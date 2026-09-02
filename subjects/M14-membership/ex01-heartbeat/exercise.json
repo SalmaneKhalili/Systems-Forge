@@ -1,0 +1,22 @@
+{
+  "id": "M14-ex01",
+  "module": "M14-membership",
+  "title": "heartbeat",
+  "lang": "go",
+  "answers": [
+    { "q": "A node is marked alive while it keeps sending what?", "a": "heartbeats" },
+    { "q": "What marks a peer as failing after a gap in heartbeats?", "a": "a timeout" },
+    { "q": "Each heartbeat from a live peer does what to its liveness tick?", "a": "resets it" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

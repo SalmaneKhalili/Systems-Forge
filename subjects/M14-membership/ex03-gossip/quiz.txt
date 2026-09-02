@@ -1,0 +1,3 @@
+Gossip spreads membership facts from node to what?: node
+On a merge, each member keeps the entry with the higher what?: version
+After gossip exchanges a cluster's views eventually what?: converge

@@ -1,0 +1,23 @@
+{
+  "id": "M0-ex04",
+  "module": "M0-tools",
+  "title": "Address Sanitizer",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "What exact report did ASan emit for this program?", "a": "heap-use-after-free" },
+    { "q": "Which syscall does the libc free() ultimately rely on?", "a": "munmap" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "micro", "cmd": ["./micro"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

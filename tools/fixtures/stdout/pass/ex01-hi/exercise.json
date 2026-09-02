@@ -1,0 +1,10 @@
+{
+  "id": "ex01-hi",
+  "module": "fixture-stdout",
+  "title": "stdout pass fixture",
+  "lang": "sh",
+  "methods": [
+    { "type": "stdout", "stdout": { "cmd": ["sh", "solve.sh"], "expect": "expected.txt", "normalize": "strip" } }
+  ],
+  "expect": "pass"
+}

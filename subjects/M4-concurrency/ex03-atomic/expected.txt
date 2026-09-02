@@ -1,0 +1,3 @@
+total 400000
+atomic ok
+ALL PASS

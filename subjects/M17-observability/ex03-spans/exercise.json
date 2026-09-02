@@ -1,0 +1,22 @@
+{
+  "id": "M17-ex03",
+  "module": "M17-observability",
+  "title": "spans",
+  "lang": "go",
+  "answers": [
+    { "q": "A span carries key=value tags that describe it, called what?", "a": "attributes" },
+    { "q": "A query over a span tree that returns every span matching a name is called what?", "a": "findall" },
+    { "q": "In a span tree the span with the largest own duration is called the what?", "a": "slowest" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

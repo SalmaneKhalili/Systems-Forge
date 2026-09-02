@@ -1,0 +1,6 @@
+a: cand(1,1) vs mine(1,0) -> true
+b: cand(1,0) vs mine(1,1) -> false
+c: cand(2,0) vs mine(1,9) -> true
+d: cand(1,5) vs mine(0,8) -> true
+e: cand(1,0) vs mine(1,0) -> true
+f: cand(1,0) vs mine(1,0) -> false

@@ -1,0 +1,12 @@
+{
+  "id": "ex01-ok",
+  "module": "fixture-quiz",
+  "title": "quiz pass fixture",
+  "lang": "text",
+  "answers": [
+    { "q": "What is a pid?", "a": "process id" },
+    { "q": "Which syscall creates a process?", "a": "fork" }
+  ],
+  "methods": [ { "type": "quiz", "quiz": { "file": "quiz.txt" } } ],
+  "expect": "pass"
+}

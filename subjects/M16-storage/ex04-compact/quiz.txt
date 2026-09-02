@@ -1,0 +1,3 @@
+The process of merging overlapping sorted SSTables into fewer, larger ones is called what?: compaction
+During compaction, when a key appears in multiple runs, which run's value wins?: the newest
+A key-value with a special empty marker that deletes a key during compaction is called a what?: tombstone

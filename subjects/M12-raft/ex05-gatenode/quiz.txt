@@ -1,0 +1,3 @@
+A node commits an entry only once it is safely where?: in the log
+Before any entry is committed a follower's read returns what?: nothing
+An append from a stale term is what by the leader?: rejected

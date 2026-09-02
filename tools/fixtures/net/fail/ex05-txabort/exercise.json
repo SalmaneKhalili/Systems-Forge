@@ -1,0 +1,19 @@
+{
+  "id": "ex05-txabort",
+  "module": "fixture-net",
+  "title": "net fail fixture: transaction commits an absent id",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17010,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "tx 3\n", "expect": "COMMIT\n" },
+        { "send": "tx 0\n", "expect": "ABORT\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

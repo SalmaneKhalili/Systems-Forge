@@ -1,0 +1,8 @@
+{
+  "ops": [
+    { "type": "write", "key": "k", "val": "v1", "start": 0, "end": 1 },
+    { "type": "read",  "key": "k", "val": "v1", "start": 2, "end": 3 },
+    { "type": "write", "key": "k", "val": "v2", "start": 4, "end": 5 },
+    { "type": "read",  "key": "k", "val": "v2", "start": 6, "end": 7 }
+  ]
+}

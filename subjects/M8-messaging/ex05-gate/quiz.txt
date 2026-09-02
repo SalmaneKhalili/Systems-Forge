@@ -1,0 +1,3 @@
+After a client disconnects mid-scenario, what must a correct switch do?: keep serving the next connection
+Does the dup directive also apply to a freshly connected client?: yes, per connection
+Which ordering of two replies proves a hold was released after the following frame?: the swapped sequence numbers

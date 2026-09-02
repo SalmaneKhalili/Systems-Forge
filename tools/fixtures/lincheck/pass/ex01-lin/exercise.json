@@ -1,0 +1,8 @@
+{
+  "id": "ex01-lin",
+  "module": "fixture-lincheck",
+  "title": "lincheck pass fixture",
+  "lang": "json",
+  "methods": [ { "type": "lincheck", "lincheck": { "history": "history.json" } } ],
+  "expect": "pass"
+}

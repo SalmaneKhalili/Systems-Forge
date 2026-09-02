@@ -1,0 +1,10 @@
+{
+  "id": "ex02-unexpected",
+  "module": "fixture-artifact",
+  "title": "artifact fail: forbidden file present",
+  "lang": "text",
+  "methods": [
+    { "type": "artifact", "artifact": { "path": "artifact.txt", "exists": false } }
+  ],
+  "expect": "fail"
+}

@@ -1,0 +1,5 @@
+n=1 quorum 1  has 1? true
+n=2 quorum 2  has 1? false  has 2? true
+n=3 quorum 2  has 1? false  has 2? true
+n=4 quorum 3  has 2? false  has 3? true
+n=5 quorum 3  has 2? false  has 3? true

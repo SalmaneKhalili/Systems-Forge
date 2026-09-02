@@ -1,0 +1,22 @@
+{
+  "id": "sequencer-reset",
+  "module": "fixture-net",
+  "title": "net fail fixture: sequencer resets across connections",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17008,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "a 0\n", "expect": "R1 a 0\n" },
+        { "send": "b 9\n", "expect": "R10 b 9\n" }
+      ] },
+      { "steps": [
+        { "send": "d 5\n", "expect": "R12 d 5\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

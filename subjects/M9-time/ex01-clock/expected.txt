@@ -1,0 +1,8 @@
+e0 t1
+p0 send m0 t2
+p1 recv m0 t3
+e1 t4
+e2 t3
+p1 send m1 t5
+p0 recv m1 t6
+e3 t7

@@ -1,0 +1,10 @@
+{
+  "id": "ex01-ok",
+  "module": "fixture-fault",
+  "title": "fault pass fixture (FORGE_RESULT override)",
+  "lang": "sh",
+  "methods": [ { "type": "fault", "fault": {
+    "driver": ["sh", "driver.sh"]
+  } } ],
+  "expect": "pass"
+}

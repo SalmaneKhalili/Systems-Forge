@@ -1,0 +1,22 @@
+{
+  "id": "M15-ex01",
+  "module": "M15-tx",
+  "title": "transaction",
+  "lang": "go",
+  "answers": [
+    { "q": "A transaction's writes are applied atomically at what point?", "a": "commit" },
+    { "q": "Discarding a transaction's staged writes without applying them is called what?", "a": "rollback" },
+    { "q": "Before a transaction commits, are its writes visible to other readers?", "a": "no" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

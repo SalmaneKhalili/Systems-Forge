@@ -1,0 +1,10 @@
+{
+  "id": "ex01-ko",
+  "module": "fixture-scenario",
+  "title": "scenario fail fixture",
+  "lang": "sh",
+  "methods": [ { "type": "scenario", "scenario": {
+    "driver": ["sh", "driver.sh"]
+  } } ],
+  "expect": "fail"
+}

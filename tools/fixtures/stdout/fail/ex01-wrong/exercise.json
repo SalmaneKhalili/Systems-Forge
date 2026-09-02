@@ -1,0 +1,10 @@
+{
+  "id": "ex01-wrong",
+  "module": "fixture-stdout",
+  "title": "stdout fail fixture",
+  "lang": "sh",
+  "methods": [
+    { "type": "stdout", "stdout": { "cmd": ["sh", "solve.sh"], "expect": "expected.txt", "normalize": "strip" } }
+  ],
+  "expect": "fail"
+}

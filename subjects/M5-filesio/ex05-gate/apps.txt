@@ -1,0 +1,3 @@
+web=nginx
+cache=redis
+queue=kafka

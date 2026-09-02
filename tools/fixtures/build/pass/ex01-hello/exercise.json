@@ -1,0 +1,13 @@
+{
+  "id": "ex01-hello",
+  "module": "fixture-build",
+  "title": "build pass fixture",
+  "lang": "c",
+  "sanitize": true,
+  "methods": [
+    { "type": "build", "build": { "make": "all", "runs": [
+      { "name": "run", "cmd": ["./hello"], "expect": "expected.txt", "normalize": "strip" }
+    ] } }
+  ],
+  "expect": "pass"
+}

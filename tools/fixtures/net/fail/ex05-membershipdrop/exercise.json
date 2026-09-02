@@ -1,0 +1,34 @@
+{
+  "id": "ex05-membershipdrop",
+  "module": "fixture-net",
+  "title": "net fail fixture: gateway lists dead members and never revives suspect",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17017,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "status a\n", "expect": "dead\n" },
+        { "send": "beat a\n", "expect": "ok\n" },
+        { "send": "beat b\n", "expect": "ok\n" },
+        { "send": "beat c\n", "expect": "ok\n" },
+        { "send": "status a\n", "expect": "alive\n" },
+        { "send": "list\n", "expect": "a|b|c\n" },
+        { "send": "suspect b\n", "expect": "ok\n" },
+        { "send": "status b\n", "expect": "suspect\n" },
+        { "send": "list\n", "expect": "a|b|c\n" }
+      ] },
+      { "steps": [
+        { "send": "list\n", "expect": "a|b|c\n" },
+        { "send": "drop c\n", "expect": "ok\n" },
+        { "send": "status c\n", "expect": "dead\n" },
+        { "send": "list\n", "expect": "a|b\n" },
+        { "send": "beat b\n", "expect": "ok\n" },
+        { "send": "status b\n", "expect": "alive\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "ex01-ok",
+  "module": "fixture-report",
+  "title": "report pass fixture",
+  "lang": "sh",
+  "methods": [ { "type": "report", "report": {
+    "cmd": ["sh", "-c", "printf 'reads=5\\nwrites=3\\n'"],
+    "reference": "reference.txt",
+    "tolerate": { "writes": 0.3 }
+  } } ],
+  "expect": "pass"
+}

@@ -1,0 +1,3 @@
+What is this leader-election scheme called where the largest id wins?: bully algorithm
+How are equal election timestamps broken?: by id
+Why does a higher election stamp win a leadership race?: it claims a more recent round

@@ -1,0 +1,14 @@
+{
+  "id": "ex01-alive",
+  "module": "fixture-process",
+  "title": "process pass fixture",
+  "lang": "sh",
+  "methods": [ { "type": "process", "process": {
+    "start": ["sleep", "30"],
+    "wait_ms": 400,
+    "probes": [
+      { "exec": ["sh", "-c", "kill -0 \"$TARGET_PID\""], "expect_exit": 0, "expect_out": "" }
+    ]
+  } } ],
+  "expect": "pass"
+}

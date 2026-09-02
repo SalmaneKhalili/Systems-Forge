@@ -1,0 +1,6 @@
+len=0 all=
+append set -> 0
+append add -> 1
+append del -> 2
+len=3 all=set|add|del
+at 1 = add

@@ -1,0 +1,49 @@
+{
+  "id": "M16-ex05",
+  "module": "M16-storage",
+  "title": "persistent",
+  "lang": "go",
+  "answers": [
+    { "q": "A store that appends every mutation to a log so it survives a restart is called what?", "a": "persistent" },
+    { "q": "On restart, a persistent store rebuilds its in-memory state by what?", "a": "replaying the write-ahead log" },
+    { "q": "A second connection served by the same store still sees data written by the first because of the store's what?", "a": "shared persistent state" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": ["./test"],
+        "port": 18130,
+        "wait_ms": 700,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              { "send": "PUT alpha 1\n", "expect": "ok\n" },
+              { "send": "GET alpha\n", "expect": "1\n" },
+              { "send": "PUT beta 2\n", "expect": "ok\n" },
+              { "send": "PUT alpha 9\n", "expect": "ok\n" },
+              { "send": "GET alpha\n", "expect": "9\n" },
+              { "send": "DEL gamma\n", "expect": "ok\n" },
+              { "send": "GET gamma\n", "expect": "nil\n" }
+            ]
+          },
+          {
+            "steps": [
+              { "send": "GET alpha\n", "expect": "9\n" },
+              { "send": "PUT gamma 7\n", "expect": "ok\n" },
+              { "send": "GET beta\n", "expect": "2\n" },
+              { "send": "GET alpha\n", "expect": "9\n" },
+              { "send": "GET gamma\n", "expect": "7\n" }
+            ]
+          }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

@@ -1,0 +1,3 @@
+The process of aggregating many observed durations into count sum max and quantiles is called a what?: summary
+A percentile such as p95 is also called a what?: quantile
+For latency SLOs the percentile that represents worst-case latency is usually what?: p95

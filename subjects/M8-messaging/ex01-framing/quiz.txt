@@ -1,0 +1,3 @@
+Which 4-byte integer in each frame tells the reader how many payload bytes follow?: length
+Which error must GetFrame return when the stream ends halfway through a frame?: io.ErrUnexpectedEOF
+Which io helper loops internally so the codec survives one-byte-at-a-time readers?: io.ReadFull

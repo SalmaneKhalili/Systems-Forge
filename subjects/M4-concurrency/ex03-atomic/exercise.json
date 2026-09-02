@@ -1,0 +1,23 @@
+{
+  "id": "M4-ex03",
+  "module": "M4-concurrency",
+  "title": "atomic counter",
+  "lang": "c",
+  "sanitizers": ["thread"],
+  "answers": [
+    { "q": "Which C11 storage qualifier makes a variable updated atomically without locks?", "a": "_Atomic" },
+    { "q": "Which function atomically adds a value and returns the old value?", "a": "atomic_fetch_add" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test", "cmd": ["setarch", "x86_64", "-R", "./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

@@ -1,0 +1,3 @@
+A member whose heartbeats have been absent past the staleness bound is what?: evicted
+Eviction drops a member that is no longer what?: live
+A member with a recent heartbeat at or inside the bound stays what?: live

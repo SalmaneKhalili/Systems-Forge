@@ -1,0 +1,23 @@
+{
+  "id": "sequencer",
+  "module": "fixture-net",
+  "title": "net pass fixture: Lamport sequencer across connections",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17007,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "a 0\n", "expect": "R1 a 0\n" },
+        { "send": "b 9\n", "expect": "R10 b 9\n" }
+      ] },
+      { "steps": [
+        { "send": "d 11\n", "expect": "R12 d 11\n" },
+        { "send": "e 0\n", "expect": "R13 e 0\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "pass"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "ex01-flag",
+  "module": "fixture-artifact",
+  "title": "artifact pass fixture",
+  "lang": "text",
+  "methods": [
+    { "type": "artifact", "artifact": {
+      "path": "artifact.txt",
+      "exists": true,
+      "is_a": "ASCII text",
+      "min_size": 4,
+      "contains": ["FORGE"]
+    } }
+  ],
+  "expect": "pass"
+}

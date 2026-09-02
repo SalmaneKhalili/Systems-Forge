@@ -1,0 +1,25 @@
+{
+  "id": "ex05-telemetryfresh",
+  "module": "fixture-net",
+  "title": "net fail fixture: telemetry gateway resets counters on every connection",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 18541,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "INC http_ok 3\n", "expect": "ok\n" },
+        { "send": "GET http_ok\n", "expect": "3\n" },
+        { "send": "INC http_total 10\n", "expect": "ok\n" },
+        { "send": "GET http_total\n", "expect": "10\n" }
+      ] },
+      { "steps": [
+        { "send": "GET http_ok\n", "expect": "3\n" },
+        { "send": "GET conn_total\n", "expect": "1\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

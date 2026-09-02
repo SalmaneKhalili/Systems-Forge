@@ -1,0 +1,6 @@
+t0 term=0 voted=false
+see 2 -> term=2 voted=false
+see 5 -> term=5 voted=false
+elect -> term=6 voted=true
+see 3 -> term=6 voted=true
+t0 term=6 voted=true

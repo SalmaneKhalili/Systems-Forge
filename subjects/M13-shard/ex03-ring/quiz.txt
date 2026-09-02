@@ -1,0 +1,3 @@
+Consistent hashing places keys and nodes on a what?: ring
+A key is owned by the first node located where on the ring?: clockwise
+Adding a node moves roughly only the keys between it and which node?: its predecessor

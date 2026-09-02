@@ -1,0 +1,3 @@
+A gateway reports the cluster's current what?: live set
+A suspected but not failed member is still what?: listed
+A dropped member is removed from the what?: live set

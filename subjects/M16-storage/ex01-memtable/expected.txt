@@ -1,0 +1,6 @@
+keys in order:
+apple=1
+banana=4
+cherry=3
+get banana: 4 (ok=true)
+get dragon: (ok=false)

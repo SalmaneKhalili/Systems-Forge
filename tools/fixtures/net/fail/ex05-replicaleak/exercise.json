@@ -1,0 +1,25 @@
+{
+  "id": "ex05-replicaleak",
+  "module": "fixture-net",
+  "title": "net fail fixture: replica leaks uncommitted entries",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17011,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "append x\n", "expect": "ok 0\n" },
+        { "send": "append y\n", "expect": "ok 1\n" },
+        { "send": "commit 1\n", "expect": "commit 1\n" },
+        { "send": "read\n", "expect": "x|y\n" }
+      ] },
+      { "steps": [
+        { "send": "append z\n", "expect": "ok 2\n" },
+        { "send": "read\n", "expect": "x|y\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

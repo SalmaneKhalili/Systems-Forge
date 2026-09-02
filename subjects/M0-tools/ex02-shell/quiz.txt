@@ -1,0 +1,2 @@
+Which flag makes a script exit on any failing command?: set -e
+What does pipefail do?: a pipeline returns the last nonzero exit 

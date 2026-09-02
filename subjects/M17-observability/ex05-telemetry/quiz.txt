@@ -1,0 +1,3 @@
+A service that exposes live metrics over a network protocol is called a what?: telemetry gateway
+The command that returns every metric as a sorted list is called what?: snap
+The counter that grows by one each time a client connects is named what?: conn_total

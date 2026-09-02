@@ -1,0 +1,22 @@
+{
+  "id": "ex05-tx",
+  "module": "fixture-net",
+  "title": "net pass fixture: 2PC transaction from votes file",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17009,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "tx 3\n", "expect": "COMMIT\n" },
+        { "send": "tx 0\n", "expect": "ABORT\n" }
+      ] },
+      { "steps": [
+        { "send": "tx 7\n", "expect": "COMMIT\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "pass"
+}

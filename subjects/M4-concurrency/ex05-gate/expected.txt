@@ -1,0 +1,5 @@
+produced 1000
+consumed 1000
+fifo ok
+checksum 499500
+ALL PASS

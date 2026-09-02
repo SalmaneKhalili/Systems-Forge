@@ -1,0 +1,3 @@
+What marks the point up to which a replicated log is durable?: a commit index
+Can a replica apply log entries beyond the commit index to its state machine?: no
+What do we call the entries at or below the commit index?: committed

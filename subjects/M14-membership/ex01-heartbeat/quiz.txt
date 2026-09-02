@@ -1,0 +1,3 @@
+A node is marked alive while it keeps sending what?: heartbeats
+What marks a peer as failing after a gap in heartbeats?: a timeout
+Each heartbeat from a live peer does what to its liveness tick?: resets it

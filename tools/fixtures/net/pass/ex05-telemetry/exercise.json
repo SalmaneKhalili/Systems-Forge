@@ -1,0 +1,29 @@
+{
+  "id": "ex05-telemetry",
+  "module": "fixture-net",
+  "title": "net pass fixture: telemetry gateway shares counters and counts connections",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 18540,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "INC http_ok 3\n", "expect": "ok\n" },
+        { "send": "INC http_total 10\n", "expect": "ok\n" },
+        { "send": "GET http_ok\n", "expect": "3\n" },
+        { "send": "GET http_missing\n", "expect": "0\n" },
+        { "send": "SNAP\n", "expect": "conn_total=1\nhttp_ok=3\nhttp_total=10\n" }
+      ] },
+      { "steps": [
+        { "send": "GET conn_total\n", "expect": "2\n" },
+        { "send": "INC http_ok 4\n", "expect": "ok\n" },
+        { "send": "GET http_ok\n", "expect": "7\n" },
+        { "send": "INC http_total 1\n", "expect": "ok\n" },
+        { "send": "SNAP\n", "expect": "conn_total=2\nhttp_ok=7\nhttp_total=11\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "pass"
+}

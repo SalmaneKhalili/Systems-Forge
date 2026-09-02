@@ -1,0 +1,8 @@
+{
+  "id": "ex01-nonlin",
+  "module": "fixture-lincheck",
+  "title": "lincheck fail fixture (real-time contradiction)",
+  "lang": "json",
+  "methods": [ { "type": "lincheck", "lincheck": { "history": "history.json" } } ],
+  "expect": "fail"
+}

@@ -1,0 +1,42 @@
+{
+  "id": "M8-ex04",
+  "module": "M8-messaging",
+  "title": "the switch: fault injection",
+  "lang": "go",
+  "answers": [
+    { "q": "Where does the switch read its fault directives from?", "a": "the fault file" },
+    { "q": "Which directive forwards one client frame to the backend twice?", "a": "dup" },
+    { "q": "In what situation is the frame a drop directive targets placed?", "a": "it is never forwarded" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": ["./switch"],
+        "port": 17304,
+        "wait_ms": 500,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              { "send": "dupme\n", "expect": "R1 dupme\nR2 dupme\n" },
+              { "send": "dropme\nheld\nw\n", "expect": "R3 w\nR4 held\n" },
+              { "send": "z\n", "expect": "R5 z\n" }
+            ]
+          },
+{
+              "steps": [
+                { "send": "a\n", "expect": "R1 a\nR2 a\n" },
+                { "send": "b\nc\nd\n", "expect": "R3 d\nR4 c\n" }
+              ]
+            }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

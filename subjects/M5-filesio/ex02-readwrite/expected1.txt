@@ -1,0 +1,4 @@
+input.txt read 44 checksum 4045
+input.txt fread 44 checksum 4045
+match 1
+ALL PASS

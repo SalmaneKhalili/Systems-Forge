@@ -1,0 +1,24 @@
+{
+  "id": "M5-ex02",
+  "module": "M5-filesio",
+  "title": "read vs stdio",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "Which system call returns bytes to a buffer you provide?", "a": "read" },
+    { "q": "Which stdio function reads fixed-size blocks into a buffer?", "a": "fread" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test input.txt", "cmd": ["./test", "input.txt"], "expect": "expected1.txt", "normalize": "strip", "stderr_ok": false },
+          { "name": "test second.txt", "cmd": ["./test", "second.txt"], "expect": "expected2.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

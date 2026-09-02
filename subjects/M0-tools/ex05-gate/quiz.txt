@@ -1,0 +1,2 @@
+Which variable holds the exit status of the last command?: $?
+What does `make -C dir` do?: runs make in that directory

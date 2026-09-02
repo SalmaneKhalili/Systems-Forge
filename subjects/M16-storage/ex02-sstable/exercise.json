@@ -1,0 +1,22 @@
+{
+  "id": "M16-ex02",
+  "module": "M16-storage",
+  "title": "sstable",
+  "lang": "go",
+  "answers": [
+    { "q": "An immutable on-disk sorted key-value file in an LSM-tree is called what?", "a": "sstable" },
+    { "q": "SSTables are immutable and sorted, so lookups use a sparse what plus binary search?", "a": "index" },
+    { "q": "An SSTable stores keys in what order on disk?", "a": "sorted" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

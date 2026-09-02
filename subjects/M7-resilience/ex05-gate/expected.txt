@@ -1,0 +1,11 @@
+task a1 ok
+task b1 ok
+task c1 ok
+task a2 ok
+task b2 failed: watchdog restarting worker b
+task c2 ok
+task a3 ok
+task b2 retry ok
+task b3 ok
+all workers complete
+shutdown complete

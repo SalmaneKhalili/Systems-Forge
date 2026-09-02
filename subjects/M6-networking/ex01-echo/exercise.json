@@ -1,0 +1,31 @@
+{
+  "id": "M6-ex01",
+  "module": "M6-networking",
+  "title": "echo server",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "Which call puts a listening socket's address family, port and address on it?", "a": "bind" },
+    { "q": "Which call accepts a pending connection and returns a new socket for it?", "a": "accept" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": ["./test"],
+        "port": 17101,
+        "wait_ms": 500,
+        "timeout_ms": 3000,
+        "steps": [
+          { "send": "hello\n", "expect": "hello\n" },
+          { "send": "ping\n", "expect": "ping\n" }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

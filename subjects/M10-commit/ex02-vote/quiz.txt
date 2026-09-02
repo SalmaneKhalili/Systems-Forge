@@ -1,0 +1,3 @@
+What must a participant be able to do once it votes commit for a transaction?: guarantee it can commit
+Why can a participant that voted commit never later change its mind to abort?: the coordinator may already have told others to commit
+A participant votes abort when it cannot guarantee what for the transaction?: commit

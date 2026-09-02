@@ -1,0 +1,31 @@
+{
+  "id": "M6-ex04",
+  "module": "M6-networking",
+  "title": "read timeout",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "Which socket option makes a blocking read give up after a delay?", "a": "SO_RCVTIMEO" },
+    { "q": "What errno does a timed-out recv return?", "a": "EAGAIN" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": ["./test"],
+        "port": 17105,
+        "wait_ms": 500,
+        "timeout_ms": 4000,
+        "steps": [
+          { "send": "ready\n", "expect": "ready\n" },
+          { "send": "half", "sleep_ms": 1200, "expect": "TIMEOUT\n" }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

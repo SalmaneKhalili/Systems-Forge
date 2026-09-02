@@ -1,0 +1,5 @@
+align ok
+no overlap
+reset ok
+exact fit ok
+ALL PASS

@@ -1,0 +1,41 @@
+{
+  "id": "M9-ex05",
+  "module": "M9-time",
+  "title": "sequencer",
+  "lang": "go",
+  "answers": [
+    { "q": "Which rule computes the sequence number for a frame claiming stamp s?", "a": "seq = max(seq, s) + 1" },
+    { "q": "Must the counter persist across connections or reset for each one?", "a": "persist" },
+    { "q": "A single-writer sequencer imposes what ordering property on all frames?", "a": "a total order" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": ["./srv"],
+        "port": 17405,
+        "connections": [
+          {
+            "steps": [
+              { "send": "a 0\n", "expect": "R1 a 0\n" },
+              { "send": "b 9\n", "expect": "R10 b 9\n" },
+              { "send": "c 9\n", "expect": "R11 c 9\n" }
+            ]
+          },
+          {
+            "steps": [
+              { "send": "d 11\n", "expect": "R12 d 11\n" },
+              { "send": "e 0\n", "expect": "R13 e 0\n" },
+              { "send": "f 20\n", "expect": "R21 f 20\n" }
+            ]
+          }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

@@ -1,0 +1,3 @@
+A span carries key=value tags that describe it, called what?: attributes
+A query over a span tree that returns every span matching a name is called what?: findall
+In a span tree the span with the largest own duration is called the what?: slowest

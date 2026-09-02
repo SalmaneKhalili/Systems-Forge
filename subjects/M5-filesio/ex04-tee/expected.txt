@@ -1,0 +1,5 @@
+hello world
+second line
+wrote 24
+readback 24
+ALL PASS

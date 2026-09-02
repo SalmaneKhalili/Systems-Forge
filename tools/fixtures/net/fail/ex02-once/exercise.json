@@ -1,0 +1,21 @@
+{
+  "id": "ex02-once",
+  "module": "fixture-net",
+  "title": "net multi-connection fail fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17004,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] },
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "M7-ex01",
+  "module": "M7-resilience",
+  "title": "backoff",
+  "lang": "python",
+  "answers": [
+    { "q": "Which algorithm multiplies the wait between retries as they keep failing?", "a": "exponential backoff" },
+    { "q": "What does a successful attempt mean for a retry loop?", "a": "it stops and reports success" },
+    { "q": "Which peer behaviour does this exercise classify as a failed attempt?", "a": "closing the connection before a response" }
+  ],
+  "methods": [
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": ["python3", "main.py"],
+        "expect": "expected.txt",
+        "normalize": "strip"
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

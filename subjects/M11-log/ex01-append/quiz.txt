@@ -1,0 +1,3 @@
+Does a replicated log ever rewrite or overwrite an existing entry?: no
+Where is a new command appended in a replicated log?: at the end
+What names the position of an entry in the log?: its index

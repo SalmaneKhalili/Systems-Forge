@@ -1,0 +1,7 @@
+prepare 0 -> yes
+prepare 1 -> yes
+prepare 2 -> no
+DECISION abort
+abort 0
+abort 1
+abort 2

@@ -1,0 +1,3 @@
+Which rule computes the sequence number for a frame claiming stamp s?: seq = max(seq, s) + 1
+Must the counter persist across connections or reset for each one?: persist
+A single-writer sequencer imposes what ordering property on all frames?: a total order

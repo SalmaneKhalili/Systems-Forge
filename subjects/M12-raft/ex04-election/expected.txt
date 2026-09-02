@@ -1,0 +1,5 @@
+n=1 quorum=1 has1=true
+n=2 quorum=2 has1=false has2=true
+n=3 quorum=2 has2=true
+n=4 quorum=3 has2=false has3=true
+n=5 quorum=3 has3=true

@@ -1,0 +1,25 @@
+# Personal progress and workspace
+progress.db
+progress.db-*
+answers/
+
+# Build artifacts
+forge/bin/
+bin/
+*.o
+*.a
+*.so
+*.out
+*.exe
+a.out
+core
+
+# Tooling noise
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+
+# Fixture build outputs (private to each self-test case)
+tools/fixtures/**/hello
+tools/fixtures/**/*.o

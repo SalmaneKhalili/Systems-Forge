@@ -1,0 +1,2 @@
+What is a pid?: a weather report
+Which syscall creates a process?: fork

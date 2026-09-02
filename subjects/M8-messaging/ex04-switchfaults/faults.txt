@@ -1,0 +1,3 @@
+dup:1
+drop:2
+hold:3

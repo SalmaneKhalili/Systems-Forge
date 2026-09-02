@@ -1,0 +1,14 @@
+{
+  "id": "ex01-gone",
+  "module": "fixture-process",
+  "title": "process fail: target already exited",
+  "lang": "sh",
+  "methods": [ { "type": "process", "process": {
+    "start": ["sh", "-c", "exit 0"],
+    "wait_ms": 400,
+    "probes": [
+      { "exec": ["sh", "-c", "kill -0 \"$TARGET_PID\""], "expect_exit": 0 }
+    ]
+  } } ],
+  "expect": "fail"
+}

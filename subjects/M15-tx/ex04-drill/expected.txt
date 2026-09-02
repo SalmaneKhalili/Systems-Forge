@@ -1,0 +1,7 @@
+drill a b c
+down b
+ok a
+fail b
+ok c
+up b
+ok b

@@ -1,0 +1,2 @@
+exec failed for /definitely/not/a/command
+parent: exec failed and was reported (127)

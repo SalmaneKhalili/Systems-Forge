@@ -1,0 +1,16 @@
+{
+  "id": "ex01-echo",
+  "module": "fixture-net",
+  "title": "net pass fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17001,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "steps": [
+      { "send": "PING\n", "expect": "PONG\n" }
+    ]
+  } } ],
+  "expect": "pass"
+}

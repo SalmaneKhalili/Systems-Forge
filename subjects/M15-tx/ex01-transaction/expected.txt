@@ -1,0 +1,8 @@
+store.get a -> 1
+tx.get a -> 2
+store.get a -> 1
+rollback done
+store.get a -> 1
+commit done
+store.get a -> 5
+store.get b -> 6

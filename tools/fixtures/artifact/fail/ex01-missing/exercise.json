@@ -1,0 +1,10 @@
+{
+  "id": "ex01-missing",
+  "module": "fixture-artifact",
+  "title": "artifact fail: missing file",
+  "lang": "text",
+  "methods": [
+    { "type": "artifact", "artifact": { "path": "no-such-file.txt", "exists": true } }
+  ],
+  "expect": "fail"
+}

@@ -1,0 +1,3 @@
+When a node joins, only keys in its new arc from what need to move?: its predecessor
+The point of consistent hashing is to minimize what when resizing?: key movement
+A key is rebalanced only when its owning what changes?: node

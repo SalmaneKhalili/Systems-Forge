@@ -1,0 +1,21 @@
+{
+  "id": "ex02-sessions",
+  "module": "fixture-net",
+  "title": "net multi-connection pass fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17003,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] },
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "pass"
+}

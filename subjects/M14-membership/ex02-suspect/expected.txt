@@ -1,0 +1,10 @@
+suspectAfter=2 failAfter=5
+tick 1: alive
+tick 2: suspect
+tick 3: suspect
+beat: alive
+tick 1: alive
+tick 2: suspect
+tick 3: suspect
+tick 4: suspect
+tick 5: failed

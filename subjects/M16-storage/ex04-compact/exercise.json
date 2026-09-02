@@ -1,0 +1,22 @@
+{
+  "id": "M16-ex04",
+  "module": "M16-storage",
+  "title": "compact",
+  "lang": "go",
+  "answers": [
+    { "q": "The process of merging overlapping sorted SSTables into fewer, larger ones is called what?", "a": "compaction" },
+    { "q": "During compaction, when a key appears in multiple runs, which run's value wins?", "a": "the newest" },
+    { "q": "A key-value with a special empty marker that deletes a key during compaction is called a what?", "a": "tombstone" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

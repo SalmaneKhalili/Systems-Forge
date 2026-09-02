@@ -1,0 +1,3 @@
+Replaying a write-ahead log recovers what after a crash?: state
+When two logged writes touch the same key, which one wins?: the later one
+The log is written before a change is considered durable; it is therefore what style of log?: write-ahead

@@ -1,0 +1,22 @@
+{
+  "id": "M12-ex04",
+  "module": "M12-raft",
+  "title": "election",
+  "lang": "go",
+  "answers": [
+    { "q": "A leader is elected only after it wins how many votes?", "a": "a majority" },
+    { "q": "The quorum of a group of size n is what?", "a": "n half plus one" },
+    { "q": "In a four node cluster how many votes are needed to win?", "a": "three" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

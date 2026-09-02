@@ -1,0 +1,23 @@
+{
+  "id": "M1-ex02",
+  "module": "M1-clib",
+  "title": "ft_strlcpy",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "What does strlcpy return when the source does not fit?", "a": "the full length of src" },
+    { "q": "At most how many bytes of the source can a call with size n copy?", "a": "n - 1" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

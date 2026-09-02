@@ -1,0 +1,23 @@
+{
+  "id": "M4-ex05",
+  "module": "M4-concurrency",
+  "title": "Gate: bounded queue",
+  "lang": "c",
+  "sanitizers": ["thread"],
+  "answers": [
+    { "q": "Which function waits on a condition variable while releasing its mutex?", "a": "pthread_cond_wait" },
+    { "q": "Which function wakes one thread waiting on a condition variable?", "a": "pthread_cond_signal" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test", "cmd": ["setarch", "x86_64", "-R", "./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

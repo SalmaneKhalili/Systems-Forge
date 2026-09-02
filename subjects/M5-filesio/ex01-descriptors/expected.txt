@@ -1,0 +1,8 @@
+stdin 0
+stdout 1
+stderr 2
+first open 3
+reuse after close 3
+two opens 3 and 4
+lowest available 3
+ALL PASS

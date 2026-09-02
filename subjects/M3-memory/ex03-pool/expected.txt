@@ -1,0 +1,9 @@
+pool empty ok
+9th get NULL ok
+borrowed 8 ok
+slots aligned ok
+isolation ok
+invalid puts ignored ok
+churn 100 ok
+release all ok
+ALL PASS

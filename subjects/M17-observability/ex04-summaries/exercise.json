@@ -1,0 +1,22 @@
+{
+  "id": "M17-ex04",
+  "module": "M17-observability",
+  "title": "summaries",
+  "lang": "go",
+  "answers": [
+    { "q": "The process of aggregating many observed durations into count sum max and quantiles is called a what?", "a": "summary" },
+    { "q": "A percentile such as p95 is also called a what?", "a": "quantile" },
+    { "q": "For latency SLOs the percentile that represents worst-case latency is usually what?", "a": "p95" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

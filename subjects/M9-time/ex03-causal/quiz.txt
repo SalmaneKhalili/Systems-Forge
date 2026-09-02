@@ -1,0 +1,3 @@
+When two vector stamps are incomparable, what are the events called?: concurrent
+Can a vector clock detect concurrency, unlike a scalar Lamport counter?: yes
+If a and b have identical vector stamps, are they causally ordered by happened-before?: no

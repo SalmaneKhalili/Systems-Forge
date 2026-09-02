@@ -1,0 +1,4 @@
+now=10 staleAfter=3
+members a7 b8 c9 d4
+live: a7 b8 c9
+evicted: d4

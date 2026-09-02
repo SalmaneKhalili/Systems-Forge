@@ -1,0 +1,21 @@
+{
+  "id": "M0-ex02",
+  "module": "M0-tools",
+  "title": "Shell hygiene",
+  "lang": "sh",
+  "answers": [
+    { "q": "Which flag makes a script exit on any failing command?", "a": "set -e" },
+    { "q": "What does pipefail do?", "a": "a pipeline returns the last nonzero exit" }
+  ],
+  "methods": [
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["bash", "solve.sh", "1", "2", "-3", "7"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    {
+      "type": "artifact",
+      "artifact": { "path": "solve.sh", "exists": true, "contains": ["set -euo pipefail"] }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

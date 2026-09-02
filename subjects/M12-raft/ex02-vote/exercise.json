@@ -1,0 +1,22 @@
+{
+  "id": "M12-ex02",
+  "module": "M12-raft",
+  "title": "vote",
+  "lang": "go",
+  "answers": [
+    { "q": "A node may only vote for a candidate whose log is at least as what as its own?", "a": "up to date" },
+    { "q": "Which log is considered more up to date, the one with the higher what?", "a": "last index" },
+    { "q": "A node that already voted this term must what for all others?", "a": "refuse" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

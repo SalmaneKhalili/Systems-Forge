@@ -1,0 +1,3 @@
+What does a Lamport clock assign to every event?: a counter
+If a happened before b, how must Lamport(a) and Lamport(b) compare?: Lamport(a) < Lamport(b)
+On receiving a message with stamp s, what rule updates the clock?: c = max(c, s) + 1

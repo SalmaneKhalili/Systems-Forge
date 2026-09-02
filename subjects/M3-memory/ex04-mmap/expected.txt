@@ -1,0 +1,8 @@
+calloc zeroed ok
+regions aligned and disjoint ok
+region contents ok
+accounting rounds to pages ok
+invalid free ignored ok
+churn 40 ok
+clean exit ok
+ALL PASS

@@ -1,0 +1,6 @@
+request=120ms
+  db.query=40ms
+    db.scan=25ms
+  cache.get=15ms
+  api.out=65ms
+root.dur=120

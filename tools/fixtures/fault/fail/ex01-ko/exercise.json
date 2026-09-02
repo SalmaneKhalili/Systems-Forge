@@ -1,0 +1,10 @@
+{
+  "id": "ex01-ko",
+  "module": "fixture-fault",
+  "title": "fault fail fixture (FORGE_RESULT override)",
+  "lang": "sh",
+  "methods": [ { "type": "fault", "fault": {
+    "driver": ["sh", "driver.sh"]
+  } } ],
+  "expect": "fail"
+}

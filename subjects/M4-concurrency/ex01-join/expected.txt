@@ -1,0 +1,8 @@
+thread 1 returned 2
+thread 2 returned 4
+thread 3 returned 6
+thread 4 returned 8
+thread 5 returned 10
+join errors 0
+sum 30
+ALL PASS

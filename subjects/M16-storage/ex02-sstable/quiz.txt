@@ -1,0 +1,3 @@
+An immutable on-disk sorted key-value file in an LSM-tree is called what?: sstable
+SSTables are immutable and sorted, so lookups use a sparse what plus binary search?: index
+An SSTable stores keys in what order on disk?: sorted

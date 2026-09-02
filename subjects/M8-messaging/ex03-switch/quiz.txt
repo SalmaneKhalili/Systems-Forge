@@ -1,0 +1,3 @@
+Which program does the switch itself start so the relay has something to reach?: the backend
+Which octet terminates a frame in this module's wire format?: the newline
+When a client disconnects, what must the switch do with the relay's backend side?: close it too

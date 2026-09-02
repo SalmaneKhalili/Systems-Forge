@@ -1,0 +1,21 @@
+{
+  "id": "ex05-norelay",
+  "module": "fixture-net",
+  "title": "net fail fixture: server spawns a worker subprocess",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17006,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] },
+      { "steps": [
+        { "send": "PING\n", "expect": "PONG\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

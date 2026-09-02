@@ -1,0 +1,25 @@
+{
+  "id": "ex05-persistonce",
+  "module": "fixture-net",
+  "title": "net fail fixture: gateway serves each connection from a fresh store",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 18241,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "PUT alpha 1\n", "expect": "ok\n" },
+        { "send": "GET alpha\n", "expect": "1\n" },
+        { "send": "PUT alpha 9\n", "expect": "ok\n" },
+        { "send": "GET alpha\n", "expect": "9\n" }
+      ] },
+      { "steps": [
+        { "send": "GET alpha\n", "expect": "9\n" },
+        { "send": "GET beta\n", "expect": "nil\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

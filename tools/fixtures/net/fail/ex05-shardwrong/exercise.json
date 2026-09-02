@@ -1,0 +1,27 @@
+{
+  "id": "ex05-shardwrong",
+  "module": "fixture-net",
+  "title": "net fail fixture: gateway routes every key to the wrong shard",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17015,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "set apple red\n", "expect": "set 0\n" },
+        { "send": "get apple\n", "expect": "0:red\n" },
+        { "send": "set mango yellow\n", "expect": "set 1\n" },
+        { "send": "get mango\n", "expect": "1:yellow\n" }
+      ] },
+      { "steps": [
+        { "send": "get apple\n", "expect": "0:red\n" },
+        { "send": "set zebra striped\n", "expect": "set 2\n" },
+        { "send": "get zebra\n", "expect": "2:striped\n" },
+        { "send": "get melon\n", "expect": "1:?\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

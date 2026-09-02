@@ -1,0 +1,16 @@
+{
+  "id": "ex01-wrong",
+  "module": "fixture-net",
+  "title": "net fail fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17002,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "steps": [
+      { "send": "PING\n", "expect": "PONG\n" }
+    ]
+  } } ],
+  "expect": "fail"
+}

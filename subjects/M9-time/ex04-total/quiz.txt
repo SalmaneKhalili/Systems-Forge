@@ -1,0 +1,3 @@
+How is a total order built from Lamport stamps that tie?: tie-break by process id
+Does the (lamport, pid) total order respect the happens-before partial order?: yes
+Adding a pid tie-break to Lamport stamps turns the partial order into what?: a total order

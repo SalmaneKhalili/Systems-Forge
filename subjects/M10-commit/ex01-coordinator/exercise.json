@@ -1,0 +1,22 @@
+{
+  "id": "M10-ex01",
+  "module": "M10-commit",
+  "title": "coordinator",
+  "lang": "go",
+  "answers": [
+    { "q": "What are the two phases of a two-phase commit?", "a": "prepare and commit" },
+    { "q": "How many phases does a coordinator drive through?", "a": "two" },
+    { "q": "What does a coordinator send to learn each participant's verdict?", "a": "a prepare" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

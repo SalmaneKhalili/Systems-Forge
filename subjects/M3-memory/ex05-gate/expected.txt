@@ -1,0 +1,8 @@
+init ok
+grow integrity ok
+full 1024 cap ok
+refusal no side effect ok
+NULL0 ok
+NULL5 refused ok
+reuse after refusal ok
+ALL PASS

@@ -1,0 +1,3 @@
+With commit index c and length of len, how many entries are uncommitted?: len - c - 1
+What index will the next Append write at?: the current length
+When the log is empty and nothing is committed, what is the commit index?: -1

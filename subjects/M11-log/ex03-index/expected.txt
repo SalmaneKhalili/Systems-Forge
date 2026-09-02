@@ -1,0 +1,4 @@
+next(c=-1,l=0) = 0      uncommitted = 0
+next(c=0,l=3)  = 3      uncommitted = 2
+next(c=2,l=3)  = 3      uncommitted = 0
+next(c=1,l=5)  = 5      uncommitted = 3

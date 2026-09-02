@@ -1,0 +1,22 @@
+{
+  "id": "M13-ex03",
+  "module": "M13-shard",
+  "title": "ring",
+  "lang": "go",
+  "answers": [
+    { "q": "Consistent hashing places keys and nodes on a what?", "a": "ring" },
+    { "q": "A key is owned by the first node located where on the ring?", "a": "clockwise" },
+    { "q": "Adding a node moves roughly only the keys between it and which node?", "a": "its predecessor" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

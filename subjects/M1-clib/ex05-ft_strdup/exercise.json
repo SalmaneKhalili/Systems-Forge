@@ -1,0 +1,23 @@
+{
+  "id": "M1-ex05",
+  "module": "M1-clib",
+  "title": "Gate: ft_strdup",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "What does ft_strdup return if malloc fails?", "a": "NULL" },
+    { "q": "Which sanitizer reports a leak on exit?", "a": "LeakSanitizer" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

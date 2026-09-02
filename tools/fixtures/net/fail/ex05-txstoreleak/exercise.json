@@ -1,0 +1,25 @@
+{
+  "id": "ex05-txstoreleak",
+  "module": "fixture-net",
+  "title": "net fail fixture: uncommitted staged writes leak across connections",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17641,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "set a 1\n", "expect": "ok\n" },
+        { "send": "begin\n", "expect": "ok\n" },
+        { "send": "set b 3\n", "expect": "ok\n" },
+        { "send": "get b\n", "expect": "3\n" }
+      ] },
+      { "steps": [
+        { "send": "get b\n", "expect": "nil\n" },
+        { "send": "get a\n", "expect": "1\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

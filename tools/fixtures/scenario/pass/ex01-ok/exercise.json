@@ -1,0 +1,10 @@
+{
+  "id": "ex01-ok",
+  "module": "fixture-scenario",
+  "title": "scenario pass fixture",
+  "lang": "sh",
+  "methods": [ { "type": "scenario", "scenario": {
+    "driver": ["sh", "driver.sh"]
+  } } ],
+  "expect": "pass"
+}

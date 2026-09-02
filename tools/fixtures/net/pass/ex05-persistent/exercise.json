@@ -1,0 +1,31 @@
+{
+  "id": "ex05-persistent",
+  "module": "fixture-net",
+  "title": "net pass fixture: persistent KV gateway shares state across connections",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 18240,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "PUT alpha 1\n", "expect": "ok\n" },
+        { "send": "GET alpha\n", "expect": "1\n" },
+        { "send": "PUT beta 2\n", "expect": "ok\n" },
+        { "send": "PUT alpha 9\n", "expect": "ok\n" },
+        { "send": "GET alpha\n", "expect": "9\n" },
+        { "send": "DEL gamma\n", "expect": "ok\n" },
+        { "send": "GET gamma\n", "expect": "nil\n" }
+      ] },
+      { "steps": [
+        { "send": "GET alpha\n", "expect": "9\n" },
+        { "send": "PUT gamma 7\n", "expect": "ok\n" },
+        { "send": "GET beta\n", "expect": "2\n" },
+        { "send": "GET alpha\n", "expect": "9\n" },
+        { "send": "GET gamma\n", "expect": "7\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "pass"
+}

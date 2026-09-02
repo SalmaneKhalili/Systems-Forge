@@ -1,0 +1,22 @@
+{
+  "id": "M9-ex01",
+  "module": "M9-time",
+  "title": "lamport clock",
+  "lang": "go",
+  "answers": [
+    { "q": "What does a Lamport clock assign to every event?", "a": "a counter" },
+    { "q": "If a happened before b, how must Lamport(a) and Lamport(b) compare?", "a": "Lamport(a) < Lamport(b)" },
+    { "q": "On receiving a message with stamp s, what rule updates the clock?", "a": "c = max(c, s) + 1" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

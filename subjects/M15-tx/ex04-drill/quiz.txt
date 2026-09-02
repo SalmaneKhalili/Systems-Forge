@@ -1,0 +1,3 @@
+A drill verifies a cluster stays what while nodes fail?: correct
+An operation on a down node returns what?: fail
+Fault-injection testing that deliberately breaks a system is called what?: chaos engineering

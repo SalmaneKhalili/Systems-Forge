@@ -1,0 +1,4 @@
+a: x1 y1
+b: x2 y1 z1
+merge(a,b): x2 y1 z1
+merge(b,a): x2 y1 z1

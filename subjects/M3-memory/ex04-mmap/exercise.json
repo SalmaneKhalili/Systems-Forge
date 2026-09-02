@@ -1,0 +1,23 @@
+{
+  "id": "M3-ex04",
+  "module": "M3-memory",
+  "title": "mmap allocator",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    { "q": "Which syscall hands back an anonymous region to the kernel?", "a": "munmap" },
+    { "q": "What granularity does mmap allocate in?", "a": "pages" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+        ]
+      }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

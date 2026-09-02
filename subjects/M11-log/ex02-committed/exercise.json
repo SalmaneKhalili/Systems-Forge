@@ -1,0 +1,22 @@
+{
+  "id": "M11-ex02",
+  "module": "M11-log",
+  "title": "committed",
+  "lang": "go",
+  "answers": [
+    { "q": "What marks the point up to which a replicated log is durable?", "a": "a commit index" },
+    { "q": "Can a replica apply log entries beyond the commit index to its state machine?", "a": "no" },
+    { "q": "What do we call the entries at or below the commit index?", "a": "committed" }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": { "make": "all" }
+    },
+    {
+      "type": "stdout",
+      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+    },
+    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+  ]
+}

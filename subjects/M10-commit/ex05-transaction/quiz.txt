@@ -1,0 +1,3 @@
+In 2PC over the wire, what does the coordinator gather before deciding?: prepared votes
+A participant replies prepared only when it can guarantee what?: commit
+What does the coordinator send when it has not heard prepared from everyone?: abort

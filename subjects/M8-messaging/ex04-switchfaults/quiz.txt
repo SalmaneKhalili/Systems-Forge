@@ -1,0 +1,3 @@
+Where does the switch read its fault directives from?: the fault file
+Which directive forwards one client frame to the backend twice?: dup
+In what situation is the frame a drop directive targets placed?: it is never forwarded
