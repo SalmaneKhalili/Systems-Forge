@@ -17,6 +17,26 @@ Milestones:
 - ex04 · Election — a leader is elected when it holds a majority of votes.
 - ex05 · The gate node — a TCP gateway serving one raft node's state to a
   client.
+- ex06 · The cluster — a real 3-node raft cluster: peers exchange
+  RequestVote/AppendEntries over real TCP and replicate one log.
 
 Rule: nothing printed or compared may depend on wall-clock time. All
 exercises are transcript-driven and byte-deterministic.
+
+---
+
+## So what? (interview / portfolio)
+
+Raft is the *flagship capstone* and the single most askable algorithm in distributed
+systems interviews. Being able to explain — and in ex06 actually *run* — a real 3-node
+raft cluster (election via majority, step-down on a higher term, append-entries
+replication) is a headline portfolio claim no infrastructure candidate should be without.
+
+**Interview questions this module arms you for:**
+- How does a raft term stay monotonic, and what "steps down" a leader?
+- Why must a voter only back a candidate with an at-least-as-up-to-date log?
+- What invariant does the matching-prefix check in AppendEntries preserve?
+- How many votes elect a leader of N nodes, and why a strict majority?
+
+**Portfolio artifact:** M12-ex06 `raft cluster` — a real 3-node raft cluster whose three
+peers agree on one replicated log over real TCP sockets.

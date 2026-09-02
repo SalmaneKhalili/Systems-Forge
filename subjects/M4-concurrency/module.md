@@ -32,3 +32,22 @@ build error here.
 | ex03 | atomic counter | whole `main.c`: the same race-free total with `_Atomic` + `atomic_fetch_add`, no lock |
 | ex04 | readers & writers | whole `main.c`: `pthread_rwlock_t`, invariant-checking readers, version-bumping writers |
 | ex05 | **Gate: bounded queue** | `queue.c`: thread-safe FIFO with mutex + condvar, blocking push/pop, cap 16 |
+
+---
+
+## So what? (interview / portfolio)
+
+Concurrency bugs are the highest-frequency failures in real systems, and this module makes
+"race-free under a sanitizer" a verifiable, screen-shareable claim rather than a hope.
+The gate — a bounded producer-consumer queue driven under ThreadSanitizer — is exactly the
+artifact an interviewer means when they ask you to "design a thread-safe queue and prove
+it."
+
+**Interview questions this module arms you for:**
+- Mutex vs. read-write lock vs. atomic: when is each the right tool?
+- What is a condition variable doing that a spin-lock can't, and why does it need a mutex?
+- How does a data race differ from a logical race, and how does TSan detect one?
+- Why must a producer-consumer queue block (not spin) when full or empty?
+
+**Portfolio artifact:** M4-ex05 `queue.c` — a bounded, race-free FIFO (mutex + condvar,
+cap 16) proven clean under ThreadSanitizer.

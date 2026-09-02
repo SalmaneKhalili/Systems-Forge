@@ -20,3 +20,22 @@ Milestones:
 
 Rule: nothing printed or compared may depend on wall-clock time. All
 exercises are transcript-driven and byte-deterministic.
+
+---
+
+## So what? (interview / portfolio)
+
+"Logical time" is the single most at-parity-with-distributed-systems idea you will ever
+learn: every leader election, version counter, and total-order total you see later is
+Lamport/vector clocks under the hood. Conveying *happens-before* fluently — and knowing why
+wall-clock time is useless for causality — is a classic senior-distributed-systems
+interview hinge.
+
+**Interview questions this module arms you for:**
+- What is the happens-before relation, and why is a wall clock the wrong clock for it?
+- Lamport vs. vector clocks: what can each one *prove* about causality?
+- How do you turn a partial order into a deterministic total order?
+- When are two events concurrent (largely incomparable), and why does that matter?
+
+**Portfolio artifact:** M9-ex05 `sequencer` — a TCP gateway that Lamport-stamps and totally
+orders every frame it receives.

@@ -24,3 +24,21 @@ server is these three verbs composed.
 | ex03 | pipes | `main.c`: child writes through a pipe, parent reads till EOF and reports |
 | ex04 | signals | `main.c`: install a `SIGUSR1` handler, `raise`, prove it ran (flag, not printf) |
 | ex05 | **Gate: pipeline** | `main.c`: two children, one pipe, `dup2` + `echo`→`tr`, parent reaps both |
+
+---
+
+## So what? (interview / portfolio)
+
+Every OS and every container runtime is a composition of `fork`, `exec`, `wait` and pipes —
+so this is the module that makes "process lifecycle" a claim you can speak to precisely.
+A shell, an init system, a supervisor, and a CI runner are all this module's verbs wired
+differently; the pipeline gate is a miniature of exactly that.
+
+**Interview questions this module arms you for:**
+- What actually happens when you type a command in a shell (`fork`+`execvp`+`wait`)?
+- How do you prevent a zombie process, and what is the missing `wait` doing?
+- What is the exec-failure convention (exit 127) and why is that a contract?
+- How does a pipe transfer data, and why read till EOF?
+
+**Portfolio artifact:** M2-ex05 `pipeline` — a fork/exec/pipe graph that runs a real
+`echo`→`tr` redirection with every child reaped.

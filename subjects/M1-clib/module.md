@@ -27,3 +27,22 @@ every warning as an error and runs AddressSanitizer + UndefinedBehaviorSanitizer
 | ex03 | `ft_memset` | `ft_memset.c` + `Makefile`; byte fills, untouched regions stay intact |
 | ex04 | `ft_strcmp` | `ft_strcmp.c` + `Makefile`; unsigned-byte lexicographic compare |
 | ex05 | **Gate: `ft_strdup`** | `ft_strdup.c` + `Makefile`; own `malloc`, leak-free under ASan |
+
+---
+
+## So what? (interview / portfolio)
+
+`libft`-style re-implementations are the classic entry test for C/embedded roles precisely
+because they strip away the standard library and prove you understand memory ownership,
+bounded writes, and undefined behavior — not that you memorised signatures. The discipline
+here (own `malloc` + ASan leak check) is the exact thing interviewers probe with "walk me
+through a memory bug you've fixed."
+
+**Interview questions this module arms you for:**
+- What does `strlcpy` return and why is that subtle? (the untruncated source length)
+- How do you guarantee a custom `strdup` leaks nothing under AddressSanitizer?
+- What is the difference between `strncpy` and a properly bounded copy?
+- Why is an unsigned-byte compare the correct model for `strcmp`?
+
+**Portfolio artifact:** M1-ex05 `ft_strdup` — a hand-written, leak-free `malloc` copy under
+ASan + Werror.

@@ -26,3 +26,21 @@ Two engine notes that keep this module deterministic:
   no "after 3 s". Every transcript is event-driven. When you need real backoff/sleep for
   the *behavior*, use millisecond sleeps — but never print them. This is the rule that
   makes each exercise deterministic, both ways.
+
+---
+
+## So what? (interview / portfolio)
+
+Resilience primitives are what "production-grade" actually means in infrastructure roles —
+half of your on-call job is handling a peer that is slow, down, or half-open. This module
+gives you the named vocabulary (retry/backoff, circuit breaker, health check, graceful
+shutdown, watchdog) that interviewers and architecture discussions assume you already have.
+
+**Interview questions this module arms you for:**
+- How does exponential backoff work, and when is retrying the wrong answer?
+- Explain the closed / open / half-open states of a circuit breaker.
+- What should a health-check endpoint report, and how does a supervisor act on it?
+- Graceful shutdown on SIGTERM: what do you drain, and why does it matter?
+
+**Portfolio artifact:** M7-ex05 `mini-supervisor` — a watchdog that restarts a worker
+boundedly and shuts down gracefully.

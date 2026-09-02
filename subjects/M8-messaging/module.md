@@ -53,3 +53,22 @@ localhost port) and proxies `TARGETPORT` → backend. The `net` runner only spaw
 Reuse contract (later modules): later exams run the learner's switch as their fault
 injector by starting `./switch` with `TARGETFAULTS`; the message framing from ex01 is the
 wire format the M9+ replicas speak under the switch.
+
+---
+
+## So what? (interview / portfolio)
+
+The switch is a miniature of the thing that makes distributed testing tractable in
+industry: a fault-injection proxy between a client and a real backend. Its `dup`/`drop`/
+`hold` coverage is exactly the "what could go wrong in the middle?" reasoning interviewers
+love, and the learner's switch doubles as a reusable test tool for every later module —
+a piece of infrastructure you built and that everything after it depends on.
+
+**Interview questions this module arms you for:**
+- How do you prove a duplicate frame was actually duplicated at the *data* level?
+- Why does framing matter on a stream, and how do you survive a split mid-frame?
+- How would you inject faults into a system that was never designed to be tested?
+- Single-writer ordering: how do you guarantee FIFO and avoid deadlock with a faulty producer?
+
+**Portfolio artifact:** M8-ex05 `gate` — a fault-injection switch that replays exact
+client-visible transcripts across drop/dup/hold, and the injector every later module reuses.

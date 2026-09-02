@@ -16,3 +16,21 @@ Milestones:
 Rule: nothing printed or compared may depend on wall-clock time. Where a
 timeout is needed, it is delivered as an event/step — never read the wall
 clock. All exercises are transcript-driven and byte-deterministic.
+
+---
+
+## So what? (interview / portfolio)
+
+"Who is in my cluster, and are they actually alive?" is the subtle failure-detection
+problem every distributed system must solve, and the suspect→failed lifecycle plus gossip
+convergence are its canonical answers. This maps directly to how real systems (e.g. gossip
+protocols) avoid split-brain and stale peers — a strong signal for a platform/infra role.
+
+**Interview questions this module arms you for:**
+- How does a heartbeat turn into a suspicion, and why the two-step don't-yell-about-it?
+- Why use gossip instead of a central authority to spread membership?
+- How do you evict a failed peer without unsafe races on the live set?
+- What keeps a small cluster from wrongly declaring healthy peers suspect?
+
+**Portfolio artifact:** M14-ex05 `membership gateway` — a TCP gateway that reports and
+updates the live set via heartbeat/gossip/eviction.

@@ -16,3 +16,22 @@ Milestones:
 
 Rule: nothing printed or compared may depend on wall-clock time. All
 exercises are transcript-driven and byte-deterministic.
+
+---
+
+## So what? (interview / portfolio)
+
+Agreement protocols are the load-bearing wall of every distributed database and
+transaction manager. Knowing *why* an abort is final, *how* a coordinator drives a
+two-phase commit, and *what* a quorum is lets you speak credibly about distributed
+transaction semantics — the kind of answer that turns a "consensus" interview into a
+conversation.
+
+**Interview questions this module arms you for:**
+- What are the two phases of 2PC, and what makes the coordinator's decision final?
+- Why is an abort irreversible once one participant votes abort?
+- How is a leader elected when votes tie, without a wall clock to break it?
+- What does it mean to say a decision "reached a quorum"?
+
+**Portfolio artifact:** M10-ex05 `transaction` — a TCP gateway that runs true two-phase
+commit over the wire.

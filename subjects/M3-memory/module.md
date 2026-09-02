@@ -28,3 +28,22 @@ allocation failure is never a crash — it is a branch you already wrote.
 | ex03 | fixed slot pool | `pool.c`: 8×32-byte slots, borrow/return, NULL on empty |
 | ex04 | mmap allocator | `ma_alloc.c`: page-rounded anonymous `mmap`/`munmap` |
 | ex05 | **Gate: OOM-safe buffer** | `buf.c`: growable buffer on a 64-byte arena that refuses growth gracefully |
+
+---
+
+## So what? (interview / portfolio)
+
+Hand-building allocators is the clearest evidence you understand what `malloc` actually is
+and how memory really works — a top signal for systems/OS and embedded interviews. After
+this module "the heap is a data structure" is something you can *show*, and the OOM gate
+teaches the safety habit that most production code gets wrong: failing gracefully instead
+of one giant segfault.
+
+**Interview questions this module arms you for:**
+- How does a bump arena allocate, and where is it faster than `malloc`?
+- Copy-on-write vs. plain copy: what does `fork` + a shared `mmap` actually do?
+- When would a fixed-slot pool beat the general allocator, and at what cost?
+- What do `mmap`/`munmap` give you that `malloc`/`free` do not?
+
+**Portfolio artifact:** M3-ex05 `buf.c` — a growable buffer that handles out-of-memory as
+a handled branch, not a crash.

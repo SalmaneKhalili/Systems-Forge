@@ -1015,6 +1015,17 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-02** **Task B — portfolio / "so what" layer** — made the portfolio promise
+  concrete at the module level:
+  - Authored the three **missing** `module.md` files: **M15** (Transactions & Chaos,
+    ex01–ex06), **M16** (Storage Engines, LSM ex01–ex05), **M17** (Observability,
+    ex01–ex05) — intro, milestones, deterministic rule, and the so-what section.
+  - Added a `## So what? (interview / portfolio)` section to **all 18 module.md** files:
+    job-relevance, 4 interview questions, and a named portfolio artifact each (M12-ex06
+    raft cluster, M15-ex06 durable txstore, M16-ex05 persistent-kv, M17-ex05 telemetry,
+    plus M0–M14 gates).
+  - M12 module.md milestones updated to include the new ex06 cluster. Docs only — grading
+    untouched; `forge score` still 92/92. See tracker item #31.
 - **2026-09-02** **Task A — Micro-App capstones → TOTAL 92/92** — shipped two new `ex06`
   capstone exercises (no rewrite of the working ex05 gates), turning two flagship modules
   into tangible portfolio artifacts:
@@ -1456,6 +1467,18 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         followers → `log b`/`log c` diverge) and `net/fail/ex06-walded` (writes never reach
         the WAL → `wal` lies empty). Selftest → **45 fixtures, 0 mismatches**.
       - `forge score` → **TOTAL 92/92 (0 remaining)**. See §14 2026-09-02 entry.
+31. ~~**Task B — portfolio / "so what" layer across all modules**~~ **DONE 2026-09-02** —
+      closed the "portfolio" mission promise ("each module results in a tangible portfolio
+      project") at the module-doc level:
+      - Authored the three **missing** `module.md` files: M15 (Transactions & Chaos),
+        M16 (Storage Engines), M17 (Observability) — each with its milestones and the
+        deterministic rule, laying out the ex01→ex06 (M15) / ex01→ex05 arc.
+      - Added a **`## So what? (interview / portfolio)`** section to **all 18** module.md
+        files: a 2–3 line "why it matters on the job", 4 bullet **interview questions**,
+        and a concrete **portfolio artifact** named per module (e.g. M12-ex06 raft cluster,
+        M15-ex06 durable txstore, M16-ex05 persistent-kv, M17-ex05 telemetry).
+      - Bumped M12 module.md milestones to include the new ex06 cluster. Docs only — grading
+        untouched; `forge score` still 92/92. See §14 2026-09-02 entry.
 
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,

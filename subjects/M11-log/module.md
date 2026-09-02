@@ -18,3 +18,21 @@ Milestones:
 
 Rule: nothing printed or compared may depend on wall-clock time. All
 exercises are transcript-driven and byte-deterministic.
+
+---
+
+## So what? (interview / portfolio)
+
+The replicated state machine is the canonical "how a service stays consistent across
+replicas" answer, and the append-only log is the data structure at its heart. Being able to
+say "every replica replays the same ordered log, so they converge" — and to defend the
+commit point — is a core distributed-systems interview skill.
+
+**Interview questions this module arms you for:**
+- Why does an append-only log make replicas deterministic and consistent by construction?
+- What is the difference between the log length and its committed prefix?
+- How does a snapshot let you truncate a log without losing the committed state?
+- Why is the order of entries sacred to a replicated state machine?
+
+**Portfolio artifact:** M11-ex05 `replica` — a TCP gateway that serves one consistent
+committed log to many clients.

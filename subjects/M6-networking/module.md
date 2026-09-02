@@ -32,3 +32,21 @@ Two rules make this deterministic, and they are worth internalizing now:
   (the grader injects it — how real tooling hands servers their ports).
 - Nothing your server prints to stdout or stderr is graded (the grader closes those), so
   the CPU you spend on "correct" output is better spent on exact **socket** semantics.
+
+---
+
+## So what? (interview / portfolio)
+
+"Sockets are fds with a destination" is the lens that makes every server — web server, RPC
+service, your own gateway — stop being magic. This is also the module where the grader
+starts *driving your binary over real TCP*, the same contract production tooling uses, so
+you leave with a runnable, scriptable server under your belt.
+
+**Interview questions this module arms you for:**
+- Walk through the five calls that make a server: `socket`→`bind`→`listen`→`accept`→`read/write`.
+- Why bind to `127.0.0.1:<port>` from an env var rather than a hard-coded port?
+- How do you stop a half-open connection from wedging a server forever (`SO_RCVTIMEO`)?
+- How does an HTTP request start (the request line)? How would you parse it minimally?
+
+**Portfolio artifact:** M6-ex05 `gate` — a stateful protocol server that greets,
+acknowledges, and re-answers across several connections (the skeleton of the M8 switch).
