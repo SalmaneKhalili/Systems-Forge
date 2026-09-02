@@ -15,15 +15,43 @@ make setup        # build the forge binary (requires go 1.27+, gcc/clang, make, 
 ./bin/forge list  # or drive everything from the command line
 ```
 
-The curriculum lives under `subjects/` (read-only canon: specs, scaffolds, harnesses,
-expected outputs, quiz questions — never a solved deliverable). Your solutions live under
-`answers/` (gitignored). `forge check M11-ex03` runs the autograder for that exercise
-inside your answers workspace and records the result in the local SQLite progress DB.
+`make` also works as shorthand: `make check M11-ex03`, `make show M0-ex01`, `make score`,
+`make selftest`.
 
-`subjects/` ships the *un*solved exercise (you write the deliverable — e.g. `log.go`,
-`server.go`, `cluster.go`, `check.py`, `solve.sh` — from the spec in `subject.md`). A
-bare workspace therefore auto-FAILs every exercise. Complete reference solutions live
-under `solutions/` (gitignored) so you can compare after you solve one — never before.
+## Where things live
+
+```
+subjects/     the curriculum — read-only canon: spec (subject.md), scaffold, harness,
+              expected outputs, quiz questions. Never a solved deliverable.
+answers/      your personal workspace (gitignored) — WRITE your solutions here.
+solutions/    reference solutions (gitignored) — compare AFTER you solve, never before.
+tools/anki/   spaced-repetition review decks, generated from every exercise's quiz
+              questions (see "Review with Anki" below).
+tools/        selfcheck, method fixtures, assistant graders.
+forge/        the platform source (TUI + CLI + grader engine, Go).
+caps/         (reserved) capstone specifications — currently unused, empty.
+switch/       (reserved) the partitionable transport — currently unused, empty.
+progress.db   local progress store (gitignored, SQLite) written by forge.
+```
+
+## The solve loop (how you actually use it)
+
+1. **Init once**: `./bin/forge init` mirrors `subjects/` into `answers/`. If you run it
+   again later it copies over new scaffold files but **never overwrites a file you've
+   already written**.
+2. **Pick an exercise**: `./bin/forge list` shows every module and exercise id (e.g.
+   `M11-ex03`), plus what you've already passed.
+3. **Read the spec**: `./bin/forge show M11-ex03` (or open `answers/M11-log/ex03-index/`
+   in an editor). The spec names the exact deliverable you must write — e.g. `log.go`,
+   `server.go`, `cluster.go`, `check.py`, `solve.sh`.
+4. **Write it** in the matching file under `answers/…` (the scaffold already names it).
+5. **Grade it**: `./bin/forge check M11-ex03` runs the autograder and records the result.
+   A bare workspace auto-FAILs every exercise — you must write the deliverable to pass.
+6. **Compare (after you pass)**: open the matching reference in `solutions/` to see an
+   expert implementation. Never read solutions before you've passed the exercise.
+
+> Tip: `./bin/forge selftest` validates the grader itself (`make selfcheck` too). If the
+> grader ever seems wrong, run this first — it's the platform's own check on itself.
 
 ## Grading model
 
@@ -42,18 +70,28 @@ Every exercise declares one or more grading methods (see `subjects/*/exercise.js
 | `fault`    | asserts a _property_ under injected failures (partition, crash)            |
 | `lincheck` | checks operation histories for linearizability                             |
 
-`make selfcheck` validates the grader itself: it runs a pass/fail fixture pair for
-every method and asserts each scores as expected.
+C exercises are compiled with `-std=gnu11 -Wall -Wextra -Werror` and, where the spec
+sets sanitizers, `-fsanitize=address,undefined` (and `thread` for the concurrency
+module). This discipline is stated in the module/subject docs — warnings are errors by
+design, so keep the code warning-clean.
 
-## Layout
+## Review with Anki (spaced repetition)
 
-```
-forge/        the platform: TUI + CLI + grader engine (Go)
-subjects/     the curriculum, one dir per module, exercises as exNN-<id> (unsolved)
-caps/         capstone specifications
-switch/       the partitionable transport (built during the curriculum)
-answers/      your personal workspace (gitignored) — you write your solutions here
-solutions/    reference solutions (gitignored) — compare after you solve
-tools/        selfcheck, fixtures, helper graders (anki: `tools/anki/export.py` → Q&A decks)
-progress.db   local progress store (gitignored, SQLite)
-```
+Every exercise ships quiz questions in its `subject.md`-adjacent metadata
+(`subjects/*/ex*/exercise.json`). `tools/anki/export.py` turns those into
+**tab-separated Anki decks**, one per module, with front cards tagged
+`[<module> · <exNN> · <title>]` so you can batch-study per week's modules.
+
+- **Where:** `tools/anki/decks/<MODULE>.txt` (regenerated; e.g. `M12-raft.txt`).
+- **Import:** Anki → File → Import → pick a deck file (Fields separated by **Tab**).
+  Optionally rename the imported deck to `systems-forge::<Module>` and tag notes with
+  `systems-forge`.
+- **Regenerate:** `python3 tools/anki/export.py` rewrites all 18 decks from the canon.
+  If you add/change quiz questions, regen and re-import (delete old notes first to avoid
+  duplicating drifted cards).
+- **Details & caveats:** `tools/anki/README.md`.
+
+## Self-check (for you and for the platform)
+
+`make selfcheck` (or `./bin/forge selftest`) runs a pass/fail fixture pair for every
+grading method and asserts each scores as expected — the platform validating itself.

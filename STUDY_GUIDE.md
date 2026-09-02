@@ -5,9 +5,10 @@ This curriculum is designed to produce high-caliber infrastructure and distribut
 ## 1. The Methodological Doctrine
 
 1.  **Active Recall & Anki (Spaced Repetition):**
-    - You must maintain an **Anki deck per module**.
-    - When a module is "authored" in `subjects/`, a corresponding Anki deck must be created.
-    - Anki cards are not for "definitions"; they are for "Mechanics." 
+    - Review decks already exist for you: `tools/anki/decks/<MODULE>.txt` (one per
+      module, one card per exercise quiz question). Import them into Anki — see the
+      "Review with Anki" section of `README.md` — and study them on a schedule.
+    - Keep the cards as **Mechanics**, not definitions.
     - *Example:* Instead of "What is a Mutex?", ask "How does `pthread_mutex_lock` interact with the CPU cache hierarchy and kernel scheduling?"
 
 2.  **The "Cracked Engineer" Rhythm (Interleaving):**
@@ -23,7 +24,7 @@ This curriculum is designed to produce high-caliber infrastructure and distribut
     - Once an exercise passes, identify the most dangerous line, delete it, and confirm the system fails exactly as expected. If the system doesn't fail, your test suite is inadequate.
 
 5.  **Engineering Rigor:**
-    - Every exercise is a real system, not a toy. If you ship an implementation with leaks, races, or deadlocks, it is a **Failure**. We adhere to `-Wall -Wextra -Werror` and use TSan/ASan as the final arbiters of truth.
+    - Every exercise is a real system, not a toy. If you ship an implementation with leaks, races, or deadlocks, it is a **Failure**. The grader compiles C with `-std=gnu11 -Wall -Wextra -Werror` and, where the spec sets them, runs ASan/UBSan (and TSan for concurrency) as the final arbiters of truth — so keep the code warning-clean and leak/race-free.
 
 ---
 
