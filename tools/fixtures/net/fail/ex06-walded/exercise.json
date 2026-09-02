@@ -1,0 +1,21 @@
+{
+  "id": "ex06-walded",
+  "module": "fixture-net",
+  "title": "net fail fixture: writes never reach the WAL (durable txstore)",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17670,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "set a 1\n", "expect": "ok\n" },
+        { "send": "set b 2\n", "expect": "ok\n" },
+        { "send": "get a\n", "expect": "1\n" },
+        { "send": "wal\n", "expect": "set a=1\nset b=2\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}

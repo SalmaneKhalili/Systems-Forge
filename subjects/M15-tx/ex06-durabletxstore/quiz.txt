@@ -1,0 +1,3 @@
+The write-ahead log records every committed write so a crash can do what?: replay
+Which command shows the durable record of committed writes?: wal
+Rolling back a transaction leaves the WAL how?: unchanged

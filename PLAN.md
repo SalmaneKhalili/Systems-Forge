@@ -5,7 +5,7 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-08-30
+> Last updated: 2026-09-02
 
 ---
 
@@ -373,7 +373,9 @@ only used by `forge selftest`; selftest runs methods in the fixture dir directly
 Module-gate `net` fixtures (ex05 gateways), all both-ways:
 `ex05-membership`(pass)/`-membershipdrop`(fail), `ex05-persistent`(pass)/`-persistonce`(fail, M16 LSM gateway),
 `ex05-telemetry`(pass)/`-telemetryfresh`(fail, M17 telemetry gateway), `ex05-txstore`(pass)/
-`-txstoreleak`(fail, M15 txstore gateway), plus M4/M8/M11/M12/M13/M15 gateways → selftest **43 fixtures, 0 mismatches**.
+`-txstoreleak`(fail, M15 txstore gateway), `ex06-nodewnly`(fail, M12 raft cluster — no
+replication to followers), `ex06-walded`(fail, M15 durable txstore — writes never reach the WAL),
+plus M4/M8/M11/M12/M13/M15 gateways → selftest **45 fixtures, 0 mismatches**.
 | scenario | `pass/ex01-ok` exit 0 + FORGE_META | `fail/ex01-ko` exit 1 |
 | fault | `pass/ex01-ok` exit 1 + `FORGE_RESULT: pass` (tests override) | `fail/ex01-ko` exit 0 + `FORGE_RESULT: fail` (tests override) |
 | lincheck | `pass/ex01-lin` linearizable single-register history | `fail/ex01-nonlin` real-time contradiction (read of v1 must follow write of v2) |
@@ -1013,6 +1015,25 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-02** **Task A — Micro-App capstones → TOTAL 92/92** — shipped two new `ex06`
+  capstone exercises (no rewrite of the working ex05 gates), turning two flagship modules
+  into tangible portfolio artifacts:
+  - **M12-ex06 `raft cluster`** — a **real 3-node raft cluster** in one binary: peers
+    a/b/c each on its own TCP endpoint (`TARGETPORT+1/+2/+3`), RequestVote/AppendEntries
+    exchanged **over real sockets**, leader commits on strict majority (2 of 3), node steps
+    down on a higher term. Client-driven, no wall clock. `log b`/`log c` matching the
+    leader's `read` (`x|y`) proves real replication to followers. → **M12 6/6**.
+    Root: `subjects/M12-raft/ex06-cluster/` (`cluster.go` byte-rewritten, deterministic).
+  - **M15-ex06 `durable txstore`** — the **durable transactional KV Micro-App** uniting M15
+    transactions with M16 WAL durability: every committed `set` is applied *and* appended to
+    a write-ahead log; `wal` exposes the ordered durable record; `begin`/`commit`/`rollback`
+    stage atomically and a rollback leaves the WAL untouched; state persists across fresh
+    connections. → **M15 6/6**. Root: `subjects/M15-tx/ex06-durabletxstore/` (`durable.go`).
+  - Both-ways net fixtures: `net/fail/ex06-nodewnly` (entries never replicated to followers →
+    `log b`/`log c` diverge) and `net/fail/ex06-walded` (writes never reach the WAL → `wal`
+    lies empty). Selftest → **45 fixtures, 0 mismatches**.
+  - `forge score` → M12 6/6, M15 6/6, **TOTAL 92/92 (0 remaining)**; no orphaned servers.
+    See tracker item #30.
 - **2026-09-02** **Gap-closure → TOTAL 90/90** — shipped the four unfinished exercises
   (M0-ex03/04/05, M15-ex05), the last `[F]`s, closing the mission-wording gap ("completeness
   over speed / never half-arsed"). Fixes:
@@ -1418,6 +1439,23 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
       `forge selftest` still 43/43. All citations are pointer-supplementary; grader logic
       (`build/stdout/quiz/net`) is fully offline.
 29. **Capstone Re-engineering**: Transition `ex05` gates from simple integrators into "Mini-Capstones." Define a cohesive "Micro-App" for each module (e.g., a process-based shell for M2, a transactional KV-store for M15) to ensure each module results in a tangible portfolio project.
+30. ~~**Task A — Micro-App capstones (M12 cluster + M15 durable KV)**~~ **DONE 2026-09-02** —
+      added one new `ex06` capstone to M12 and M15 (no rewrite of working ex05 gates).
+      - **M12-ex06 `raft cluster`** (`subjects/M12-raft/ex06-cluster/`): a **real 3-node
+        raft cluster**. One binary boots peers a/b/c, each on its own TCP endpoint (client
+        port +1/+2/+3), and they exchange RequestVote/AppendEntries **over real sockets**;
+        the leader commits on a strict majority (2 of 3); a node steps down on a higher term.
+        Byte-deterministic: the client drives `elect`/`propose`/`read`/`log`/`term` — no wall
+        clock. `log b`/`log c` matching the leader's `read` proves true replication. → M12 6/6.
+      - **M15-ex06 `durable txstore`** (`subjects/M15-tx/ex06-durabletxstore/`): the **Micro-App
+        uniting M15 transactions with M16 WAL durability**. A durable transactional KV gateway
+        where every committed `set` is atomically applied *and* appended to a write-ahead log;
+        the `wal` command exposes the ordered durable record; `begin`/`commit`/`rollback` stage
+        atomically, and a rollback leaves the WAL untouched. Cross-conn persistence proven. → M15 6/6.
+      - Both-ways net fixtures added: `net/fail/ex06-nodewnly` (entries never replicated to
+        followers → `log b`/`log c` diverge) and `net/fail/ex06-walded` (writes never reach
+        the WAL → `wal` lies empty). Selftest → **45 fixtures, 0 mismatches**.
+      - `forge score` → **TOTAL 92/92 (0 remaining)**. See §14 2026-09-02 entry.
 
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,

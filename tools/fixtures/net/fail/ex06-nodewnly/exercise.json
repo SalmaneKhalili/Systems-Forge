@@ -1,0 +1,23 @@
+{
+  "id": "ex06-nodewnly",
+  "module": "fixture-net",
+  "title": "net fail fixture: entries not replicated to followers (raft cluster)",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17650,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      { "steps": [
+        { "send": "elect a\n", "expect": "ELECTED a term 1\n" },
+        { "send": "propose x\n", "expect": "ok 0\n" },
+        { "send": "propose y\n", "expect": "ok 1\n" },
+        { "send": "read\n", "expect": "x|y\n" },
+        { "send": "log b\n", "expect": "x|y\n" },
+        { "send": "log c\n", "expect": "x|y\n" }
+      ] }
+    ]
+  } } ],
+  "expect": "fail"
+}
