@@ -15,9 +15,15 @@ make setup        # build the forge binary (requires go 1.27+, gcc/clang, make, 
 ./bin/forge list  # or drive everything from the command line
 ```
 
-The curriculum lives under `subjects/` (read-only canon). Your solutions live under
+The curriculum lives under `subjects/` (read-only canon: specs, scaffolds, harnesses,
+expected outputs, quiz questions — never a solved deliverable). Your solutions live under
 `answers/` (gitignored). `forge check M11-ex03` runs the autograder for that exercise
 inside your answers workspace and records the result in the local SQLite progress DB.
+
+`subjects/` ships the *un*solved exercise (you write the deliverable — e.g. `log.go`,
+`server.go`, `cluster.go`, `check.py`, `solve.sh` — from the spec in `subject.md`). A
+bare workspace therefore auto-FAILs every exercise. Complete reference solutions live
+under `solutions/` (gitignored) so you can compare after you solve one — never before.
 
 ## Grading model
 
@@ -43,10 +49,11 @@ every method and asserts each scores as expected.
 
 ```
 forge/        the platform: TUI + CLI + grader engine (Go)
-subjects/     the curriculum, one dir per module, exercises as exNN-<id>
+subjects/     the curriculum, one dir per module, exercises as exNN-<id> (unsolved)
 caps/         capstone specifications
 switch/       the partitionable transport (built during the curriculum)
-answers/      your personal workspace (gitignored)
+answers/      your personal workspace (gitignored) — you write your solutions here
+solutions/    reference solutions (gitignored) — compare after you solve
 tools/        selfcheck, fixtures, helper graders
 progress.db   local progress store (gitignored, SQLite)
 ```

@@ -2,6 +2,7 @@
 progress.db
 progress.db-*
 answers/
+solutions/
 
 # Build artifacts
 forge/bin/

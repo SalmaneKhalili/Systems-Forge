@@ -5,7 +5,7 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-02
+> Last updated: 2026-09-02 (clean-start migration)
 
 ---
 
@@ -1015,6 +1015,30 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-02** **Clean-start migration — workspace de-pollution + solutions kit** —
+  the assessment surfaced the core quality flaw: `answers/` (the student workspace
+  `forge check` grades) had been polluted with solved references + build artifacts during
+  development, so a bare `forge init` + `forge check` **auto-PASSED** almost everything
+  without the learner writing a line. Fixed by separating *course* from *reference*:
+  - **`solutions/`** (new, gitignored): complete reference solutions — 157 files
+    (56 `.go`, 30 `.c`, 34 `Makefile`, 36 `quiz.txt`, `.py`/`.sh`) — so the learner can
+    compare after solving, never before.
+  - **`answers/` purged**: 140 reference sources moved to `solutions/`, 87 build
+    artifacts (`test`, `srv`, `switch`, `*.o`, `out.txt`, `store.log`, …) deleted. It now
+    mirrors `subjects/` only.
+  - **`subjects/` de-polluted**: 20 named-deliverable reference files moved out of the
+    canon into `solutions/` (M12-ex06 `cluster.go`; M15-ex01/02/03/04/05/06
+    `store|log|conflict|drill|txstore|durable.go`; M16-ex01/02/03/04/05
+    `memtable|sstable|wal|compact|server.go`; M17-ex01/02/03/04/05
+    `metrics|trace|spans|summary|server.go`; M0-ex02 `solve.sh`, M0-ex03 `check.py`,
+    M0-ex05 `mini_forge.sh`). The canon is contract-only (spec + harness + scaffold).
+  - **Verified both-ways**: bare workspace → **all 92 FAIL** (0 auto-pass leaks);
+    restoring the reference → PASS. Grader selftest **45 fixtures, 0 mismatches**.
+    `forge score` from a bare workspace: **0/92** (correct clean start).
+  - README layout + grading model updated; `solutions/` added to `.gitignore`.
+
+  See tracker item #32.
+
 - **2026-09-02** **Task B — portfolio / "so what" layer** — made the portfolio promise
   concrete at the module level:
   - Authored the three **missing** `module.md` files: **M15** (Transactions & Chaos,
@@ -1477,8 +1501,19 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         files: a 2–3 line "why it matters on the job", 4 bullet **interview questions**,
         and a concrete **portfolio artifact** named per module (e.g. M12-ex06 raft cluster,
         M15-ex06 durable txstore, M16-ex05 persistent-kv, M17-ex05 telemetry).
-      - Bumped M12 module.md milestones to include the new ex06 cluster. Docs only — grading
-        untouched; `forge score` still 92/92. See §14 2026-09-02 entry.
+- Bumped M12 module.md milestones to include the new ex06 cluster. Docs only — grading
+      untouched; `forge score` still 92/92. See §14 2026-09-02 entry.
+32. ~~**Clean start: de-pollute workspace + solutions kit**~~ **DONE 2026-09-02** — closed
+      the "course must actually test the learner" quality finding. Development had left
+      solved references + build artifacts in the graded workspace, so `forge check` was
+      auto-passing nearly everything. Separation implemented:
+      - Reference solutions (157 files) moved to a gitignored **`solutions/`** kit for
+        after-post-solve comparison.
+      - `answers/` purged (140 refs moved, 87 artifacts deleted) → clean mirror of `subjects/`.
+      - 20 named-deliverable files removed from the `subjects/` canon → solutions/ (contract
+        stays in `subject.md`; scaffold/harness/quiz remain in subjects).
+      - Both-ways verified: bare → 92/92 FAIL (0 leaks); restored ref → PASS; selftest 45/45.
+      See §14 2026-09-02 entry.
 
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,
