@@ -1,0 +1,10 @@
+[M4-concurrency · 01 · join and exit] Which pthread call reclaims a thread and captures its exit value?	pthread_join
+[M4-concurrency · 01 · join and exit] Which function terminates the calling thread and returns a value to pthread_join?	pthread_exit
+[M4-concurrency · 02 · mutex bomb] Which function blocks until the caller owns a mutex?	pthread_mutex_lock
+[M4-concurrency · 02 · mutex bomb] What happens to other threads when one thread owns a mutex?	they block until it unlocks
+[M4-concurrency · 03 · atomic counter] Which C11 storage qualifier makes a variable updated atomically without locks?	_Atomic
+[M4-concurrency · 03 · atomic counter] Which function atomically adds a value and returns the old value?	atomic_fetch_add
+[M4-concurrency · 04 · readers and writers] Which call acquires a read-write lock for reading?	pthread_rwlock_rdlock
+[M4-concurrency · 04 · readers and writers] Can two reader threads hold a read-write lock at the same time?	yes
+[M4-concurrency · 05 · Gate: bounded queue] Which function waits on a condition variable while releasing its mutex?	pthread_cond_wait
+[M4-concurrency · 05 · Gate: bounded queue] Which function wakes one thread waiting on a condition variable?	pthread_cond_signal

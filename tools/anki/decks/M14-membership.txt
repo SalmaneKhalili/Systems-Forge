@@ -1,0 +1,15 @@
+[M14-membership · 01 · heartbeat] A node is marked alive while it keeps sending what?	heartbeats
+[M14-membership · 01 · heartbeat] What marks a peer as failing after a gap in heartbeats?	a timeout
+[M14-membership · 01 · heartbeat] Each heartbeat from a live peer does what to its liveness tick?	resets it
+[M14-membership · 02 · suspect] Before a node is declared failed it is usually marked what?	suspect
+[M14-membership · 02 · suspect] A node becomes failed only after the what threshold elapses?	second
+[M14-membership · 02 · suspect] An incoming heartbeat clears what state immediately?	suspect
+[M14-membership · 03 · gossip] Gossip spreads membership facts from node to what?	node
+[M14-membership · 03 · gossip] On a merge, each member keeps the entry with the higher what?	version
+[M14-membership · 03 · gossip] After gossip exchanges a cluster's views eventually what?	converge
+[M14-membership · 04 · evict] A member whose heartbeats have been absent past the staleness bound is what?	evicted
+[M14-membership · 04 · evict] Eviction drops a member that is no longer what?	live
+[M14-membership · 04 · evict] A member with a recent heartbeat at or inside the bound stays what?	live
+[M14-membership · 05 · membershipgate] A gateway reports the cluster's current what?	live set
+[M14-membership · 05 · membershipgate] A suspected but not failed member is still what?	listed
+[M14-membership · 05 · membershipgate] A dropped member is removed from the what?	live set

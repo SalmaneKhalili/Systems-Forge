@@ -1,0 +1,15 @@
+[M17-observability · 01 · metrics] What are small numeric measurements collected from a running service called?	metrics
+[M17-observability · 01 · metrics] A named numeric measurement that can be incremented by other components is called a what?	counter
+[M17-observability · 01 · metrics] In observability, the snapshot that feeds dashboards and alerting comes from the what?	metrics registry
+[M17-observability · 02 · tracing] Tracing records the lifecycle of a single request as a tree of what?	spans
+[M17-observability · 02 · tracing] A named unit of work that carries a name and a duration is called a what?	span
+[M17-observability · 02 · tracing] In a tracing tree, the span at the root of a request is called the what?	root span
+[M17-observability · 03 · spans] A span carries key=value tags that describe it, called what?	attributes
+[M17-observability · 03 · spans] A query over a span tree that returns every span matching a name is called what?	findall
+[M17-observability · 03 · spans] In a span tree the span with the largest own duration is called the what?	slowest
+[M17-observability · 04 · summaries] The process of aggregating many observed durations into count sum max and quantiles is called a what?	summary
+[M17-observability · 04 · summaries] A percentile such as p95 is also called a what?	quantile
+[M17-observability · 04 · summaries] For latency SLOs the percentile that represents worst-case latency is usually what?	p95
+[M17-observability · 05 · telemetry] A service that exposes live metrics over a network protocol is called a what?	telemetry gateway
+[M17-observability · 05 · telemetry] The command that returns every metric as a sorted list is called what?	snap
+[M17-observability · 05 · telemetry] The counter that grows by one each time a client connects is named what?	conn_total

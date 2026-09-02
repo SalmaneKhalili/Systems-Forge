@@ -1,0 +1,15 @@
+[M7-resilience · 01 · backoff] Which algorithm multiplies the wait between retries as they keep failing?	exponential backoff
+[M7-resilience · 01 · backoff] What does a successful attempt mean for a retry loop?	it stops and reports success
+[M7-resilience · 01 · backoff] Which peer behaviour does this exercise classify as a failed attempt?	closing the connection before a response
+[M7-resilience · 02 · circuit breaker] Which breaker state refuses calls without trying the backend?	Open
+[M7-resilience · 02 · circuit breaker] Which single probe call decides whether an open breaker recovers?	HalfOpen
+[M7-resilience · 02 · circuit breaker] How many consecutive failures does the harness trip the breaker after?	2
+[M7-resilience · 03 · health checks] Which routing path reports whether the service is currently healthy?	/health
+[M7-resilience · 03 · health checks] Which HTTP status does an unhealthy health endpoint return?	503
+[M7-resilience · 03 · health checks] Which path flips the service unhealthy for the next probe?	/down
+[M7-resilience · 04 · graceful shutdown] Which signal does this exercise handle for graceful shutdown?	SIGTERM
+[M7-resilience · 04 · graceful shutdown] What should a graceful shutdown do to in-flight work?	let it finish before exiting
+[M7-resilience · 04 · graceful shutdown] What is the exit code on the clean shutdown path?	0
+[M7-resilience · 05 · Gate: mini supervisor] What unit does the watchdog restart after one of its tasks fails?	the worker
+[M7-resilience · 05 · Gate: mini supervisor] How many consecutive failures trigger the supervisor to give up on a worker?	2
+[M7-resilience · 05 · Gate: mini supervisor] What is the final phase after every worker finishes its tasks?	graceful shutdown

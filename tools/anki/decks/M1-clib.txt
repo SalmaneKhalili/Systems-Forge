@@ -1,0 +1,10 @@
+[M1-clib · 01 · ft_strlen] Which character terminates a C string?	NUL
+[M1-clib · 01 · ft_strlen] Which unsigned type do strlen-style functions use for sizes?	size_t
+[M1-clib · 02 · ft_strlcpy] What does strlcpy return when the source does not fit?	the full length of src
+[M1-clib · 02 · ft_strlcpy] At most how many bytes of the source can a call with size n copy?	n - 1
+[M1-clib · 03 · ft_memset] Which header declares memset?	string.h
+[M1-clib · 03 · ft_memset] What address does memset return?	the start pointer
+[M1-clib · 04 · ft_strcmp] strcmp must interpret bytes as which type to be correct on negative bytes?	unsigned char
+[M1-clib · 04 · ft_strcmp] When s1 sorts before s2, strcmp returns a value that is what?	negative
+[M1-clib · 05 · Gate: ft_strdup] What does ft_strdup return if malloc fails?	NULL
+[M1-clib · 05 · Gate: ft_strdup] Which sanitizer reports a leak on exit?	LeakSanitizer

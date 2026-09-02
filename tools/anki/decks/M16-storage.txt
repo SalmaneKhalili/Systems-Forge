@@ -1,0 +1,15 @@
+[M16-storage · 01 · memtable] An LSM-tree memtable buffers writes in what?	memory
+[M16-storage · 01 · memtable] To support range scans and efficient flushes, keys in a memtable must be what?	sorted
+[M16-storage · 01 · memtable] In an LSM-tree, are writes applied directly on-disk or buffered in-memory first?	buffered in-memory first
+[M16-storage · 02 · sstable] An immutable on-disk sorted key-value file in an LSM-tree is called what?	sstable
+[M16-storage · 02 · sstable] SSTables are immutable and sorted, so lookups use a sparse what plus binary search?	index
+[M16-storage · 02 · sstable] An SSTable stores keys in what order on disk?	sorted
+[M16-storage · 03 · wal] The record of every mutation written to disk before it is applied is called the what?	write-ahead log
+[M16-storage · 03 · wal] The write-ahead log is what kind of file?	append-only
+[M16-storage · 03 · wal] On restart, an LSM-tree rebuilds the in-memory state by what process?	replaying the write-ahead log
+[M16-storage · 04 · compact] The process of merging overlapping sorted SSTables into fewer, larger ones is called what?	compaction
+[M16-storage · 04 · compact] During compaction, when a key appears in multiple runs, which run's value wins?	the newest
+[M16-storage · 04 · compact] A key-value with a special empty marker that deletes a key during compaction is called a what?	tombstone
+[M16-storage · 05 · persistent] A store that appends every mutation to a log so it survives a restart is called what?	persistent
+[M16-storage · 05 · persistent] On restart, a persistent store rebuilds its in-memory state by what?	replaying the write-ahead log
+[M16-storage · 05 · persistent] A second connection served by the same store still sees data written by the first because of the store's what?	shared persistent state

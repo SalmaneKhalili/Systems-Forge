@@ -5,7 +5,7 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-02 (clean-start migration)
+> Last updated: 2026-09-02 (anki decks + 95 TUI survey)
 
 ---
 
@@ -1015,6 +1015,22 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-02** **Anki review decks + "95" TUI inspiration survey** — post-clean-start
+  additions tracked as PRIO 1 / PRIO 2:
+  - **Quizzes on ANKI (PRIO 1)** — `tools/anki/export.py` (stdlib) regenerates per-module
+    Anki decks from `subjects/*/ex*/exercise.json` quiz `answers[]`: **241 cards across 18
+    decks** (`tools/anki/decks/<MODULE-ID>.txt`), tab-separated. Deck = `[module · exNN ·
+    title]` question → answer, so each review card is traceable to an exercise and can be
+    grouped into per-week filtered decks. Fixed filename bug (module title with `/`, e.g.
+    `M5 Files & I/O`, broke `open()`) → filename = module **id** (`M5-filesio.txt`), human
+    title printed for the import label. Playbook in `tools/anki/README.md`. See item #33.
+  - **App "95" TUI survey (PRIO 2)** — inspected `/home/salmane/.local/bin/95` (v1.4.4,
+    coding-challenge CLI, backend-validated): it runs the **same charmbracelet stack** as
+    forge (bubbletea v1.3.10 / bubbles v1.0.0 / lipgloss v1.1.0), so its interaction ideas
+    are drop-in borrowable. No live TUI capture (needs `95 login` + network). Recorded
+    `retry` semantics, success language, and verb-model notes as inspiration in #34.
+  - No grading changes — `forge score` unchanged at **92/92**. See items #33/#34.
+
 - **2026-09-02** **Clean-start migration — workspace de-pollution + solutions kit** —
   the assessment surfaced the core quality flaw: `answers/` (the student workspace
   `forge check` grades) had been polluted with solved references + build artifacts during
@@ -1514,6 +1530,41 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         stays in `subject.md`; scaffold/harness/quiz remain in subjects).
       - Both-ways verified: bare → 92/92 FAIL (0 leaks); restored ref → PASS; selftest 45/45.
       See §14 2026-09-02 entry.
+33. **Quizzes on ANKI — export Q&A to spaced-repetition decks** (PRIO 1) — every
+      exercise's `quiz` `answers[]` in `subjects/*/ex*/exercise.json` is also a review
+      card. `tools/anki/export.py` (stdlib, no deps) regenerates per-module Anki decks from
+      the canon (never from gitignored solutions/):
+      - 241 Q&A pairs across all 92 exercises; 0 exercises without a quiz (M0–M6 ×10,
+        M7–M11/M13/M14/M16/M17 ×15, M12/M15 ×18).
+      - Deck files `tools/anki/decks/<MODULE-ID>.txt`, tab-separated `Front	Back`;
+        Front = `[<module> · <exNN> · <title>] <question>`, Back = `<answer>`. Filename is
+        the module **id** (a `/` in the human title like `M5 Files & I/O` can't be a
+        filename); human deck name printed per-file for the Anki import step.
+      - `/` in the title crashed `open()` → module id used as filename (fixed).
+      - Deck cards carry a `[module · exNN]` tag → learner can build a filtered deck per
+        week's modules. **Keep decks fresh whenever `exercise.json` quiz changes** (regen +
+        delete old notes to avoid duplicate/drifted cards).
+      Playbook + caveats in `tools/anki/README.md`.
+34. **App "95" TUI — inspiration survey** (PRIO 2) — `/home/salmane/.local/bin/95` v1.4.4
+      = a coding-challenge CLI (GitHub OAuth, `init`/`run`/`test`/`retry`/`version`;
+      candidate submissions validated against a remote backend, "floors"). TUI could not be
+      captured live here (its `init`/onboarding needs the backend + login → times out
+      offline). Static inspection was still conclusive:
+      - **Same TUI stack as forge**: charmbracelet **bubbletea** v1.3.10, **bubbles**
+        v1.0.0, **lipgloss** v1.1.0 (+ `x/ansi`, `x/cellbuf`) — versus forge's bubbletea
+        v1.3.4 / bubbles v0.21.0 / lipgloss v1.1.0. So any interaction idea it has is a
+        drop-in borrow for forge.
+      - **Model worth copying**: terse top-level verbs (`init`/`run`/`test`/`retry`) +
+      a per-project TUI (forge already mirrors this: CLI verbs + TUI, repo-scoped).
+      - **Retry semantics**: `95 retry` re-runs the *last* validation command in place —
+        a pattern forge's `forge check` could borrow (re-check the last failed exercise
+        without re-selecting).
+      - Success language uses progression ("All floors passed") — forge already does
+        per-exercise PASS/FAIL; consider a per-module "Mx complete" banner.
+      - `update` self-upgrader + `logout` are backend/credential features, not needed by
+        forge's offline grader.
+      Recorded as inspiration, not requirements; revisit if a live `95` session is wanted
+      (needs `95 login`, network to api.95ninefive.dev).
 
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,

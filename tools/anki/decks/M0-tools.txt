@@ -1,0 +1,10 @@
+[M0-tools · 01 · Makefile discipline] What target removes build artifacts?	fclean
+[M0-tools · 01 · Makefile discipline] What does `make re` do?	fclean then all
+[M0-tools · 02 · Shell hygiene] Which flag makes a script exit on any failing command?	set -e
+[M0-tools · 02 · Shell hygiene] What does pipefail do?	a pipeline returns the last nonzero exit
+[M0-tools · 03 · A five-minute checker] What is the standard location for the interpreter on unix?	/usr/bin/env python3
+[M0-tools · 03 · A five-minute checker] Which module is best for parsing command-line arguments?	argparse
+[M0-tools · 04 · Address Sanitizer] What exact report did ASan emit for this program?	heap-use-after-free
+[M0-tools · 04 · Address Sanitizer] Which syscall does the libc free() ultimately rely on?	munmap
+[M0-tools · 05 · Gate: mini-forge] Which variable holds the exit status of the last command?	$?
+[M0-tools · 05 · Gate: mini-forge] What does `make -C dir` do?	runs make in that directory

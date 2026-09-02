@@ -1,0 +1,15 @@
+[M11-log · 01 · append] Does a replicated log ever rewrite or overwrite an existing entry?	no
+[M11-log · 01 · append] Where is a new command appended in a replicated log?	at the end
+[M11-log · 01 · append] What names the position of an entry in the log?	its index
+[M11-log · 02 · committed] What marks the point up to which a replicated log is durable?	a commit index
+[M11-log · 02 · committed] Can a replica apply log entries beyond the commit index to its state machine?	no
+[M11-log · 02 · committed] What do we call the entries at or below the commit index?	committed
+[M11-log · 03 · index] With commit index c and length of len, how many entries are uncommitted?	len - c - 1
+[M11-log · 03 · index] What index will the next Append write at?	the current length
+[M11-log · 03 · index] When the log is empty and nothing is committed, what is the commit index?	-1
+[M11-log · 04 · snapshot] What does a snapshot replace in an over-long replicated log?	the compacted prefix
+[M11-log · 04 · snapshot] After a snapshot, which entries remain available in the log?	the uncommitted suffix
+[M11-log · 04 · snapshot] What advantage does snapshotting give a growing replica?	bounded memory
+[M11-log · 05 · replica] What must every client of a replicated log read to see the same state?	the committed prefix
+[M11-log · 05 · replica] Which log entries may a client never observe?	uncommitted ones
+[M11-log · 05 · replica] A log read returns entries only up to which index?	the commit index

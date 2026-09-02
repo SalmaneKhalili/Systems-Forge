@@ -1,0 +1,10 @@
+[M3-memory · 01 · bump arena] An allocator that assigns memory only by advancing a pointer is called what?	a bump allocator
+[M3-memory · 01 · bump arena] Which C11 keyword forces a static buffer to a required alignment?	_Alignas
+[M3-memory · 02 · copy-on-write] Anonymous private mappings use copy-on-write across fork by default — true or false?	true
+[M3-memory · 02 · copy-on-write] Which flag makes a forked child's writes visible to the parent?	MAP_SHARED
+[M3-memory · 03 · fixed slot pool] What does an empty pool return from get?	NULL
+[M3-memory · 03 · fixed slot pool] How is a slot pointer proven to belong to the pool?	it lies within the pool
+[M3-memory · 04 · mmap allocator] Which syscall hands back an anonymous region to the kernel?	munmap
+[M3-memory · 04 · mmap allocator] What granularity does mmap allocate in?	pages
+[M3-memory · 05 · OOM-safe buffer] How must a bounded allocator signal that memory is exhausted?	by refusing (returning an error)
+[M3-memory · 05 · OOM-safe buffer] What is the buffer's hard capacity in bytes?	1024

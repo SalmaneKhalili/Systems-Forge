@@ -1,0 +1,15 @@
+[M13-shard · 01 · slot] A fixed-slot scheme assigns each key to a slot by its what?	hash
+[M13-shard · 01 · slot] The slot of a key is the hash modulo the number of what?	slots
+[M13-shard · 01 · slot] Two keys that hash to the same slot land on the same what?	shard
+[M13-shard · 02 · range] Key-range sharding splits the key space into contiguous what?	ranges
+[M13-shard · 02 · range] Where on the sorted range does a key fall to pick its shard?	by value
+[M13-shard · 02 · range] A key below every boundary belongs to which shard?	the first
+[M13-shard · 03 · ring] Consistent hashing places keys and nodes on a what?	ring
+[M13-shard · 03 · ring] A key is owned by the first node located where on the ring?	clockwise
+[M13-shard · 03 · ring] Adding a node moves roughly only the keys between it and which node?	its predecessor
+[M13-shard · 04 · rebalance] When a node joins, only keys in its new arc from what need to move?	its predecessor
+[M13-shard · 04 · rebalance] The point of consistent hashing is to minimize what when resizing?	key movement
+[M13-shard · 04 · rebalance] A key is rebalanced only when its owning what changes?	node
+[M13-shard · 05 · shardgate] A shard gateway routes a key by looking up which what owns it?	shard
+[M13-shard · 05 · shardgate] Key-range routing needs the boundaries kept in what order?	sorted
+[M13-shard · 05 · shardgate] Each shard keeps its own isolated what?	key value store

@@ -54,6 +54,6 @@ caps/         capstone specifications
 switch/       the partitionable transport (built during the curriculum)
 answers/      your personal workspace (gitignored) — you write your solutions here
 solutions/    reference solutions (gitignored) — compare after you solve
-tools/        selfcheck, fixtures, helper graders
+tools/        selfcheck, fixtures, helper graders (anki: `tools/anki/export.py` → Q&A decks)
 progress.db   local progress store (gitignored, SQLite)
 ```

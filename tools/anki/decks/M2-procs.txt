@@ -1,0 +1,10 @@
+[M2-procs · 01 · fork and wait] Which syscall waits for a specific child process?	waitpid
+[M2-procs · 01 · fork and wait] Which macro tests whether a child exited normally?	WIFEXITED
+[M2-procs · 02 · the spawn idiom] On success, what does exec never do?	return
+[M2-procs · 02 · the spawn idiom] Which exec family function searches PATH for the program?	execvp
+[M2-procs · 03 · pipes] Which syscall creates a pipe?	pipe
+[M2-procs · 03 · pipes] When parent and child share a pipe, what must the parent close to see EOF on read?	the write end
+[M2-procs · 04 · signals] Which integer type is read and written atomically inside a signal handler?	volatile sig_atomic_t
+[M2-procs · 04 · signals] Which function sends a signal to the current process?	raise
+[M2-procs · 05 · Gate: pipeline] Which syscall redirects a file descriptor to another?	dup2
+[M2-procs · 05 · Gate: pipeline] A pipe delivers written bytes in what order?	FIFO

@@ -1,0 +1,10 @@
+[M5-filesio · 01 · descriptors] What is a file descriptor number?	an index into the process's open file table
+[M5-filesio · 01 · descriptors] Which integer does the first open() usually return?	3
+[M5-filesio · 02 · read vs stdio] Which system call returns bytes to a buffer you provide?	read
+[M5-filesio · 02 · read vs stdio] Which stdio function reads fixed-size blocks into a buffer?	fread
+[M5-filesio · 03 · redirect] Which function repoints one file descriptor to another open file?	dup2
+[M5-filesio · 03 · redirect] What does _exit() skip that exit() runs?	the atexit handlers and the stdio flush
+[M5-filesio · 04 · tee] Which system call copies a set of bytes to an open file descriptor?	write
+[M5-filesio · 04 · tee] Read() and write() return the number of bytes actually transferred.	true
+[M5-filesio · 05 · Gate: log parser] What character separates a name from a value in a key=value line?	=
+[M5-filesio · 05 · Gate: log parser] What should a parsing function return for a malformed line?	-1

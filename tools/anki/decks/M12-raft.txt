@@ -1,0 +1,18 @@
+[M12-raft · 01 · term] Can a node's term ever move backwards?	no, it only increases
+[M12-raft · 01 · term] A node that sees a higher term becomes what?	a follower
+[M12-raft · 01 · term] What resets when a node learns of a higher term?	the vote
+[M12-raft · 02 · vote] A node may only vote for a candidate whose log is at least as what as its own?	up to date
+[M12-raft · 02 · vote] Which log is considered more up to date, the one with the higher what?	last index
+[M12-raft · 02 · vote] A node that already voted this term must what for all others?	refuse
+[M12-raft · 03 · logmatch] Raft appends only to a log whose immediate prefix what?	matches
+[M12-raft · 03 · logmatch] When a follower rejects an AppendEntries, the leader tries what index?	a lower one
+[M12-raft · 03 · logmatch] The overlapping prefix between follower and leader must be what?	identical
+[M12-raft · 04 · election] A leader is elected only after it wins how many votes?	a majority
+[M12-raft · 04 · election] The quorum of a group of size n is what?	n half plus one
+[M12-raft · 04 · election] In a four node cluster how many votes are needed to win?	three
+[M12-raft · 05 · gatenode] A node commits an entry only once it is safely where?	in the log
+[M12-raft · 05 · gatenode] Before any entry is committed a follower's read returns what?	nothing
+[M12-raft · 05 · gatenode] An append from a stale term is what by the leader?	rejected
+[M12-raft · 06 · raft cluster] A group of 3 nodes needs how many votes to elect a leader?	2
+[M12-raft · 06 · raft cluster] The leader commits an entry once it is replicated to what?	a majority
+[M12-raft · 06 · raft cluster] A node that sees a higher term immediately becomes what?	a follower

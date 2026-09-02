@@ -1,0 +1,15 @@
+[M8-messaging · 01 · message framing] Which 4-byte integer in each frame tells the reader how many payload bytes follow?	length
+[M8-messaging · 01 · message framing] Which error must GetFrame return when the stream ends halfway through a frame?	io.ErrUnexpectedEOF
+[M8-messaging · 01 · message framing] Which io helper loops internally so the codec survives one-byte-at-a-time readers?	io.ReadFull
+[M8-messaging · 02 · ordered delivery] What must hold between any two entries of the same partition?	per-partition FIFO
+[M8-messaging · 02 · ordered delivery] What does the queue do with a partition entry whose predecessor has not arrived?	holds it back
+[M8-messaging · 02 · ordered delivery] When several entries are eligible at once, whose entry is delivered first?	the earliest arrival
+[M8-messaging · 03 · the switch: transparent relay] Which program does the switch itself start so the relay has something to reach?	the backend
+[M8-messaging · 03 · the switch: transparent relay] Which octet terminates a frame in this module's wire format?	the newline
+[M8-messaging · 03 · the switch: transparent relay] When a client disconnects, what must the switch do with the relay's backend side?	close it too
+[M8-messaging · 04 · the switch: fault injection] Where does the switch read its fault directives from?	the fault file
+[M8-messaging · 04 · the switch: fault injection] Which directive forwards one client frame to the backend twice?	dup
+[M8-messaging · 04 · the switch: fault injection] In what situation is the frame a drop directive targets placed?	it is never forwarded
+[M8-messaging · 05 · Gate: the switch in anger] After a client disconnects mid-scenario, what must a correct switch do?	keep serving the next connection
+[M8-messaging · 05 · Gate: the switch in anger] Does the dup directive also apply to a freshly connected client?	yes, per connection
+[M8-messaging · 05 · Gate: the switch in anger] Which ordering of two replies proves a hold was released after the following frame?	the swapped sequence numbers

@@ -1,0 +1,15 @@
+[M9-time · 01 · lamport clock] What does a Lamport clock assign to every event?	a counter
+[M9-time · 01 · lamport clock] If a happened before b, how must Lamport(a) and Lamport(b) compare?	Lamport(a) < Lamport(b)
+[M9-time · 01 · lamport clock] On receiving a message with stamp s, what rule updates the clock?	c = max(c, s) + 1
+[M9-time · 02 · vector clock] In a vector clock, which component does a process advance on a local event?	its own component
+[M9-time · 02 · vector clock] On receiving a vector, which elementwise fold does the receiver apply before advancing?	max
+[M9-time · 02 · vector clock] vc(a) <= vc(b) componentwise holds exactly when what relation exists between a and b?	a happened before b
+[M9-time · 03 · causality] When two vector stamps are incomparable, what are the events called?	concurrent
+[M9-time · 03 · causality] Can a vector clock detect concurrency, unlike a scalar Lamport counter?	yes
+[M9-time · 03 · causality] If a and b have identical vector stamps, are they causally ordered by happened-before?	no
+[M9-time · 04 · total order] How is a total order built from Lamport stamps that tie?	tie-break by process id
+[M9-time · 04 · total order] Does the (lamport, pid) total order respect the happens-before partial order?	yes
+[M9-time · 04 · total order] Adding a pid tie-break to Lamport stamps turns the partial order into what?	a total order
+[M9-time · 05 · sequencer] Which rule computes the sequence number for a frame claiming stamp s?	seq = max(seq, s) + 1
+[M9-time · 05 · sequencer] Must the counter persist across connections or reset for each one?	persist
+[M9-time · 05 · sequencer] A single-writer sequencer imposes what ordering property on all frames?	a total order

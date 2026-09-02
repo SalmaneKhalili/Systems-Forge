@@ -1,0 +1,15 @@
+[M10-commit · 01 · coordinator] What are the two phases of a two-phase commit?	prepare and commit
+[M10-commit · 01 · coordinator] How many phases does a coordinator drive through?	two
+[M10-commit · 01 · coordinator] What does a coordinator send to learn each participant's verdict?	a prepare
+[M10-commit · 02 · vote] What must a participant be able to do once it votes commit for a transaction?	guarantee it can commit
+[M10-commit · 02 · vote] Why can a participant that voted commit never later change its mind to abort?	the coordinator may already have told others to commit
+[M10-commit · 02 · vote] A participant votes abort when it cannot guarantee what for the transaction?	commit
+[M10-commit · 03 · elect] What is this leader-election scheme called where the largest id wins?	bully algorithm
+[M10-commit · 03 · elect] How are equal election timestamps broken?	by id
+[M10-commit · 03 · elect] Why does a higher election stamp win a leadership race?	it claims a more recent round
+[M10-commit · 04 · quorum] What is the smallest quorum for a majority-based decision among n participants?	floor(n/2) + 1
+[M10-commit · 04 · quorum] Can two different majority quorums share no participant at all?	no
+[M10-commit · 04 · quorum] Why does using a strict-majority quorum prevent two decisions?	every two majorities overlap
+[M10-commit · 05 · transaction] In 2PC over the wire, what does the coordinator gather before deciding?	prepared votes
+[M10-commit · 05 · transaction] A participant replies prepared only when it can guarantee what?	commit
+[M10-commit · 05 · transaction] What does the coordinator send when it has not heard prepared from everyone?	abort

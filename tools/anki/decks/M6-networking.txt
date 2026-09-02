@@ -1,0 +1,10 @@
+[M6-networking · 01 · echo server] Which call puts a listening socket's address family, port and address on it?	bind
+[M6-networking · 01 · echo server] Which call accepts a pending connection and returns a new socket for it?	accept
+[M6-networking · 02 · line chat] What does the accept loop let a server do?	serve multiple connections
+[M6-networking · 02 · line chat] How does a server usually know where one message ends?	by a framing rule like a newline
+[M6-networking · 03 · http-ish server] Which HTTP request method does this exercise serve?	GET
+[M6-networking · 03 · http-ish server] Which number means the resource was not found?	404
+[M6-networking · 04 · read timeout] Which socket option makes a blocking read give up after a delay?	SO_RCVTIMEO
+[M6-networking · 04 · read timeout] What errno does a timed-out recv return?	EAGAIN
+[M6-networking · 05 · Gate: stateful server] Which environment variable carries the port the grader injects?	TARGETPORT
+[M6-networking · 05 · Gate: stateful server] Which socket option lets a server rebind an address still in TIME_WAIT?	SO_REUSEADDR

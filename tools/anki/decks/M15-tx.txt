@@ -1,0 +1,18 @@
+[M15-tx · 01 · transaction] A transaction's writes are applied atomically at what point?	commit
+[M15-tx · 01 · transaction] Discarding a transaction's staged writes without applying them is called what?	rollback
+[M15-tx · 01 · transaction] Before a transaction commits, are its writes visible to other readers?	no
+[M15-tx · 02 · replay] Replaying a write-ahead log recovers what after a crash?	state
+[M15-tx · 02 · replay] When two logged writes touch the same key, which one wins?	the later one
+[M15-tx · 02 · replay] The log is written before a change is considered durable; it is therefore what style of log?	write-ahead
+[M15-tx · 03 · conflict] Two transactions writing the same key risk a what?	lost update
+[M15-tx · 03 · conflict] When both write the same key during a merge, whose value wins?	yours
+[M15-tx · 03 · conflict] A write overwritten by another actor is called a what?	lost update
+[M15-tx · 04 · drill] A drill verifies a cluster stays what while nodes fail?	correct
+[M15-tx · 04 · drill] An operation on a down node returns what?	fail
+[M15-tx · 04 · drill] Fault-injection testing that deliberately breaks a system is called what?	chaos engineering
+[M15-tx · 05 · txstore gateway] A gateway reports the cluster's current what?	live set
+[M15-tx · 05 · txstore gateway] A transaction's staged writes are visible to other readers until what point?	commit
+[M15-tx · 05 · txstore gateway] Uncommitted staged writes visible to other connections is the bug for what exercise?	ex05
+[M15-tx · 06 · durable txstore] The write-ahead log records every committed write so a crash can do what?	replay
+[M15-tx · 06 · durable txstore] Which command shows the durable record of committed writes?	wal
+[M15-tx · 06 · durable txstore] Rolling back a transaction leaves the WAL how?	unchanged
