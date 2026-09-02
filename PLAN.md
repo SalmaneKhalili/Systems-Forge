@@ -5,7 +5,7 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-02 (anki decks + 95 TUI survey)
+> Last updated: 2026-09-02 (pre-release audit: 92/92 pass, port collision fixed)
 
 ---
 
@@ -1015,6 +1015,32 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-02** **Pre-release exhaustive audit (92/92 pass, deterministic)** — full
+  sweep before learner use, from a *fresh* checkout (not the working copy):
+  - **Reference-PASS proven for all 92**: merged `subjects/` stencil + `solutions/`
+    reference for every exercise → `forge check` **PASS×92, and stable on a second full
+    run**. Pristine `forge score` = **0/92**; negative controls (deleted/corrupted
+    deliverable) → FAIL. Grader genuinely discriminates good from bad.
+  - **Port collision fixed**: M14-ex05 `membershipgate` and M12-ex06 `raft cluster` both
+    declared `port 17430` (ex06 also binds peer `+1/+2/+3`). M14-ex05 now **17435**;
+    `solutions/.../watch.go` fallback default aligned to 17435. Verified clean-FAIL and
+    reference-PASS at the new port; no base/peer collision remains in the 17101–18530 set.
+  - **Quiz consistency**: all 92 `quiz.txt` cover every `exercise.json` `answers[]`
+    (grader `parseKV` semantics: `:`/`=` split, case-insensitive keys; answers compared
+    `EqualFold`+trimmed → forgiving). No stale/missing questions.
+  - **Grader-referenced files**: 0 missing `expect`/`stdout.expect`/`quiz.file`/
+    `report.reference` paths (each resolves as scaffold in subjects or deliverable in
+    solutions).
+  - **M2–M6 C modules leak-sweep**: subjects ship only *headers + test harnesses*
+    (`main.c` calling `pool_*/arena_*/mm_*`), never the implementing `.c` or `Makefile` —
+    both student deliverables. No leaked answers.
+  - **-Werror discipline is documented** (module/subject .md: `-std=gnu11 -Wall -Wextra
+    -Werror -fsanitize=address,undefined`); a *differently-coded-but-correct* `ft_strlen`
+    still PASSed → valid alternatives aren't rejected on style. Selftest **45/45**, no
+    orphaned servers/sockets after the full run.
+  - Workspace hygiene re-confirmed: `answers/` + `solutions/` gitignored, nothing tracked.
+  See §15 tracker item #35.
+
 - **2026-09-02** **Anki review decks + "95" TUI inspiration survey** — post-clean-start
   additions tracked as PRIO 1 / PRIO 2:
   - **Quizzes on ANKI (PRIO 1)** — `tools/anki/export.py` (stdlib) regenerates per-module
@@ -1565,6 +1591,15 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         forge's offline grader.
       Recorded as inspiration, not requirements; revisit if a live `95` session is wanted
       (needs `95 login`, network to api.95ninefive.dev).
+35. ~~**Pre-release exhaustive audit: "will the platform fight me"**~~ **DONE 2026-09-02** —
+      full sweep from a fresh clone before learner use. Results:
+      - **92/92 reference-PASS** (merged stencil+solutions per exercise, deterministic on
+        2 runs); pristine 0/92; negative controls FAIL. Grader discriminates.
+      - **Fixed port collision**: M14-ex05 & M12-ex06 both 17430 → M14-ex05 **17435**
+        (ex06 needs 17430–17433 for its 3 peers). Ref fallback aligned.
+      - Quizzes: all 92 covered, grader case-insensitive → forgiving. 0 missing
+        grader-referenced files. M2–M6 C modules leak-free. `-Werror` documented.
+      See §14 2026-09-02 "Pre-release exhaustive audit" entry.
 
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,

@@ -17,7 +17,7 @@
       "type": "net",
       "net": {
         "start": ["./watch"],
-        "port": 17430,
+        "port": 17435,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
