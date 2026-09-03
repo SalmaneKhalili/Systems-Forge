@@ -44,7 +44,7 @@ Which function atomically adds a value and returns the old value?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, Chapter 30 "Threads: Synchronization and Common Mistakes" —
+- The Linux Programming Interface, Chapter 30 "Threads: Thread Synchronization" —
   the "Atomics" material: the cases where locks are the wrong tool and C11 atomic
   operations take over (and their memory-ordering caveats).
 - cppreference *C atomics*: https://en.cppreference.com/w/c/atomic — `atomic_fetch_add`,

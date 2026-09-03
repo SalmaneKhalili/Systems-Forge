@@ -64,8 +64,8 @@ What is the final phase after every worker finishes its tasks?: <answer>
 
 - The supervisor pattern in *Release It!* (monitoring, restart, backoff) — the watchdog
   concept this program operationalizes.
-- TLPI §62 — the failures a watchdog exists to catch (a peer that simply stops making
-  progress).
+- TLPI §61.1 "Partial Reads and Writes on Stream Sockets" — the failures a watchdog
+  exists to catch (a peer that simply stops making progress).
 - Kubernetes *Restart Policies* — what a real restart policy decides (Never/Always/
   OnFailure) and why bounded restarts matter.
 

@@ -68,9 +68,9 @@ A pipe delivers written bytes in what order?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §44.4–44.5 "Pipes and FIFOs / Using a pipe to connect
-  filter programs" — study the figure of two children joined by a pipe (TLPI Figure 44-6).
-- §5.5 "The dup(), dup2() and fcntl() System Calls" if you haven't read it.
+- The Linux Programming Interface, §44.4 "Using Pipes to Connect Filters" — study the
+  figure of two children joined by a pipe (TLPI Figure 44-6).
+- §5.5 "Duplicating File Descriptors" (dup/dup2) if you haven't read it.
 - `man 2 dup2`, `man 2 pipe`, `man 3 execlp`, `man 2 waitpid` again.
 
 ## How you are graded

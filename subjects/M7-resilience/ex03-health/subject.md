@@ -48,7 +48,8 @@ Which path flips the service unhealthy for the next probe?: <answer>
 
 ## Readings
 
-- RFC 9110 §15.5 — the HTTP statuses the endpoint speaks (200, 404, 503 semantics).
+- RFC 9110 — the HTTP statuses the endpoint speaks: 200 (§15.3.1), 404 (§15.5.5),
+  503 (§15.6.4) semantics.
 - Kubernetes *Configure Probes* — liveness vs readiness: the operational vocabulary this
   exercise is the smallest example of.
 - TLPI §56 — the accept-loop skeleton you reuse from M6.

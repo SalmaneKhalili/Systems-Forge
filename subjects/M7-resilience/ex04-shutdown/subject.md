@@ -50,7 +50,8 @@ What is the exit code on the clean shutdown path?: <answer>
 ## Readings
 
 - `man 7 signal` — the default action of SIGTERM vs how a handler changes it.
-- TLPI §20 (signals), §22 (handlers) — the mechanics behind "received SIGTERM, draining".
+- TLPI §20 (signals), §21 (signal handlers) — the mechanics behind "received SIGTERM,
+  draining".
 - Go `os/signal` docs — `signal.Notify` semantics for graceful-shutdown goroutines.
 
 ## How you are graded

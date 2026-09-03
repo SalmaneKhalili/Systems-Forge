@@ -51,5 +51,6 @@ A replay that applies writes out of order, or that does not preserve the last wr
 
 ## Readings
 
-- *Designing Data-Intensive Applications* (DDIA), Chapter 3: "SSTables and LSM-Trees" (The write path and recovery).
+- *Designing Data-Intensive Applications* (DDIA), Chapter 3 "Storage and Retrieval"
+  (§3.2 "SSTables and LSM-Trees": the write path and crash recovery via WAL).
 - This section: "The write path: memtable + WAL".

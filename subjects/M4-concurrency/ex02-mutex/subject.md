@@ -40,7 +40,8 @@ What happens to other threads when one thread owns a mutex?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, Chapter 30 "Threads: Synchronization and Common Mistakes":
+- The Linux Programming Interface, Chapter 30 "Threads: Thread Synchronization" (§30.1
+  "Protecting Accesses to Shared Variables: Mutexes"):
   why plain increments lose updates, the lock/unlock discipline, and what else a mutex
   protects.
 - `man pthread_mutex_lock` — the blocking semantics ("returns only after the caller owns

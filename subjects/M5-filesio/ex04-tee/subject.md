@@ -47,8 +47,8 @@ Read() and write() return the number of bytes actually transferred.: <answer>
 
 - `man 2 read`, `man 2 write`, `man 2 open` — short reads AND short writes are in the
   contract; a real `tee` of a pipe must re-loop.
-- TLPI §5.1–5.2 "the universal I/O model" — `write` on a pipe/socket may partially
-  transfer; that's why `w` must be compared to `n`.
+- TLPI Chapter 4 "File I/O: The Universal I/O Model" — `write` on a pipe/socket may
+  partially transfer; that's why `w` must be compared to `n`.
 - `man 1 tee` (if the manpage is present): the real tool you are cloning.
 
 ## How you are graded

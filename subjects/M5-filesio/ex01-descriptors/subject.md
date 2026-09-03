@@ -49,9 +49,10 @@ Which integer does the first open() usually return?: <answer>
 
 - `man 2 open`, `man 2 close` — the "lowest-numbered file descriptor not currently open"
   contract, straight from the manual.
-- TLPI §5.3 "File Descriptors Are Not Magic" — the table of numbers, and why storing them
-  in shell redirections (`>`, `<`) is just `open` + table surgery done for you.
-- The Linux Programming Interface, Chapter 5 "File I/O: The Universal I/O Model".
+- TLPI §5.4 "Relationship Between File Descriptors and Open Files" — the table of
+  numbers, and why storing them in shell redirections (`>`, `<`) is just `open` +
+  table surgery done for you.
+- The Linux Programming Interface, Chapter 4 "File I/O: The Universal I/O Model".
 
 ## How you are graded
 

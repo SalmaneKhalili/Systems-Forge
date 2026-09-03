@@ -40,7 +40,7 @@ What address does memset return?: <answer>
 ## Readings
 
 - `man 3 memset` and `man 3 bzero` (note the deprecation wording).
-- "The Linux Programming Interface", §2.5 "Standardized Versions of C" is the *only* TLPI
+- "The Linux Programming Interface", §3.6.1 "Feature Test Macros" is the *only* TLPI
   section you need this time — plus the C99/C11 and-cast rules:
 - cppreference "C data types" → the conversion rules for integral values:
   https://en.cppreference.com/w/c/language/conversion

@@ -47,11 +47,12 @@ Which function sends a signal to the current process?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §21.1 "Establishing a Handler", §21.2
-  "Reentrant and Async-Signal-Safe Functions" (why no printf).
+- The Linux Programming Interface, §21.1 "Designing Signal Handlers", §21.1.2
+  "Reentrant and Async-Signal-Safe Functions", §21.1.3 "Global Variables and the
+  sig_atomic_t Data Type" (why no printf).
 - `man 2 signal`, `man 2 raise`, `man 7 signal-safety`.
 - C standard note on `sig_atomic_t`: cppreference
-  https://en.cppreference.com/w/c/atomic/sig_atomic_t
+  https://en.cppreference.com/w/c/program/sig_atomic_t
 
 ## How you are graded
 

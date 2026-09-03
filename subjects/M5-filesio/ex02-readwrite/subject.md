@@ -56,9 +56,10 @@ Which stdio function reads fixed-size blocks into a buffer?: <answer>
   transferred", 0 means EOF, -1 an error; partial reads are possible.
 - `man 3 fread`, `man 3 feof` — stdio buffers internally; `fread` fills a caller buffer on
   top of that.
-- TLPI §5.1–5.2: "the universal I/O model" — the same `read`/`write` pair that moves
-  bytes for files, devices, pipes, and sockets.
-- TLPI §12.2 if you want the syscall-vs-stdio buffering split explained.
+- TLPI Chapter 4 "File I/O: The Universal I/O Model" (§4.2 "Universality of I/O") — the
+  same `read`/`write` pair that moves bytes for files, devices, pipes, and sockets.
+- TLPI §13.2 "Buffering in the stdio Library" if you want the syscall-vs-stdio buffering
+  split explained.
 
 ## How you are graded
 

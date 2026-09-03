@@ -49,5 +49,6 @@ A lookup that mishandles the last entry in a block, or returns the wrong value a
 
 ## Readings
 
-- *Designing Data-Intensive Applications* (DDIA), Chapter 3: "SSTables and LSM-Trees".
+- *Designing Data-Intensive Applications* (DDIA), Chapter 3 "Storage and Retrieval"
+  (§3.2 "SSTables and LSM-Trees").
 - Go `encoding/binary`: https://pkg.go.dev/encoding/binary

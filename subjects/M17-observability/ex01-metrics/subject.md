@@ -54,4 +54,5 @@ A registry that loses increments from concurrent goroutines (not mutex-safe), or
 ## Readings
 
 - Tragically achievable with the Go standard library `sync.Mutex`.
-- DDIA, Chapter 9: "Consistency for measured state" (summary for the module).
+- DDIA, Chapter 9 "Consistency and Consensus" (consistency guarantees for replicated
+  measured state — summary for the module).

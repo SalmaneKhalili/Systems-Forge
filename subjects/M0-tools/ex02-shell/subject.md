@@ -38,8 +38,9 @@ What does pipefail do?: <answer>
 
 - `man bash`, sections about the `set` builtin: `-e`, `-u`, `-o pipefail`, `-x`.
 - **Ground Truth: Shell Control Flow & Arithmetic** (Inline Reference below).
-- TLPI §1.4–1.5 (where "everything is a file" and process basics begin later in M2 —
-  skim now, deep-dive later).
+- TLPI Chapter 1 "History and Standards" (§1.4 "Summary") for orientation; the
+  "everything is a file" idea is the universal I/O model of §5.1–5.2 (deep-dive in M5;
+  process basics come in M2).
 
 ### Ground Truth: Shell Control Flow & Arithmetic
 

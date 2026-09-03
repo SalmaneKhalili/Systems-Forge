@@ -53,11 +53,11 @@ What granularity does mmap allocate in?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §49.1 "Overview" and §49.4 "Anonymous Mappings".
+- The Linux Programming Interface, §49.1 "Overview" and §49.7 "Anonymous Mappings".
 - `man 2 mmap` — the `MAP_ANONYMOUS` paragraph, and why the kernel allocates in pages
   (the `length` fiddling notes near the end).
-- TLPI §49.6 "Summary…"? Better: read §49.2 "Creating a Mapping" including the `map()` helper
-  for page-rounding, and the classic note: "the kernel rounds length up".
+- TLPI §49.2 "Creating a Mapping" including the `map()` helper for page-rounding, and
+  the classic note: "the kernel rounds length up".
 
 ## How you are graded
 

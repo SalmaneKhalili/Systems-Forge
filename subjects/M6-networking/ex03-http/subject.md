@@ -59,8 +59,10 @@ Which number means the resource was not found?: <answer>
 ## Readings
 
 - `man 2 read`, `man 2 write`; `memchr`/`strstr` to find `"\r\n\r\n"`.
-- RFC 9110 §4 / §6 — the semantics of GET, 200, 404, and the role of Content-Length.
-  TLPI §59.2 (the "scatter/gather" read loop from the client perspective) is also relevant.
+- RFC 9110 — the semantics of GET (§9.3.1), 200 (§15.3.1), 404 (§15.5.5), the
+  Content-Length header (§8.6), and message framing (§6.1).
+  TLPI §56.5.4 "I/O on Stream Sockets" (the read-loop, framing, and partial-read
+  concerns from the client perspective) is also relevant.
 
 ## How you are graded
 

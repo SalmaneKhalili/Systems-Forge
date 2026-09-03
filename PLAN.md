@@ -1483,8 +1483,16 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
       Result: **M0 5/5, M15 5/5, `forge score` → TOTAL 90/90 (0 remaining)**;
       `make selfcheck` OK, selftest **43 fixtures, 0 mismatches**; no orphaned servers.
       See §14 2026-09-02 changelog entry.
-24. Nice-to-have: add an `artifact` check (`ft_strdup.c` must exist w/ `malloc` call) to
-      M1-gate — presently graded by build+quiz only, which is already both-ways deterministic.
+24. ~~Nice-to-have: add an `artifact` check (`ft_strdup.c` must exist w/ `malloc` call) to
+      M1-gate~~ **CLOSED 2026-09-02 (rejected — would fight correct solutions)** — the gate is
+      already substantive via the behavioral harness (`main.c` exercises empty/hello/spaces/
+      long/high-bit: NULL-on-fail, source-address independence, content match, copy
+      independence) run under ASan/UBSan + `-Wall -Wextra -Werror`, which catches leaks,
+      overflows, UB, and independence failures. An `artifact` grep for the literal `malloc`
+      would **falsely reject** valid `ft_strdup` implementations — e.g. `calloc`, or "reuse
+      your own `ft_strlen`/`ft_memcpy`-style loops" (as the spec explicitly permits), or an
+      inline pointer-walk copy that never writes the token `malloc`. Not worth the false-reject
+      risk. Grading stays build+quiz (already both-ways deterministic); see §14 2026-09-02.
 25. ~~Nice-to-have (M5 hardening)~~ **PARTIALLY CLOSED 2026-08-31** —
       `answers/` workdirs accumulate run artifacts (`test`, `*.o`, `out.txt`), and
       `make fclean` never removes `out.txt`. Added optional `artifact.wipe: true` —
@@ -1498,10 +1506,14 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 26. ~~Nice-to-have (M6): orphaned-server check~~ **VERIFIED 2026-08-30** — after
       `forge check M6-ex05`, `pgrep` finds no leftover `./test` process; the net runner's
       `h.Stop(true)` kills the spawned process group cleanly. Closed without code change.
-27. **Both-ways hygiene (from M7, standard since M8)**: in one scripted loop, restore the
-      reference to `answers/` *immediately* after each broken-variant run — M7's swap-grade
-      loop overwrote the references and they had to be rebuilt from spec. Keep a per-module
-      `cp` back-to-back within the same command.
+27. ~~**Both-ways hygiene (from M7, standard since M8)**~~ **CLOSED 2026-09-02 (adopted as
+      standard practice; superseded by the solutions-kit workflow)** — the discipline of
+      restoring the reference back into `answers/` immediately after each broken-variant run.
+      The clean-start migration (#32) made references permanent under a gitignored
+      `solutions/` kit, so an in-place `cp` swap-dance is no longer the mechanism: devs author
+      against `solutions/` and validate a broken variant against a *pristine* `answers/` mirror
+      (or a fresh merged tree, as in the #35 audit). Closing as process guidance, not a code
+      feature; see §14 2026-09-02.
 
 28. ~~**Resource Integrity Audit**~~ **DONE 2026-09-02** — deep-read every `subject.md` file
       and verified each of the 18 external URLs (M0–M16) resolves to a live, canonical source

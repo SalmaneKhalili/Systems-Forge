@@ -57,5 +57,6 @@ A memtable that fails to keep keys sorted, or that does not overwrite an existin
 
 ## Readings
 
-- *Designing Data-Intensive Applications* (DDIA), Chapter 3: "SSTables and LSM-Trees".
+- *Designing Data-Intensive Applications* (DDIA), Chapter 3 "Storage and Retrieval"
+  (§3.2 "SSTables and LSM-Trees").
 - Go `sort` package: https://pkg.go.dev/sort (specifically binary search with `sort.Search`).

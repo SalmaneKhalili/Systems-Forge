@@ -71,8 +71,8 @@ What should a parsing function return for a malformed line?: <answer>
 
 - `man 2 read`, `man 2 open` — the fd contract, again: partial reads and EOF are normal.
 - `man 3 strchr`, `man 3 memchr` — line/segment scanning without string-overflow traps.
-- TLPI Chapter 5 — everything in this gate is the "universal I/O model" applied to
-  structured text.
+- TLPI Chapter 4 "File I/O: The Universal I/O Model" — everything in this gate is the
+  "universal I/O model" applied to structured text.
 - A real `strtok`-style parser is the wrong tool here: you need off-by-one-exact
   delimiters, and `TOKEN_LEN` overflow handling.
 

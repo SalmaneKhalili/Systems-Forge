@@ -43,7 +43,10 @@ Which syscall does the libc free() ultimately rely on?: <munmap or sbrk — pick
 ## Readings
 
 - AddressSanitizer docs: https://clang.llvm.org/docs/AddressSanitizer.html
-  (read the "how it works" section — what shadows?) and the common bugs list.
+  (read "Usage" and the "Additional Checks" list — the use-after-free example) and
+  the common bugs list.
+- How ASan works — what shadows? https://github.com/google/sanitizers/wiki/AddressSanitizerAlgorithm
+  (this is the "how it works" page: red zones, quarantine, and shadow memory).
 - TLPI §7 (Memory Allocation — malloc/free semantics, why "free" means "unsafe to keep using").
 - `man 2 munmap`, `man 3 malloc`.
 

@@ -51,7 +51,8 @@ How does a server usually know where one message ends?: <answer>
 - `man 2 accept`, `man 2 read`, `man 2 write`, `man 2 memmove`.
 - TLPI §56.4–56.5 — the accept loop pattern you are extending; "stream sockets have no
   message boundaries" is *precisely* why a framing rule exists.
-- TLPI §59.2 if you want to see the same framing problem from the client side
+- TLPI §56.5.4 "I/O on Stream Sockets" and §61.1 "Partial Reads and Writes on Stream
+  Sockets" if you want to see the same framing problem from the client side
   (readall-style loops).
 
 ## How you are graded

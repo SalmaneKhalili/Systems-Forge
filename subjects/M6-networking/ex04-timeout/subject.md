@@ -55,8 +55,9 @@ What errno does a timed-out recv return?: <answer>
 
 ## Readings
 
-- `man 2 setsockopt` (`SO_RCVTIMEO`); TLPI §63.3 for the timeout-on-sockets mechanism
-  and why `EAGAIN`/`EWOULDBLOCK` are the same on Linux.
+- `man 2 setsockopt` (`SO_RCVTIMEO`); TLPI §23.3 "Setting Timeouts on Blocking
+  Operations" for the timeout-on-sockets mechanism and why `EAGAIN`/`EWOULDBLOCK`
+  are the same on Linux.
 - A `poll` loop with a deadline achieves the same effect and is a common alternative
   (TLPI §63.2). Both are acceptable for this exercise.
 

@@ -49,7 +49,7 @@ Read these before you type a loop:
 
 - `man 3 strlen` and `man 3 string` (the whole string-function family overview).
 - K&R §5.5 "Character Pointers and Functions" (what `char *` really is).
-- "The Linux Programming Interface", §2.5 "Standardized Versions of C" (why `gnu11`).
+- "The Linux Programming Interface", §3.6.1 "Feature Test Macros" (why `gnu11`).
 - Beej's Guide to C: "Strings and String Functions".
   https://beej.us/guide/bgc/html/split/strings.html
 

@@ -48,8 +48,9 @@ Which macro tests whether a child exited normally?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §24.2/fi "Process Creation and Termination" (fork),
-  §26.1–26.2 "Waiting on a Child Process" (wait/waitpid, status macros).
+- The Linux Programming Interface, Chapter 24 "Process Creation" (§24.2 "Creating a New
+  Process: fork()"), §26.1 "Waiting on a Child Process", §26.2 "Orphans and Zombies"
+  (wait/waitpid, status macros).
 - `man 2 fork`, `man 2 waitpid`, `man 2 _exit` (why `return` in a child vs `_exit`).
 
 ## How you are graded

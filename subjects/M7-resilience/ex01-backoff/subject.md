@@ -55,7 +55,8 @@ Which peer behaviour does this exercise classify as a failed attempt?: <answer>
 - `man 2 socket`, `man 2 connect`, `man 2 recv`, `man 2 send`.
 - Cloudflare's "Exponential Backoff" guidance — the canonical pairing of retry counts and
   doubling waits, plus jitter — is the industrial version of what you just wrote.
-- TLPI §62 on the failure modes of a peer (EOF/hang-up) that make retries necessary.
+- TLPI §56.5 "Stream Sockets" and §61.1 "Partial Reads and Writes on Stream Sockets"
+  on the failure modes of a peer (EOF/hang-up) that make retries necessary.
 
 ## How you are graded
 

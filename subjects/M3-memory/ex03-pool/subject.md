@@ -47,7 +47,7 @@ How is a slot pointer proven to belong to the pool?: <answer>
 - "The Linux Programming Interface", §7.1 "Allocating Memory on the Heap" for why malloc
   (in `glibc` via its own pool structure) is not free — the motivating background of pools.
 - Object pooling rationale:
-  https://en.wikipedia.org/wiki/Object_pool_pattern (skim; the "reasons" section).
+  https://en.wikipedia.org/wiki/Object_pool_pattern (skim; the "Benefits" section).
 - Hash-free, allocation-free bookkeeping: think bitset, not linked list — that is the lesson.
 - `_Alignas`/`_Alignof` again: cppreference https://en.cppreference.com/w/c/language/_Alignas
 

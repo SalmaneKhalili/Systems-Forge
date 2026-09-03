@@ -43,7 +43,8 @@ Read these before starting (they are short):
 
 - GNU make manual: §2 "An Introduction to Makefiles", §9.2 "Phony Targets".
   `man make` or online: https://www.gnu.org/software/make/manual/
-- The Linux Programming Interface, §2.5 "Standardized Versions of C" (why `-std=gnu11` exists).
+- The Linux Programming Interface, §3.6.1 "Feature Test Macros" (why `-std=gnu11` selects
+  a C standard / feature-set variant).
 
 ## How you are graded
 

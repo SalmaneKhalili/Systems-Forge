@@ -49,7 +49,8 @@ Can two reader threads hold a read-write lock at the same time?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, Chapter 30 "Threads: Synchronization and Common Mistakes" —
+- The Linux Programming Interface, Chapter 30 "Threads: Thread Synchronization" (§30.1
+  mutex discipline underpinning the read-write lock) —
   the read-write lock material: rdlock/wrlock semantics and the "readers are allowed to run
   concurrently" contract.
 - `man pthread_rwlock_rdlock`, `man pthread_rwlock_unlock`.

@@ -62,8 +62,9 @@ Which exec family function searches PATH for the program?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §27.2 "Executing a Program" (execve and friends),
-  §24.5 "Optimizing fork()" — skim; §26.1 "Waiting on a Child Process" for conflict-free
+- The Linux Programming Interface, §27.1 "Executing a New Program: execve()" and §27.2
+  "The exec() Library Functions" (execve and friends), §28.3 "Speed of Process Creation"
+  (why fork/exec is fast) — skim; §26.1 "Waiting on a Child Process" for conflict-free
   reaping.
 - `man 2 execve`, `man 3 execvp` (note: `execvp` searches `PATH`), `man 2 _exit` vs `exit`.
 - "The exec() family": https://man7.org/linux/man-pages/man3/exec.3.html

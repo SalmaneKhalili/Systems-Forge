@@ -53,5 +53,6 @@ A server that serves each connection from a fresh (non-persistent) map, returns 
 
 ## Readings
 
-- *Designing Data-Intensive Applications* (DDIA), Chapter 3 (SSTables and LSM-Trees): the full write path and recovery.
+- *Designing Data-Intensive Applications* (DDIA), Chapter 3 "Storage and Retrieval"
+  (§3.2 "SSTables and LSM-Trees"): the full write path and recovery.
 - Reuse ex01 (memtable), ex02 (sstable), ex03 (wal), ex04 (compaction).

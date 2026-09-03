@@ -57,5 +57,6 @@ For recorded durations 10, 20, 30, 40, 50: count 5, sum 150, max 50, p50 30, p95
 
 ## Readings
 
-- Percentiles and p95/p99 for latency SLOs (DDIA, Chapter 1: "Describing Performance").
+- Percentiles and p95/p99 for latency SLOs (DDIA, Chapter 1 "Reliable, Scalable, and
+  Maintainable Applications", §1.3 "Describing Performance").
 - Quantile rounding (ceil index) convention.

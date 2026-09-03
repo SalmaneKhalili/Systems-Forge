@@ -47,7 +47,7 @@ Which call accepts a pending connection and returns a new socket for it?: <answe
 
 - `man 2 socket`, `man 2 bind`, `man 2 listen`, `man 2 accept`, `man 2 read`, `man 2 write`.
 - TLPI §56.4–56.5 "sockets: stream sockets" — the socket/bind/listen/accept skeleton and
-  the accept loop; §56.3 for `socket()` itself.
+  the accept loop; §56.2 for `socket()` itself.
 - The echo server is the Unix miniature of every networked program: a listener plus a
   per-connection copy loop.
 

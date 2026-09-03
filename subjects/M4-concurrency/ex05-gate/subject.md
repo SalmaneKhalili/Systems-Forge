@@ -55,9 +55,10 @@ Which function wakes one thread waiting on a condition variable?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §30.2 "Synchronizing with Condition Variables" — the
+- The Linux Programming Interface, §30.2 "Signaling Changes of State: Condition Variables"
+  (esp. §30.2.2 "Signaling and Waiting on Condition Variables") — the
   lock→wait→resignal loop in figure 30-2, the `while` loop contract, and the
-  spurious-wakeup rationale. Also §30.2 "Overview" for the waittime model.
+  spurious-wakeup rationale, plus the wait-mechanism overview.
 - `man pthread_cond_wait`, `man pthread_cond_signal` — "the mutex is released and remains
   unlocked until another thread signals".
 - Producer-consumer with bounded buffer is TLPI §30.2.3's classic example figure 30-2.

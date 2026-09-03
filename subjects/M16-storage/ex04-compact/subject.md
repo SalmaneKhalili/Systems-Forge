@@ -38,5 +38,6 @@ In the sample, `a` appears in both runs (the newer `stale` wins), `c` and `e` we
 
 ## Readings
 
-- *Designing Data-Intensive Applications* (DDIA), Chapter 3: "SSTables and LSM-Trees" (Compaction and performance).
+- *Designing Data-Intensive Applications* (DDIA), Chapter 3 "Storage and Retrieval"
+  (§3.2.3 "Performance Optimizations" — compaction strategies and bloom filters).
 - Merge of k sorted lists (k-way merge).
