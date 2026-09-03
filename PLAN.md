@@ -5,8 +5,8 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-03 (Skill-Reuse Audit §16 + Batch A/B/C sweeps; net grader gained
-> signal/wait_exit/restart steps; selftest 49/49, 0 mismatches)
+> Last updated: 2026-09-03 (TUI redesign: home dashboard, activity heatmap, profile/skills view;
+> Batch E PLAN sweep; net grader gained signal/wait_exit/restart steps; selftest 49/49, 0 mismatches)
 
 ---
 
@@ -68,9 +68,10 @@ Core principles (user-set, non-negotiable):
 - [x] `forge init` mirroring + `score` validated against `M0-tools` (2-ex exercise set).
 - [x] M0 "tools" module authored (`subjects/M0-tools/ex01–ex05`); M0-ex01 solved in `answers/` → PASS.
       (M0-ex03/04/05 shipped later — see tracker item #23 and §14 2026-09-02 → M0 5/5.)
-- [x] **TUI layout reworked to side-by-side two-column** (module tree | spec pane) — verified under tmux:
-      header with progress, tree with ✓/·/✕ marks, spec renders subject.md, `G`/`n`/arrows
-      refresh the spec, `browse`/`score`/`help` views intact.
+- [x] **TUI redesigned with three new views** — 95-inspired home dashboard (progress bar, activity
+      strip), GitHub-style activity heatmap (26-week contribution grid), profile/skills view
+      (earned skills + proficiency bars per module). Modules sorted numerically (M0..M17).
+      Tab-style header chips, context-sensitive footer. Verified under tmux; selftest 49/49.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05` all `build`+`quiz`
       green; both-ways determinism proven; `forge score` → `M1-clib 5/5`.
 - [x] **M2 "Processes" module authored + solved** — `subjects/M2-procs/ex01–ex05` all `build`+`quiz`
@@ -1044,6 +1045,26 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
   selftest count updated 47→**49** throughout; "Last updated" + §3 snapshot rolled to
   2026-09-03; tracker items #33 (Anki decks) and #34 (`95` TUI survey) confirmed already
   struck as DONE. Reads consistently as "49 fixtures, 0 mismatches, 92/92 exercises".
+
+- **2026-09-03** **TUI redesign — three new views (home dashboard, activity heatmap, profile/skills).** Commit
+  `fff84be` adds a polished 95-inspired TUI overhaul. Four full-pane views navigated by
+  `1`/`2`/`3`/`b` keys, tab-style header chips, and context-sensitive footer:
+  - **Home (1)**: banner, overall progress bar (██░░), 90-day activity strip (Unicode glyph
+    ramp ···▁▂▄▆█), per-module progress with "Mx complete" banners, key hints.
+  - **Activity (2)**: GitHub-style contribution grid — 26-week rolling window, 7 weekday rows,
+    6-level green ramp, month labels (Mar–Sep), legend (Less ▯▯▯▯▯▯ More). Powered by new
+    `store.ActivityByDay(start, end)` query.
+  - **Profile (3)**: skills earned per module — badge (✓ earned / ◔ partial / ○ not started),
+    skill name, 24-char proficiency bar (██░░), percent. Overall skills-earned count. Modules
+    sorted numerically (M0..M17) via `moduleNum()` parser (fixes lexicographic M0/M10/M11 issue).
+  - **Browse (b)**: existing tree|spec split, also now numerically sorted.
+  - Header: tab chips (home/activity/profile/browse) with active-state highlighting + overall
+    progress percentage. Footer: context-sensitive key set per view mode.
+  - New files: `render.go` (home/heatmap/profile renderers + heat color ramps),
+    `skills.go` (module→skill-name map, 18 skills from module themes).
+  - `store.ActivityByDay` counts runs per UTC calendar day (foundation for heatmap).
+  - Modules sorted numerically at TUI init (`sortModulesNumeric` on `cur.Modules`).
+  - Removed unused `styleHeader`/`stylePanel`; selfcheck still **49 fixtures, 0 mismatches**.
 
 - **2026-09-03** **Grader: `net` `restart` re-verify step (closes the Batch C "supervisor
   re-verify" deferral) + 2 new fixtures.** The `net` runner now supports a `restart` step
