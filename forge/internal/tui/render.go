@@ -100,8 +100,15 @@ func (a *app) renderHeatmap() string {
 	cell := func(d time.Time) string {
 		n := activity[d.UTC().Format("2006-01-02")]
 		c := heatColor(heatLevel(n))
-		return lipgloss.NewStyle().Background(lipgloss.Color(c)).
-			Foreground(lipgloss.Color("0")).Render("   ")
+		// Bordered box (GitHub-style): the stroke draws a thin outline around
+		// every square so adjacent cells are separated on all four sides and
+		// never bleed into one another.
+		return lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(lipgloss.Color("237")).
+			Background(lipgloss.Color(c)).
+			Width(2).
+			Render(" ")
 	}
 
 	// Build the week columns, tracking each week's Sunday for month labels.
@@ -120,18 +127,19 @@ func (a *app) renderHeatmap() string {
 		weeksList = append(weeksList, w)
 	}
 
-	// Month-label row: at the first week containing the 1st of a new month,
-	// write the month abbreviation (up to 3 chars per 3-char cell).
+	// Month-label row: each week column now spans 4 terminal columns (a bordered
+	// 2-wide cell), so use 4-wide slots and write the month abbreviation at the
+	// first week containing the 1st of a new month.
 	monthRow := make([][]rune, len(weeksList))
 	for current := range monthRow {
-		monthRow[current] = []rune("   ")
+		monthRow[current] = []rune("    ")
 	}
 	prevMonth := -1
 	for i, w := range weeksList {
 		m := int(w.sunday.AddDate(0, 0, 6).Month()) // month of the week's last day
 		if m != prevMonth {
 			label := []rune(time.Month(m).String()[:3])
-			copy(monthRow[i], label)
+			copy(monthRow[i][:len(label)], label)
 			prevMonth = m
 		}
 	}
@@ -141,15 +149,23 @@ func (a *app) renderHeatmap() string {
 	}
 
 	weekdayNames := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
+
+	// Join each weekday's cells horizontally into a row, then stack the rows
+	// vertically so the border strokes form a complete grid (separation in
+	// both axes, exactly like GitHub).
+	var dayRows []string
+	for day := 0; day < 7; day++ {
+		var weekCells []string
+		for _, w := range weeksList {
+			weekCells = append(weekCells, w.cells[day])
+		}
+		dayRows = append(dayRows, lipgloss.JoinHorizontal(lipgloss.Top, weekCells...))
+	}
 	var b strings.Builder
 	b.WriteString(styleSection.Render(" Activity") + "\n\n")
 	b.WriteString("     " + monthLine + "\n")
 	for day := 0; day < 7; day++ {
-		row := ""
-		for _, w := range weeksList {
-			row += w.cells[day]
-		}
-		b.WriteString(fmt.Sprintf("%-4s %s\n", weekdayNames[day], row))
+		b.WriteString(fmt.Sprintf("%-4s %s\n", weekdayNames[day], dayRows[day]))
 	}
 	b.WriteString("\n" + heatLegend() + "\n")
 	return b.String()
@@ -161,9 +177,9 @@ func heatLegend() string {
 	b.WriteString(styleMuted.Render("Less "))
 	for _, lv := range levels {
 		c := heatColor(heatLevel(lv))
-		b.WriteString(lipgloss.NewStyle().Background(lipgloss.Color(c)).Render("  "))
+		b.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color(c)).Render("██ "))
 	}
-	b.WriteString(styleMuted.Render(" More"))
+	b.WriteString(styleMuted.Render("More"))
 	return b.String()
 }
 
