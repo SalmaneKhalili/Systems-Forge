@@ -42,7 +42,8 @@
               { "send": "status c\n", "expect": "dead\n" },
               { "send": "list\n", "expect": "a|b\n" },
               { "send": "beat b\n", "expect": "ok\n" },
-              { "send": "status b\n", "expect": "alive\n" }
+              { "send": "status b\n", "expect": "alive\n" },
+              { "signal": "TERM", "wait_exit": 0 }
             ]
           }
         ]

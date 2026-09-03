@@ -44,8 +44,13 @@ The grader's two connections must observe this exact transcript:
 - **conn 2** (same server, fresh socket): `list` → `a`; `drop a`; `status a` → `dead`;
   `list` → (blank); `begin`; `set b 3`; `rollback`; `get b` → `nil`
 
+The grader then sends **SIGTERM** to the process and requires it to exit **0**.
+This re-deploys the M7-ex04 graceful-shutdown skill: a server should stop
+accepting and exit cleanly, not be killed with a non-zero code.
+
 Staged writes leaking to another connection before `commit`, or a `rollback` that applies
-its writes anyway, is the bug this gate exists to catch.
+its writes anyway, is the bug this gate exists to catch. A gateway that dies on SIGTERM
+(non-zero exit) fails the graceful-shutdown step.
 
 ## Readings
 

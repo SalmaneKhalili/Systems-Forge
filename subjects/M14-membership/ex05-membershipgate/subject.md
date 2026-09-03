@@ -50,7 +50,12 @@ conn2: status c -> dead
 conn2: list     -> a|b           (c evicted)
 conn2: beat b   -> ok
 conn2: status b -> alive         (revived from suspect)
+
+The grader then sends **SIGTERM** to the process and requires it to exit **0**.
+This re-deploys the M7-ex04 graceful-shutdown skill: a server should stop
+accepting and exit cleanly, not be killed with a non-zero code.
 ```
 
 A gateway that lists a `dead` member, or that fails to revive a `suspect`
-member on `beat`, is the bug.
+member on `beat`, is the bug. A gateway that dies on SIGTERM (non-zero
+exit) fails the graceful-shutdown step.

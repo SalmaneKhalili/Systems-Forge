@@ -146,13 +146,12 @@ Core principles (user-set, non-negotiable):
       `TOTAL 47/50`.
 
 ### In progress
-- [in-progress] **2026-09-03 — Unblocking Batch C (net runner signal/restart).** The `net`
-      runner now supports a `signal` step and a `wait_exit` step (see §14 2026-09-03 entry),
-      which lifts the stated Batch C blocker ("the net runner can't send OS signals or restart
-      the server"). First re-deployment landed: **M16-ex05 requires graceful SIGTERM shutdown**
-      (reuses M7-ex04), PASS/FAIL verified, selftest 47/47. Remaining Batch C targets
-      (M14/M15 similarity) not yet converted; and the "restart / supervisor" step type is not
-      yet built (M7-ex05 watchdog re-verify) — deferred. §14 2026-09-03.
+- [in-progress] **2026-09-03 — Batch C (net runner signal/restart) near-complete.** The `net`
+      runner gained `signal` + `wait_exit` steps (see §14 2026-09-03 entry), and **graceful
+      SIGTERM shutdown is now re-deployed in M16-ex05, M14-ex05, and M15-ex05** — all re-using
+      the M7-ex04 skill in later gateways (PASS/FAIL verified each, selftest 47/47). Remaining
+      in this batch: the "restart / supervisor re-verify" step type (M7-ex05 watchdog) is still
+      not built — deferred. §14 2026-09-03.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05`, all graded
       `build`+`quiz`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
       broken `ft_strlen` verified to FAIL (both-way determinism).
@@ -1022,6 +1021,18 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-03** **Batch C completed across M14/M15/M16 (graceful SIGTERM shutdown re-deployed).**
+  Extending the signal/wait_exit grader feature from earlier today, the M7-ex04 skill is now
+  re-used in all three later gateways:
+  - **M14-ex05 (membership gateway)** — must stop accepting and exit 0 on SIGTERM.
+  - **M15-ex05 (txstore gateway)** — same graceful-shutdown requirement.
+  - **M16-ex05 (persistent KV gateway)** — flush/close `store.log`, exit 0 (done in the prior
+    commit).
+  Each verified **PASS** for the reference and **FAIL** for a no-handler negative control
+  (`exit -1 (want 0)`); `forge selftest` still **47 fixtures, 0 mismatches**. Also closed out
+  §15 items 1–5 (selfcheck.sh, root Makefile, init+score e2e, M0 fixtures, TUI async/score) as
+  already-done and verified.
+
 - **2026-09-03** **Grader: `net` signal + wait_exit steps (lifts the Batch C blocker) + M16-ex05
   re-deployment.** The `net` runner previously could only send/receive line bytes — it could
   not signal the server or check its exit code, which blocked the whole "reuse M7 graceful
@@ -1412,13 +1423,18 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 15. Next Steps (ordered)
 
-1. `tools/selfcheck.sh`: build from clean + `forge selftest` gate (README must stay truthful).
-2. Root `Makefile`: `setup` (go build), `list/show/check/score/selftest` (run `bin/forge …`), `init`.
-3. Verify `forge init` + `score` end-to-end with a 2-exercise subject.
-4. Write M0 module (§10) with both-ways fixtures per exercise; add its gate.
+1. ~~`tools/selfcheck.sh`: build from clean + `forge selftest` gate (README must stay truthful).~~ **DONE**
+   — `tools/selfcheck.sh` exists and passes (fmt + vet + clean build + selftest 47/47 + cli smoke).
+2. ~~Root `Makefile`: `setup` (go build), `list/show/check/score/selftest` (run `bin/forge …`), `init`.~~ **DONE**
+   — root `Makefile` forwards all verbs to `./bin/forge`, rebuilt on demand.
+3. ~~Verify `forge init` + `score` end-to-end with a 2-exercise subject.~~ **DONE** — `forge init` mirrors
+   all 92; `score` reports per-module + TOTAL (verified 2026-09-03).
+4. ~~Write M0 module (§10) with both-ways fixtures per exercise; add its gate.~~ **DONE** — M0 authored
+   (5 exercises, methods build/quiz/stdout/artifact/scenario); every method type M0 uses has pass+fail
+   fixtures under `tools/fixtures/`.
 5. ~~Smoke-test the TUI~~ **DONE** — two-column tree|spec layout verified under tmux (nav,
-   spec render, jump keys, width/height clamps). Remaining: async check + score view touch-up
-   in the same session if needed.
+   spec render, jump keys, width/height clamps). Async check (`checkSel` → `msgCheck` + spinner)
+   and score view (`score` verb + `loadScore`) are implemented.
 6. ~~Resume M1 (C gate)~~ **DONE 2026-08-30** — module authored, validated both-ways, all PASS.
 7. ~~M2 (Processes)~~ **DONE 2026-08-30** — module authored, all PASS; broken solutions
    proven to FAIL (signal-death and timeout classes). See §10 M2 detail.
@@ -1749,13 +1765,11 @@ output).
   fault proofs (they're format-specific), or requires redesigning the gateway's wire format.
   Not a clean drop-in; deferred to a future design pass rather than risk the deterministic
   suite. The switch stays a strong self-contained M8 deliverable.
-- **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — **partially shipped
-  2026-09-03** (see §14): the `net` runner gained `signal` + `wait_exit` steps (the grader
-  surgery that unblocked this batch), and **M16-ex05 now requires graceful SIGTERM shutdown**,
-  re-deploying M7-ex04 in the storage capstone (PASS/FAIL verified, selftest 47/47). The
-  remaining Batch C targets (M14/M15 gateways using the same pattern) are natural follow-ups
-  now that the grader supports signalling; and the "restart / supervisor re-verify" step type
-  is still not built (deferred).
+- **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — **DONE 2026-09-03** (see
+  §14): the `net` runner gained `signal` + `wait_exit` steps, and graceful SIGTERM shutdown is
+  now required (and verified PASS/FAIL) in **M16-ex05**, **M14-ex05**, and **M15-ex05**,
+  re-deploying M7-ex04 across all three later gateways. Selftest 47/47. Residual: the
+  "restart / supervisor re-verify" step type (M7-ex05 watchdog) is still not built — deferred.
 - **Batch D — re-deploy M2 processes + M4 rwlock/atomic + M3 mmap** — **M17-ex01 RWMutex
   shipped 2026-09-03** (re-deploys M4-ex04 rwlock in Go; the read-heavy registry uses
   `RLock` for Get/Snapshot, `Lock` for Inc/Add; verified PASS/FAIL + selftest 45/45). The
