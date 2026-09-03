@@ -1,0 +1,22 @@
+{
+  "id": "ex07-restart",
+  "module": "fixture-net",
+  "title": "net restart re-verify pass fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17020,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      {
+        "steps": [
+          { "send": "PING\n", "expect": "PONG\n" },
+          { "restart": true, "signal": "TERM", "wait_exit": 0 },
+          { "send": "PING\n", "expect": "PONG\n" }
+        ]
+      }
+    ]
+  } } ],
+  "expect": "pass"
+}

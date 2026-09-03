@@ -83,15 +83,37 @@ func runProcess(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
 	return res, nil
 }
 
-// runNet drives a scripted protocol against a spawned server.
-func runNet(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
-	spec := m.Net
-	res := &Result{}
+// netRunner carries the respawn context a restart step needs: how to boot the
+// server and where to reach it. The current handle and connection are stored
+// so a restart can swap them out in place.
+type netRunner struct {
+	ctx     context.Context
+	c       *Ctx
+	spec    *cur.NetSpec
+	host    string
+	port    int
+	timeout int
+	res     *Result
 
+	h    *sandbox.Handle
+	conn net.Conn
+}
+
+// newNetRunner spawns the server, dials it, and returns a runner.
+// The returned cleanup must be called to stop the (possibly restarted) server.
+// ok is false if startup failed; the returned runner still holds the error parts.
+func newNetRunner(ctx context.Context, c *Ctx, m *cur.Method, prefix string) (*netRunner, func(), bool) {
+	spec := m.Net
 	host := spec.Host
 	if host == "" {
 		host = "127.0.0.1"
 	}
+	timeout := spec.TimeoutMs
+	if timeout <= 0 {
+		timeout = 5000
+	}
+
+	r := &netRunner{ctx: ctx, c: c, spec: spec, host: host, port: spec.Port, timeout: timeout, res: &Result{}}
 
 	env := append([]string{}, c.BaseEnv...)
 	for k, v := range spec.StartEnv {
@@ -99,57 +121,104 @@ func runNet(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
 	}
 	env = append(env, "TARGETPORT="+strconv.Itoa(spec.Port), "TARGETHOST="+host)
 
+	cleanup := func() {
+		if r.conn != nil {
+			_ = r.conn.Close()
+		}
+		if r.h != nil {
+			r.h.Stop(true)
+		}
+	}
+
 	h, err := sandbox.Background(sandbox.Options{Cmd: spec.Start, Dir: c.Dir, Env: env})
 	if err != nil {
-		res.Parts = append(res.Parts, &Part{Name: "start", Pass: false, Detail: err.Error()})
-		return res, nil
+		r.res.Parts = append(r.res.Parts, &Part{Name: "start", Pass: false, Detail: err.Error()})
+		return r, cleanup, false
 	}
-	defer h.Stop(true)
+	r.h = h
 
-	timeout := spec.TimeoutMs
-	if timeout <= 0 {
-		timeout = 5000
-	}
 	deadline := time.Now().Add(time.Duration(spec.WaitMs)*time.Millisecond +
 		time.Duration(timeout+1000)*time.Millisecond)
-
-	// Retry dialing the first connection until the server is up or cancelled.
-	conn, err := dialRetry(ctx, host, spec.Port, deadline)
-	if err != nil {
-		cause := err
+	conn, derr := dialRetry(ctx, host, spec.Port, deadline)
+	if derr != nil {
+		cause := derr
 		if ctx.Err() != nil {
 			cause = errors.New("cancelled")
 		}
-		res.Parts = append(res.Parts, &Part{Name: "start", Pass: false,
+		r.res.Parts = append(r.res.Parts, &Part{Name: prefix + " start", Pass: false,
 			Detail: "server never accepted connections: " + cause.Error()})
-		return res, nil
+		return r, cleanup, false
 	}
-	defer conn.Close()
+	r.conn = conn
+	_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
+	return r, cleanup, true
+}
+
+// dialNew re-dials the server, replacing r.conn. Used after a restart.
+func (r *netRunner) dialNew(prefix string) error {
+	if r.conn != nil {
+		_ = r.conn.Close()
+		r.conn = nil
+	}
+	conn, err := dialRetry(r.ctx, r.host, r.port, time.Now().Add(5*time.Second))
+	if err != nil {
+		r.res.Parts = append(r.res.Parts, &Part{Name: prefix + " connect", Pass: false,
+			Detail: "server did not come back after restart: " + err.Error()})
+		return err
+	}
+	r.conn = conn
+	_ = conn.SetDeadline(time.Now().Add(time.Duration(r.timeout+1000) * time.Millisecond))
+	return nil
+}
+
+// respawn stops the current server and boots a fresh instance of the same
+// start command, replacing r.h. Callers must then re-dial.
+func (r *netRunner) respawn() error {
+	if r.h != nil {
+		r.h.Stop(true)
+		r.h = nil
+	}
+	env := append([]string{}, r.c.BaseEnv...)
+	for k, v := range r.spec.StartEnv {
+		env = append(env, k+"="+v)
+	}
+	env = append(env, "TARGETPORT="+strconv.Itoa(r.spec.Port), "TARGETHOST="+r.host, "TARGETRESTART=1")
+	h, err := sandbox.Background(sandbox.Options{Cmd: r.spec.Start, Dir: r.c.Dir, Env: env})
+	if err != nil {
+		r.res.Parts = append(r.res.Parts, &Part{Name: "restart spawn", Pass: false, Detail: err.Error()})
+		return err
+	}
+	r.h = h
+	return nil
+}
+
+// runNet drives a scripted protocol against a spawned server.
+func runNet(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
+	spec := m.Net
+	r, cleanup, ok := newNetRunner(ctx, c, m, "step ")
+	if !ok {
+		cleanup()
+		return r.res, nil
+	}
+	defer cleanup()
 
 	if len(spec.Connections) == 0 {
-		_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-		runNetSteps(conn, h, spec.Steps, "step ", timeout, res)
-		return res, nil
+		runNetSteps(r, spec.Steps, "step ")
+		return r.res, nil
 	}
 
-	_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-	if !runNetSteps(conn, h, spec.Connections[0].Steps, "conn 1 step ", timeout, res) {
-		return res, nil
+	if !runNetSteps(r, spec.Connections[0].Steps, "conn 1 step ") {
+		return r.res, nil
 	}
 	for i := 1; i < len(spec.Connections); i++ {
-		_ = conn.Close()
-		conn, err = dialRetry(ctx, host, spec.Port, time.Now().Add(2*time.Second))
-		if err != nil {
-			res.Parts = append(res.Parts, &Part{Name: fmt.Sprintf("conn %d connect", i+1), Pass: false,
-				Detail: "server stopped accepting: " + err.Error()})
-			return res, nil
+		if err := r.dialNew(fmt.Sprintf("conn %d ", i+1)); err != nil {
+			return r.res, nil
 		}
-		_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-		if !runNetSteps(conn, h, spec.Connections[i].Steps, fmt.Sprintf("conn %d step ", i+1), timeout, res) {
-			return res, nil
+		if !runNetSteps(r, spec.Connections[i].Steps, fmt.Sprintf("conn %d step ", i+1)) {
+			return r.res, nil
 		}
 	}
-	return res, nil
+	return r.res, nil
 }
 
 // dialRetry keeps dialing until it succeeds or the deadline passes.
@@ -174,8 +243,67 @@ func dialRetry(ctx context.Context, host string, port int, deadline time.Time) (
 
 // runNetSteps plays one conn's send/expect script, appending parts to res.
 // Returns false on the first failed step.
-func runNetSteps(conn net.Conn, h *sandbox.Handle, steps []*cur.NetStep, prefix string, timeout int, res *Result) bool {
+func runNetSteps(r *netRunner, steps []*cur.NetStep, prefix string) bool {
+	conn := r.conn
+	h := r.h
+	timeout := r.timeout
+	res := r.res
 	for i, step := range steps {
+		// Handle restart step: kill the server, wait for its exit, respawn the
+		// same command, and re-dial so later steps act on the restarted process.
+		// This is the "supervisor re-verify": does the service come back after
+		// being killed (a bounded restart policy, cf. M7-ex05 watchdog).
+		if step.Restart {
+			sig := syscall.SIGTERM
+			if step.Signal != "" {
+				var err error
+				sig, err = lookupSignal(step.Signal)
+				if err != nil {
+					res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " restart", Pass: false,
+						Detail: err.Error()})
+					return false
+				}
+			}
+			if err := syscall.Kill(-h.Pid(), sig); err != nil {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " restart", Pass: false,
+					Detail: err.Error()})
+				return false
+			}
+			exitCode, ok := h.Wait(time.Duration(timeout) * time.Millisecond)
+			// A hard kill (KILL) yields no graceful exit; only check the code
+			// when the caller asked for it via WaitExit.
+			if !ok {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " restart", Pass: false,
+					Detail: "server did not exit before restart"})
+				return false
+			}
+			if step.WaitExit != nil && exitCode != *step.WaitExit {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " restart", Pass: false,
+					Detail: fmt.Sprintf("exit code %d (want %d) before restart", exitCode, *step.WaitExit)})
+				return false
+			}
+
+			if err := r.respawn(); err != nil {
+				return false
+			}
+			if step.SleepMs > 0 {
+				time.Sleep(time.Duration(step.SleepMs) * time.Millisecond)
+			}
+			if err := r.dialNew(prefix + itoa(i+1) + " restart "); err != nil {
+				return false
+			}
+			part := &Part{Name: prefix + itoa(i+1) + " restart", Pass: true}
+			if step.WaitExit != nil {
+				part.Detail = fmt.Sprintf("killed (exit %d), respawned on %d", exitCode, r.port)
+			} else {
+				part.Detail = fmt.Sprintf("restarted on %d", r.port)
+			}
+			res.Parts = append(res.Parts, part)
+			// Rebound to the restarted connection for remaining steps.
+			conn, h = r.conn, r.h
+			continue
+		}
+
 		// Handle signal step: send an OS signal to the server process group.
 		if step.Signal != "" {
 			sig, err := lookupSignal(step.Signal)

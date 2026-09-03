@@ -189,6 +189,14 @@ type NetStep struct {
 	// WaitExit waits for the server process to exit and checks the exit code.
 	// Nil means "just wait, don't check the code". Non-nil means check the code matches.
 	WaitExit *int `json:"wait_exit,omitempty"`
+
+	// Restart performs a supervisor restart cycle: kill the running server
+	// (using Signal, default TERM), wait for it to exit (checking WaitExit if
+	// set), respawn the same start command, and re-dial. Subsequent steps in
+	// this connection run against the restarted server. This grades that a
+	// service comes back up and serves again after being killed (a bounded
+	// restart policy, cf. M7-ex05 watchdog / Kubernetes Restart Policies).
+	Restart bool `json:"restart,omitempty"`
 }
 
 // QuizSpec grades a checkpoint answers file against the exercise's Answers.

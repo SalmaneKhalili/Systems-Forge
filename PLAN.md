@@ -146,12 +146,14 @@ Core principles (user-set, non-negotiable):
       `TOTAL 47/50`.
 
 ### In progress
-- [in-progress] **2026-09-03 — Batch C (net runner signal/restart) near-complete.** The `net`
-      runner gained `signal` + `wait_exit` steps (see §14 2026-09-03 entry), and **graceful
-      SIGTERM shutdown is now re-deployed in M16-ex05, M14-ex05, and M15-ex05** — all re-using
-      the M7-ex04 skill in later gateways (PASS/FAIL verified each, selftest 47/47). Remaining
-      in this batch: the "restart / supervisor re-verify" step type (M7-ex05 watchdog) is still
-      not built — deferred. §14 2026-09-03.
+- [x] **2026-09-03 — Batch C (net runner signal/restart) DONE.** The `net`
+      runner gained `signal` + `wait_exit` steps and a **`restart` re-verify step**
+      (see §14 2026-09-03 entries). Graceful SIGTERM shutdown is re-deployed in
+      M16-ex05, M14-ex05, and M15-ex05 (M7-ex04 skill reuse), PASS/FAIL verified each.
+      The restart step — "kill the server, wait for its exit, respawn, re-dial, keep
+      verifying" — completes the supervisor re-verify capability (M7-ex05 watchdog
+      semantics) and is proven with pass+fail fixtures (server that ignores SIGTERM
+      cannot be restarted → FAIL). Selftest **49 fixtures, 0 mismatches**. §14 2026-09-03.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05`, all graded
       `build`+`quiz`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
       broken `ft_strlen` verified to FAIL (both-way determinism).
@@ -1021,6 +1023,24 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-03** **Grader: `net` `restart` re-verify step (closes the Batch C "supervisor
+  re-verify" deferral) + 2 new fixtures.** The `net` runner now supports a `restart` step
+  that performs a full supervisor restart cycle on a live scripted connection: kill the
+  server (configurable `signal`, default TERM), wait for its exit (checking `wait_exit` if
+  set), respawn the same `start` command (fresh process, `TARGETRESTART=1` set), re-dial,
+  and continue the remaining steps against the restarted instance — grading that a service
+  comes back up and serves again after being killed (the M7-ex05 watchdog / Kubernetes
+  restart-policy property). Verified both ways:
+  - `net/pass/ex07-restart`: PING→PONG → restart → PONG again (`killed (exit 0), respawned`);
+  - `net/fail/ex07-restart`: server ignores SIGTERM → restart step FAILs
+    (`server did not exit before restart`) — a process that cannot be terminated cannot be
+    restarted, so the supervisor must not attempt to.
+  Implementation note: `runNet` was refactored into a `netRunner` carrier (spawn context +
+  live handle/conn) so a restart can swap both in place; `newNetRunner` returns
+  `(*netRunner, cleanup, ok)` — ok=false when startup failed, with the error parts still on
+  the result (fixes an earlier nil-deref on the startup-failure path).
+  `forge selftest` now **49 fixtures, 0 mismatches**. Commit `feb6a2f`.
+
 - **2026-09-03** **Batch C completed across M14/M15/M16 (graceful SIGTERM shutdown re-deployed).**
   Extending the signal/wait_exit grader feature from earlier today, the M7-ex04 skill is now
   re-used in all three later gateways:
@@ -1745,9 +1765,11 @@ Confirmed by crawling all 92 exercises (quote-evidence on record):
   **Batch D partially shipped**: M17-ex01 Metrics converted from `sync.Mutex` to
   `sync.RWMutex` — reads (Get/Snapshot) take `RLock`, writes (Inc/Add) take `Lock` —
   re-deploying M4-ex04 read-write lock in Go. Verified PASS through `forge check` + selftest
-  45/45; transcript byte-identical. Remaining Batch C/D items (SIGTERM graceful shutdown,
-  M12 subprocess spawn, read-deadline re-deployment) proved not viable without grader surgery
-  or major redesign — deferred per §16 deeper-dive conclusion.
+  45/45; transcript byte-identical. (Later commits went past this note: the "SIGTERM graceful
+  shutdown" and "restart re-verify" Batch C items — originally deferred as needing grader
+  surgery — were subsequently unblocked with `net` signal/wait_exit/restart steps and shipped
+  across M14/M15/M16-ex05; see §14. Remaining deferred items are M12 subprocess spawn and
+  read-deadline re-deployment, per §16 deeper-dive conclusion.)
 
 ### 16.5 Fix plan (batched, byte-determinism preserved)
 
@@ -1766,10 +1788,12 @@ output).
   Not a clean drop-in; deferred to a future design pass rather than risk the deterministic
   suite. The switch stays a strong self-contained M8 deliverable.
 - **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — **DONE 2026-09-03** (see
-  §14): the `net` runner gained `signal` + `wait_exit` steps, and graceful SIGTERM shutdown is
-  now required (and verified PASS/FAIL) in **M16-ex05**, **M14-ex05**, and **M15-ex05**,
-  re-deploying M7-ex04 across all three later gateways. Selftest 47/47. Residual: the
-  "restart / supervisor re-verify" step type (M7-ex05 watchdog) is still not built — deferred.
+  §14): the `net` runner gained `signal` + `wait_exit` steps **plus a `restart` re-verify
+  step**, and graceful SIGTERM shutdown is now required (and verified PASS/FAIL) in
+  **M16-ex05**, **M14-ex05**, and **M15-ex05**, re-deploying M7-ex04 across all three later
+  gateways. The restart step (kill → exit → respawn → re-dial → keep verifying) closes the
+  supervisor re-verify deferral; pass+fail fixtures prove both directions; selftest now
+  **49/49**. No residuals.
 - **Batch D — re-deploy M2 processes + M4 rwlock/atomic + M3 mmap** — **M17-ex01 RWMutex
   shipped 2026-09-03** (re-deploys M4-ex04 rwlock in Go; the read-heavy registry uses
   `RLock` for Get/Snapshot, `Lock` for Inc/Add; verified PASS/FAIL + selftest 45/45). The
