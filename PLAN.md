@@ -1039,7 +1039,8 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
   live handle/conn) so a restart can swap both in place; `newNetRunner` returns
   `(*netRunner, cleanup, ok)` — ok=false when startup failed, with the error parts still on
   the result (fixes an earlier nil-deref on the startup-failure path).
-  `forge selftest` now **49 fixtures, 0 mismatches**. Commit `feb6a2f`.
+  `forge selftest` now **49 fixtures, 0 mismatches**. See the "Add net restart re-verify
+  step" §14 commit if you need the exact diff.
 
 - **2026-09-03** **Batch C completed across M14/M15/M16 (graceful SIGTERM shutdown re-deployed).**
   Extending the signal/wait_exit grader feature from earlier today, the M7-ex04 skill is now
