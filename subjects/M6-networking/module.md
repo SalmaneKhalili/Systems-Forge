@@ -35,6 +35,32 @@ Two rules make this deterministic, and they are worth internalizing now:
 
 ---
 
+## Prerequisites
+
+Before starting M6, you should be comfortable with everything from M0–M5, plus:
+
+- Explain what a socket is: a file descriptor with a remote address attached.
+- Call `socket(AF_INET, SOCK_STREAM, 0)` and check the return value.
+- Explain `struct sockaddr_in`: `sin_family`, `sin_port` (network byte order), `sin_addr`.
+- Explain `htons`/`htonl`/`ntohs`/`ntohl`: convert between host byte order and network
+  (big-endian) byte order.
+- Call `bind(sockfd, &addr, sizeof(addr))` and explain why `INADDR_ANY` means "listen on
+  all interfaces."
+- Call `listen(sockfd, backlog)` — explain that it marks the socket as passive (server side).
+- Call `accept(sockfd, ...)` — returns a NEW file descriptor for the connected client.
+- Call `read`/`write` on the accepted fd — a TCP connection is just a bidirectional byte stream.
+- Explain `SO_REUSEADDR`: why you need it to rebind a port after a crash.
+- Handle `SIGPIPE` by ignoring it (`signal(SIGPIPE, SIG_IGN)`) — explain that writing to a
+  broken connection would otherwise kill your process.
+- Call `getenv("TARGETPORT")` and convert it with `atoi()` or `strtol()`.
+- Handle timeouts: explain that `setsockopt` + `SO_RCVTIMEO` makes `read` return -1 with
+  `errno == EAGAIN` if no data arrives in time.
+
+You do NOT need to know: non-blocking I/O, `select`/`poll`, UDP, or DNS resolution.
+You will learn those concepts later.
+
+---
+
 ## So what? (interview / portfolio)
 
 "Sockets are fds with a destination" is the lens that makes every server — web server, RPC

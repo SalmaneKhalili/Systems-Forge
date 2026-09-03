@@ -27,6 +27,20 @@ server is these three verbs composed.
 
 ---
 
+## Prerequisites
+
+Before starting M2, you should be comfortable with everything from M0 and M1, plus:
+
+- Write a `main(int argc, char **argv)` function and loop over `argv[1]` to `argv[argc - 1]`.
+- Explain the difference between `exit(1)` and `return 1` from `main`.
+- Call `printf` and `fprintf(stderr, ...)` and explain why `stderr` is separate from `stdout`.
+- Explain what `perror` prints and how it relates to `errno`.
+
+You do NOT need to know: signals, pipes, `dup2`, `fork`, or process groups. You will learn
+those here.
+
+---
+
 ## So what? (interview / portfolio)
 
 Every OS and every container runtime is a composition of `fork`, `exec`, `wait` and pipes —

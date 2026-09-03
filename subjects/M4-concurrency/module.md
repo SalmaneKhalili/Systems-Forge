@@ -35,6 +35,26 @@ build error here.
 
 ---
 
+## Prerequisites
+
+Before starting M4, you should be comfortable with everything from M0–M3, plus:
+
+- Explain what a data race is: two threads writing the same variable without synchronization,
+  and why the result depends on timing.
+- Call `pthread_create(&tid, NULL, fn, arg)` and `pthread_join(tid, NULL)`.
+  (If you've never used pthreads, the exercises walk you through it — but you should know
+  that threads exist and that `pthread_create` takes a function pointer.)
+- Explain what a mutex is: a lock that only one thread can hold at a time.
+- Explain `lock`/`unlock` semantics: if thread A holds the lock, thread B blocks until A
+  releases it.
+- Compile with `-pthread` in your Makefile (M0/M1 taught Makefiles; this flag is new).
+- Read a Makefile `CFLAGS` line and add a new flag to it.
+
+You do NOT need to know: read-write locks, atomics, condition variables, or producer–consumer
+patterns. You will build all of those here from scratch.
+
+---
+
 ## So what? (interview / portfolio)
 
 Concurrency bugs are the highest-frequency failures in real systems, and this module makes

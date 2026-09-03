@@ -25,6 +25,34 @@ exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M12, you should be comfortable with everything from M0–M11, plus:
+
+- Explain Raft leader election:
+  - A node starts an election by incrementing its term and sending `RequestVote` RPCs.
+  - A node votes for at most one candidate per term (first-come-first-served).
+  - A candidate wins if it receives votes from a majority (⌊N/2⌋ + 1).
+  - If no winner, a new election starts with a higher term.
+- Explain Raft log replication:
+  - The leader appends entries to its log, then sends `AppendEntries` RPCs to followers.
+  - Each follower appends the entry and acknowledges.
+  - Once a majority has persisted the entry, the leader commits it (advances commit index).
+  - Followers learn the commit index from the next `AppendEntries` heartbeat.
+- Explain log matching: if two logs have the same index and term, all entries before that
+  index are identical. This is how the leader detects missing/conflicting entries.
+- Explain what `term` is: a monotonically increasing counter. Each term has at most one
+  leader. A higher term always trumps a lower term.
+- Explain the TCP peer-to-peer protocol: nodes talk to each other directly (not through
+  a central switch). Each node has its own listener; you connect to peers by address.
+- Use goroutines for concurrent TCP connections (ex05/06 each require handling multiple
+  peers simultaneously).
+
+You do NOT need to know: log compaction/snapshotting, cluster membership changes, or
+linearizability proofs. Those are advanced topics outside this module.
+
+---
+
 ## So what? (interview / portfolio)
 
 Raft is the *flagship capstone* and the single most askable algorithm in distributed

@@ -30,6 +30,26 @@ every warning as an error and runs AddressSanitizer + UndefinedBehaviorSanitizer
 
 ---
 
+## Prerequisites
+
+Before starting M1, you should be able to do these specific things in C:
+
+- Write a `for` loop that counts from 0 to N and accesses `array[i]`.
+- Write an `if`/`else` branch that returns different values based on a condition.
+- Write a function that takes `const char *s` and returns `size_t`.
+- Explain what a NUL-terminated string is and why `"hello"` has length 5, not 6.
+- Explain the difference between `'A'` (a char literal, integer value 65) and `"A"` (a string
+  of length 1 containing `'\0'`).
+- Use `sizeof` on a variable vs `sizeof` on a type.
+- Explain what `unsigned char` is and why reading bytes as `unsigned char` avoids sign-extension.
+- Write a simple `Makefile` with targets `all`, `clean`, `re` that compiles one `.c` file
+  into a binary (M0-ex01 teaches this; you must have done it).
+
+You do NOT need to know: pointers-to-pointers, dynamic memory allocation, structs, or the
+C standard library beyond `strlen`/`strcmp`/`memcpy` at the "I can call it" level.
+
+---
+
 ## So what? (interview / portfolio)
 
 `libft`-style re-implementations are the classic entry test for C/embedded roles precisely

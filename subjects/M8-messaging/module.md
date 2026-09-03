@@ -4,6 +4,28 @@ Focus: a small message layer (framing, ordering) and the module's centerpiece �
 **fault-injection switch** (`switch/`) the learner builds once and every later module's
 grader reuses.
 
+## Prerequisites
+
+Before starting M8, you should be comfortable with everything from M0–M7, plus:
+
+- Use `io.Reader` / `io.Writer` interfaces — explain that `net.Conn` implements both.
+- Call `io.ReadFull(reader, buf)` and handle `io.ErrUnexpectedEOF` (incomplete frame).
+- Explain `io.EOF`: returned when the remote side closes the connection.
+- Use `encoding/binary.BigEndian.PutUint32`/`Uint64` to encode integers into byte slices.
+  (You do NOT need to know endianness in depth — just that network byte order is big-endian
+  and the library handles the conversion.)
+- Spawn a subprocess with `exec.Command("path/to/binary")` / `.Start()` / `.Wait()`.
+  Explain that `.Wait()` blocks until the process exits.
+- Use `bufio.Scanner` with a custom `Split` function (for length-prefixed framing).
+- Write a goroutine that reads from a `net.Conn` and forwards to another `net.Conn` (relay).
+- Understand the concept of "fault injection": deliberately dropping, delaying, or corrupting
+  messages to test resilience.
+
+You do NOT need to know: gRPC, protobuf, or any serialization library. The switch uses raw
+byte framing (length-prefix) — you build the codec here.
+
+---
+
 ## Shape
 
 Go throughout. ex01/ex02 are the messaging core (harness-shape: provided `main.go` +

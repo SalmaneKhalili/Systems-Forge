@@ -18,6 +18,31 @@ exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M13, you should be comfortable with everything from M0–M12, plus:
+
+- Explain what sharding is: splitting a key space across multiple nodes so each node stores
+  only a subset of the data.
+- Explain the two sharding strategies:
+  - **Fixed-slot:** keys are mapped to slots by `hash(key) % numSlots`, and slots are assigned
+    to shards. Growing the cluster requires reassigning slots.
+  - **Range:** keys are partitioned by value ranges (e.g., A-M → shard1, N-Z → shard2).
+    Growing the cluster requires splitting ranges.
+- Explain consistent hashing (ring): hash both keys AND nodes onto a ring. Each key is
+  assigned to the next node clockwise. Adding/removing a node only affects its neighbors.
+- Explain the boundary problem: adjacent keys (e.g., "foo" and "foo1") hash to different
+  positions. Range sharding handles this; fixed-slot sharding does not.
+- Explain a shard gateway: a single entry point that routes each request to the correct
+  shard based on the key.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` (from M7/M8) — ex05 is a TCP gateway
+  that routes to shard backends.
+
+You do NOT need to know: rebalancing algorithms, virtual nodes, or distributed hash tables
+(Kademlia). Those are covered conceptually here but not implemented.
+
+---
+
 ## So what? (interview / portfolio)
 
 At any scale beyond a single machine, "where does this key live?" is the first question

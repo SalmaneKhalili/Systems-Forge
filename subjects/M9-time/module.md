@@ -23,6 +23,29 @@ exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M9, you should be comfortable with everything from M0–M8, plus:
+
+- Explain what a Lamport logical clock is: a counter attached to each event, incremented on
+  local events and updated on message receipt (`max(local, received) + 1`).
+- Explain what a vector clock is: an array of counters, one per node, updated element-wise
+  on events and message receipt (`for each i: vc[i] = max(local[i], received[i])`).
+- Explain causality: event A "happened before" event B if there is a chain of messages
+  from A to B (or A is a local predecessor of B).
+- Explain total order vs partial order: total order means every event pair is comparable;
+  partial order means some pairs are concurrent (neither caused the other).
+- Explain what a sequencer is: a designated node that stamps every message with a global
+  sequence number, giving total order without tracking causality.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` (from M7/M8) — you will build a TCP
+  sequencer server in ex05.
+- Write a goroutine that handles one TCP connection (ex05 requires spawning a handler
+  goroutine per client).
+
+You do NOT need to know: Raft, 2PC, Paxos, or distributed consensus. Those come in M10–M12.
+
+---
+
 ## So what? (interview / portfolio)
 
 "Logical time" is the single most at-parity-with-distributed-systems idea you will ever

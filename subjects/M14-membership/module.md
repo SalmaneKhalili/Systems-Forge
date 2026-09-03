@@ -19,6 +19,32 @@ clock. All exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M14, you should be comfortable with everything from M0–M13, plus:
+
+- Explain what cluster membership is: a node's knowledge of which other nodes are in the
+  cluster, and whether each is alive.
+- Explain the heartbeat failure-detection model:
+  - Each node periodically sends a heartbeat to every peer.
+  - If no heartbeat is received from a peer within a timeout, the peer is marked `SUSPECT`.
+  - If the suspect node does not refute within a window, it is declared `FAILED`.
+- Explain state machines for membership: `ALIVE → SUSPECT → FAILED`. A node can refute
+  a suspicion by sending a heartbeat while in `SUSPECT` state.
+- Explain gossip protocol: instead of every node talking to every other node directly, nodes
+  periodically share their membership state with a random subset of peers. State propagates
+  epidemically.
+- Explain eviction: removing a `FAILED` node from the membership set. The node must be
+  re-added manually (or automatically by an external controller) to rejoin.
+- Explain the tradeoff between fast detection and false positives: shorter timeouts detect
+  failures faster but may falsely suspect a slow node.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` — ex05 is a TCP membership gateway.
+
+You do NOT need to know: SWIM protocol details, phi-accrual failure detectors, or
+gossip convergence proofs. Those are advanced topics outside this module.
+
+---
+
 ## So what? (interview / portfolio)
 
 "Who is in my cluster, and are they actually alive?" is the subtle failure-detection

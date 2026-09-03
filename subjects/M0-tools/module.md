@@ -22,6 +22,14 @@ the grader for _this_ module is the same shape as the grader you will build late
 
 ---
 
+## Prerequisites
+
+None — this module IS the onboarding. You need a terminal, a text editor, and the
+willingness to type commands. Everything here teaches the tools you'll use for every
+subsequent module.
+
+---
+
 ## So what? (interview / portfolio)
 
 Everything you build from here ships through the same machinery you install in this

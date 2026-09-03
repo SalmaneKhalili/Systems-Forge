@@ -22,6 +22,35 @@ clock — the whole module stays byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M17, you should be comfortable with everything from M0–M16, plus:
+
+- Explain what observability is: the ability to understand a system's internal state from
+  its external outputs (metrics, logs, traces).
+- Explain the three pillars:
+  - **Metrics:** numeric counters and gauges (e.g., "requests per second", "queue depth").
+  - **Logs:** timestamped text records of events.
+  - **Traces:** a tree of spans showing the path of a single request through the system.
+- Explain a metric type: `Counter` (monotonically increasing — only goes up) vs `Gauge`
+  (can go up or down — e.g., queue depth, active connections).
+- Explain the summary/aggregation problem: every node collects its own metrics; the summary
+  endpoint must aggregate them into a cluster-wide view.
+- Explain the tradeoff of push vs pull: push = nodes send metrics to a central server on
+  a timer; pull = central server queries nodes. Here we use push.
+- Explain what OpenTelemetry is: a vendor-neutral standard for metrics/traces. You will NOT
+  implement OTel here — you will build the same concepts from scratch.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` — ex05 is a TCP telemetry gateway.
+- Use `sync.RWMutex` (from M4) for concurrent access to the metrics registry. Reads are
+  fast (RLock); writes are exclusive (Lock).
+- Use goroutines for concurrent metric updates (multiple connections updating metrics
+  simultaneously).
+
+You do NOT need to know: Prometheus, Grafana, Jaeger, or any external tooling. This module
+builds the concepts from scratch.
+
+---
+
 ## So what? (interview / portfolio)
 
 Distributed systems interviews and on-call reality revolve around "how do you

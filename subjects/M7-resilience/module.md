@@ -29,6 +29,52 @@ Two engine notes that keep this module deterministic:
 
 ---
 
+## Prerequisites
+
+M7 is where **Go is introduced**. If you have never used Go, do the [Go Tour](https://tour.golang.org)
+first (takes ~1 hour). Then come back and verify you can do these specific things:
+
+**Go language basics (you must know before starting):**
+
+- Write a function with named parameters and return values: `func foo(x int, y string) (int, error)`.
+- Define a struct and add methods to it: `type Foo struct { ... }` / `func (f *Foo) Bar()`.
+- Use `iota` to define a set of related constants: `const ( A = iota; B; C )`.
+- Write a closure: `func() { ... }` passed as an argument or returned from a function.
+- Use `if err != nil { ... }` — Go's error handling pattern.
+- Declare a goroutine: `go doSomething()` — starts a new concurrent function.
+- Use a channel: `ch <- val` (send), `val := <-ch` (receive), `<-chan int` (type).
+- Use a `select` block to wait on multiple channel operations with a `default` case.
+- Call `time.Sleep(d)` and `time.Duration` arithmetic (`100 * time.Millisecond`).
+
+**Go standard library (used in this module):**
+
+- `net.Listen("tcp", addr)` — returns a `net.Listener`; call `.Accept()` in a loop to get
+  `net.Conn` values.
+- `conn.Read(buf)` / `conn.Write(data)` — like file I/O but over the network.
+- `bufio.NewScanner(conn)` and `scanner.Text()` — line-based reading.
+- `os.Getenv("VARNAME")` — read environment variables.
+- `os.Exit(1)` / `syscall.SIGTERM` — process lifecycle signals.
+- `os/signal.Notify(ch, syscall.SIGTERM)` — channel receives OS signals.
+
+**Build tooling:**
+
+- Run `go build -o test .` to compile a Go program.
+- Know what `go.mod` is and that `module <name>` declares the module path.
+- `make` wrapping `go build` (the Makefiles here do this — read them before writing).
+
+**Concurrency patterns (you will learn the details here, but know the shape):**
+
+- "Fan out" = multiple goroutines reading from different connections.
+- "Graceful shutdown" = receive SIGTERM, drain connections, exit cleanly.
+- A circuit breaker = track consecutive failures, stop trying after threshold, retry after
+  cooldown.
+
+If you've never written Go before, the first exercise (M7-ex01 backoff) is deliberately a
+gentle onboarding: goroutine + `net.Listen`/`net.Dial` + `time.Sleep`. The second exercise
+(circuit breaker) is where the pace picks up.
+
+---
+
 ## So what? (interview / portfolio)
 
 Resilience primitives are what "production-grade" actually means in infrastructure roles —

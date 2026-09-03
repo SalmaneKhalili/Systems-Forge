@@ -31,6 +31,24 @@ allocation failure is never a crash — it is a branch you already wrote.
 
 ---
 
+## Prerequisites
+
+Before starting M3, you should be comfortable with everything from M0–M2, plus:
+
+- Explain what a pointer is: `int *p = &x;` means `p` holds the address of `x`.
+- Dereference a pointer: `*p = 42;` writes 42 to the address `p` holds.
+- Do pointer arithmetic: `p + 1` advances by `sizeof(int)` bytes, not 1 byte.
+- Explain `sizeof(int)` vs `sizeof(char)` and why `(char *)p + 1` advances by 1 byte.
+- Cast between pointer types: `(char *)ptr` to treat raw bytes as a byte stream.
+- Call `malloc(N)` and check if it returned `NULL`. Free what you allocated.
+- Explain what `mmap` conceptually does: gives you a block of memory (or a file mapping).
+- Know what a page is: the OS manages memory in fixed-size chunks (usually 4096 bytes).
+- Explain what `fork` does at a high level: duplicates the process (you learned this in M2).
+
+You do NOT need to know: threads, mutexes, or concurrency. Those come in M4.
+
+---
+
 ## So what? (interview / portfolio)
 
 Hand-building allocators is the clearest evidence you understand what `malloc` actually is

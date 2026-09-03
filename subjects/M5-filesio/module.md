@@ -25,6 +25,25 @@ only after every fd is closed or every child is reaped — no PIDs, no addresses
 
 ---
 
+## Prerequisites
+
+Before starting M5, you should be comfortable with everything from M0–M4, plus:
+
+- Call `open(path, O_RDONLY)` and check the return value is ≥ 0 (or -1 on error).
+- Explain what a file descriptor is: a small non-negative integer that the kernel uses to
+  refer to an open file. `0` = stdin, `1` = stdout, `2` = stderr.
+- Call `read(fd, buf, count)` and handle three cases: full read, partial read (return < count),
+  and EOF (return == 0).
+- Call `write(fd, buf, count)` and handle short writes (return < count).
+- Call `close(fd)` and explain why you must close file descriptors (leak the descriptor table).
+- Explain `errno` and `perror` — if `open` returns -1, `perror("open")` prints a human-readable
+  message.
+- Know what `fork` does (M2) — you will combine `fork` + `dup2` in ex03.
+
+You do NOT need to know: `dup2`, pipes, `lseek`, or `select`/`poll`. You will learn them here.
+
+---
+
 ## So what? (interview / portfolio)
 
 The file-descriptor table is the mental model behind I/O of every kind — "everything is a

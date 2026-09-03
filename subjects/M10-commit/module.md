@@ -19,6 +19,28 @@ exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M10, you should be comfortable with everything from M0–M9, plus:
+
+- Explain what a distributed transaction is: a set of writes across multiple nodes that must
+  either ALL succeed or ALL fail (atomicity across machines).
+- Explain the two-phase commit (2PC) protocol:
+  - **Phase 1 (prepare):** coordinator asks all participants "can you commit?" — each replies
+    YES or NO.
+  - **Phase 2 (commit/abort):** coordinator tells all participants the outcome. If ANY
+    participant voted NO or timed out, the coordinator aborts.
+- Explain the coordinator's state machine: `INIT → PREPARING → DECIDING → COMMITTED/ABORTED`.
+- Explain what a quorum is: in voting, a quorum = ⌊N/2⌋ + 1 votes (majority).
+- Explain why a coordinator crash during phase 2 is dangerous: participants are locked in
+  PREPARED state and cannot proceed without the coordinator's decision.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` (from M7/M8) — ex05 is a TCP gateway
+  for a coordinator.
+
+You do NOT need to know: Raft, Paxos, or leader election. Those come in M11–M12.
+
+---
+
 ## So what? (interview / portfolio)
 
 Agreement protocols are the load-bearing wall of every distributed database and

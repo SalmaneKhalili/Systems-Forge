@@ -21,6 +21,30 @@ exercises are transcript-driven and byte-deterministic.
 
 ---
 
+## Prerequisites
+
+Before starting M11, you should be comfortable with everything from M0–M10, plus:
+
+- Explain what a replicated state machine is: multiple replicas process the same ordered
+  sequence of commands, so they all converge to the same state.
+- Explain what a log is in this context: an append-only sequence of entries, each containing
+  a command. The log IS the state machine's input.
+- Explain the commit point: the index up to which all replicas have the entry persisted.
+  A committed entry will NOT be lost, even if a leader crashes.
+- Explain the relationship between log index and state: entry at index 1 is applied first,
+  then index 2, etc. Applying out of order = incorrect state.
+- Explain what a snapshot is: a compacted representation of state up to index N, so you
+  can discard log entries before N.
+- Explain index arithmetic: log is 1-indexed (index 0 = sentinel/empty). `lastLogIndex` =
+  length of the log (or length - 1 if 0-indexed). Be precise about off-by-one.
+- Use `net.Listen`/`net.Dial` and `bufio.Scanner` (from M7/M8) — ex05 is a TCP gateway
+  for a single replica.
+
+You do NOT need to know: Raft, leader election, or log replication across nodes. M12 handles
+that. Here you build the log mechanics for ONE node.
+
+---
+
 ## So what? (interview / portfolio)
 
 The replicated state machine is the canonical "how a service stays consistent across
