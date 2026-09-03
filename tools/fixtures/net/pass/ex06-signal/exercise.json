@@ -1,0 +1,21 @@
+{
+  "id": "ex06-signal",
+  "module": "fixture-net",
+  "title": "net signal/wait_exit pass fixture",
+  "lang": "python",
+  "methods": [ { "type": "net", "net": {
+    "start": ["python3", "server.py"],
+    "port": 17018,
+    "wait_ms": 500,
+    "timeout_ms": 3000,
+    "connections": [
+      {
+        "steps": [
+          { "send": "PING\n", "expect": "PONG\n" },
+          { "signal": "TERM", "wait_exit": 0 }
+        ]
+      }
+    ]
+  } } ],
+  "expect": "pass"
+}

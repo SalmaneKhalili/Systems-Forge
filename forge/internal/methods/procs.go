@@ -8,6 +8,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"forge/internal/cur"
@@ -127,12 +128,12 @@ func runNet(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
 
 	if len(spec.Connections) == 0 {
 		_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-		runNetSteps(conn, spec.Steps, "step ", timeout, res)
+		runNetSteps(conn, h, spec.Steps, "step ", timeout, res)
 		return res, nil
 	}
 
 	_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-	if !runNetSteps(conn, spec.Connections[0].Steps, "conn 1 step ", timeout, res) {
+	if !runNetSteps(conn, h, spec.Connections[0].Steps, "conn 1 step ", timeout, res) {
 		return res, nil
 	}
 	for i := 1; i < len(spec.Connections); i++ {
@@ -144,7 +145,7 @@ func runNet(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
 			return res, nil
 		}
 		_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout+1000) * time.Millisecond))
-		if !runNetSteps(conn, spec.Connections[i].Steps, fmt.Sprintf("conn %d step ", i+1), timeout, res) {
+		if !runNetSteps(conn, h, spec.Connections[i].Steps, fmt.Sprintf("conn %d step ", i+1), timeout, res) {
 			return res, nil
 		}
 	}
@@ -173,8 +174,65 @@ func dialRetry(ctx context.Context, host string, port int, deadline time.Time) (
 
 // runNetSteps plays one conn's send/expect script, appending parts to res.
 // Returns false on the first failed step.
-func runNetSteps(conn net.Conn, steps []*cur.NetStep, prefix string, timeout int, res *Result) bool {
+func runNetSteps(conn net.Conn, h *sandbox.Handle, steps []*cur.NetStep, prefix string, timeout int, res *Result) bool {
 	for i, step := range steps {
+		// Handle signal step: send an OS signal to the server process group.
+		if step.Signal != "" {
+			sig, err := lookupSignal(step.Signal)
+			if err != nil {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " signal", Pass: false,
+					Detail: err.Error()})
+				return false
+			}
+			if err := syscall.Kill(-h.Pid(), sig); err != nil {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " signal", Pass: false,
+					Detail: err.Error()})
+				return false
+			}
+			if step.SleepMs > 0 {
+				time.Sleep(time.Duration(step.SleepMs) * time.Millisecond)
+			}
+			res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " signal", Pass: true,
+				Detail: "sent " + step.Signal})
+			// If no wait_exit, continue to next step (server may still be alive).
+			if step.WaitExit == nil {
+				continue
+			}
+			// wait_exit: wait for server to exit and check exit code.
+			exitCode, ok := h.Wait(time.Duration(timeout) * time.Millisecond)
+			if !ok {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: false,
+					Detail: "server did not exit within timeout"})
+				return false
+			}
+			if exitCode != *step.WaitExit {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: false,
+					Detail: fmt.Sprintf("exit code %d (want %d)", exitCode, *step.WaitExit)})
+				return false
+			}
+			res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: true,
+				Detail: fmt.Sprintf("exit %d", exitCode)})
+			continue
+		}
+
+		// Handle wait_exit without signal: just wait for server to exit.
+		if step.WaitExit != nil {
+			exitCode, ok := h.Wait(time.Duration(timeout) * time.Millisecond)
+			if !ok {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: false,
+					Detail: "server did not exit within timeout"})
+				return false
+			}
+			if exitCode != *step.WaitExit {
+				res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: false,
+					Detail: fmt.Sprintf("exit code %d (want %d)", exitCode, *step.WaitExit)})
+				return false
+			}
+			res.Parts = append(res.Parts, &Part{Name: prefix + itoa(i+1) + " wait_exit", Pass: true,
+				Detail: fmt.Sprintf("exit %d", exitCode)})
+			continue
+		}
+
 		send := decodeBytes(step.Send)
 		var sendErr error
 		if step.SendHex != "" {
@@ -289,4 +347,28 @@ func bytesEqual(a, b []byte) bool {
 		}
 	}
 	return true
+}
+
+func lookupSignal(name string) (syscall.Signal, error) {
+	s := strings.ToUpper(strings.TrimPrefix(strings.ToUpper(name), "SIG"))
+	switch s {
+	case "TERM":
+		return syscall.SIGTERM, nil
+	case "KILL":
+		return syscall.SIGKILL, nil
+	case "USR1":
+		return syscall.SIGUSR1, nil
+	case "USR2":
+		return syscall.SIGUSR2, nil
+	case "HUP":
+		return syscall.SIGHUP, nil
+	case "INT":
+		return syscall.SIGINT, nil
+	case "QUIT":
+		return syscall.SIGQUIT, nil
+	case "ALRM":
+		return syscall.SIGALRM, nil
+	default:
+		return 0, fmt.Errorf("unknown signal: %s", name)
+	}
 }

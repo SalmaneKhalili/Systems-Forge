@@ -47,9 +47,15 @@ conn 2:
   GET beta           -> 2
   GET alpha          -> 9
   GET gamma          -> 7
+
+The grader then sends **SIGTERM** to the process and requires it to exit **0**.
+This re-deploys the M7-ex04 graceful-shutdown skill: a crash would kill the
+process with a non-zero exit and could leave the WAL unsynced. A correct
+server installs a SIGTERM handler, stops accepting new connections, flushes
+and closes `store.log`, and exits 0.
 ```
 
-A server that serves each connection from a fresh (non-persistent) map, returns stale values, or answers the wrong value, is the bug.
+A server that serves each connection from a fresh (non-persistent) map, returns stale values, or answers the wrong value, is the bug. A server that dies on SIGTERM (non-zero exit) fails the graceful-shutdown step.
 
 ## Readings
 

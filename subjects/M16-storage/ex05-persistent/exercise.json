@@ -38,7 +38,8 @@
               { "send": "PUT gamma 7\n", "expect": "ok\n" },
               { "send": "GET beta\n", "expect": "2\n" },
               { "send": "GET alpha\n", "expect": "9\n" },
-              { "send": "GET gamma\n", "expect": "7\n" }
+              { "send": "GET gamma\n", "expect": "7\n" },
+              { "signal": "TERM", "wait_exit": 0 }
             ]
           }
         ]

@@ -181,6 +181,14 @@ type NetStep struct {
 	ExpectHex string `json:"expect_hex,omitempty"`
 	Contains  string `json:"contains,omitempty"` // substring match on received bytes
 	SleepMs   int    `json:"sleep_ms,omitempty"`
+
+	// Signal sends an OS signal to the server process group.
+	// Accepted names: TERM, KILL, USR1, USR2, HUP, INT (SIG prefix optional).
+	Signal string `json:"signal,omitempty"`
+
+	// WaitExit waits for the server process to exit and checks the exit code.
+	// Nil means "just wait, don't check the code". Non-nil means check the code matches.
+	WaitExit *int `json:"wait_exit,omitempty"`
 }
 
 // QuizSpec grades a checkpoint answers file against the exercise's Answers.

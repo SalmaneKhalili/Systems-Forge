@@ -35,9 +35,10 @@ type Options struct {
 
 // Handle wraps a running background process group.
 type Handle struct {
-	pgid int
-	done chan struct{}
-	once sync.Once
+	pgid     int
+	done     chan struct{}
+	once     sync.Once
+	exitCode int
 }
 
 // Pid returns the process group id of the launched command (all children
@@ -47,6 +48,30 @@ func (h *Handle) Pid() int {
 		return -1
 	}
 	return h.pgid
+}
+
+// ExitCode returns the process exit code after it has exited.
+// Returns -1 if the handle is nil or the process hasn't exited yet.
+func (h *Handle) ExitCode() int {
+	if h == nil {
+		return -1
+	}
+	<-h.done
+	return h.exitCode
+}
+
+// Wait blocks until the process exits and returns the exit code.
+// Returns -1 and false if the timeout elapses before exit.
+func (h *Handle) Wait(timeout time.Duration) (int, bool) {
+	if h == nil {
+		return -1, false
+	}
+	select {
+	case <-h.done:
+		return h.exitCode, true
+	case <-time.After(timeout):
+		return -1, false
+	}
 }
 
 // Stop terminates the process group. When graceful is true it sends SIGTERM
@@ -202,6 +227,9 @@ func Background(o Options) (*Handle, error) {
 	h := &Handle{pgid: cmd.Process.Pid, done: make(chan struct{})}
 	go func() {
 		_ = cmd.Wait()
+		if cmd.ProcessState != nil {
+			h.exitCode = cmd.ProcessState.ExitCode()
+		}
 		close(h.done)
 	}()
 	return h, nil

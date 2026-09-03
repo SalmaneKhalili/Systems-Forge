@@ -146,11 +146,13 @@ Core principles (user-set, non-negotiable):
       `TOTAL 47/50`.
 
 ### In progress
-- [in-progress] **2026-09-03 — Skill-Reuse Audit (§16) + Batch A shipped.** Crawled all 92
-      exercises both directions (forward=atrophy, backward=readiness). **Batch A done**:
-      M7-ex01 Python→Go (Go onboarding), PASS/FAIL verified, selftest 45/45. **Batch B
-      deferred** (switch reuse breaks byte-determinism). Batches C/D pending a build decision
-      (grader-touching). §14 2026-09-03.
+- [in-progress] **2026-09-03 — Unblocking Batch C (net runner signal/restart).** The `net`
+      runner now supports a `signal` step and a `wait_exit` step (see §14 2026-09-03 entry),
+      which lifts the stated Batch C blocker ("the net runner can't send OS signals or restart
+      the server"). First re-deployment landed: **M16-ex05 requires graceful SIGTERM shutdown**
+      (reuses M7-ex04), PASS/FAIL verified, selftest 47/47. Remaining Batch C targets
+      (M14/M15 similarity) not yet converted; and the "restart / supervisor" step type is not
+      yet built (M7-ex05 watchdog re-verify) — deferred. §14 2026-09-03.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05`, all graded
       `build`+`quiz`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
       broken `ft_strlen` verified to FAIL (both-way determinism).
@@ -1020,6 +1022,27 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-03** **Grader: `net` signal + wait_exit steps (lifts the Batch C blocker) + M16-ex05
+  re-deployment.** The `net` runner previously could only send/receive line bytes — it could
+  not signal the server or check its exit code, which blocked the whole "reuse M7 graceful
+  shutdown later" chain (§16 Batch C). This commit adds:
+  - **`net` step `signal`**: sends an OS signal (`TERM`, `KILL`, `USR1/2`, `HUP`, `INT`,
+    `QUIT`, `ALRM`) to the server process. `sandbox.Handle` now exposes the target's real
+    exit code.
+  - **`net` step `wait_exit`**: waits for the server to exit and asserts its exit code —
+    verifies graceful shutdown (exit 0) vs being killed (non-zero).
+  - **Fixtures**: `net/pass/ex06-signal` + `net/fail/ex06-signal` prove both directions →
+    **selftest 45→47 fixtures, 0 mismatches**.
+  - **M16-ex05 (persistent)** re-deploy: the WAL-backed KV gateway now must shut down
+    gracefully on SIGTERM (flush+close `store.log`, exit 0) — re-using the M7-ex04 skill in
+    the storage capstone. Reference updated; verified **PASS** for the reference and **FAIL**
+    for a no-handler negative control (`exit -1 (want 0)`); selftest still 47/47.
+
+- **2026-09-03** **Every module.md now lists concrete prerequisites** — a `## Prerequisites`
+  section naming the specific skills/functions you must know before starting (and what you do
+  NOT need yet). M7 gets the deepest set since Go is introduced there. Docs-only; no grader
+  impact. Commit `5b0d876`.
+
 - **2026-09-03** **Skill-Reuse Audit + Batch A (Go onboarding)** — commit `7f4bb12` landed the
   reference-integrity audit; the skill-reuse crawl (§16) ran both directions over all 92
   exercises. **Batch A shipped**: `M7-ex01 backoff` converted from Python to **Go**, making it
@@ -1726,10 +1749,13 @@ output).
   fault proofs (they're format-specific), or requires redesigning the gateway's wire format.
   Not a clean drop-in; deferred to a future design pass rather than risk the deterministic
   suite. The switch stays a strong self-contained M8 deliverable.
-- **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — deferred with Batch D as
-  a group; each requires editing a working `net` fixture + gateway wire protocol. Deeper dive
-  confirmed these are grader-touching, not drop-in. Awaiting a build decision on whether to
-  invest in grader surgery.
+- **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — **partially shipped
+  2026-09-03** (see §14): the `net` runner gained `signal` + `wait_exit` steps (the grader
+  surgery that unblocked this batch), and **M16-ex05 now requires graceful SIGTERM shutdown**,
+  re-deploying M7-ex04 in the storage capstone (PASS/FAIL verified, selftest 47/47). The
+  remaining Batch C targets (M14/M15 gateways using the same pattern) are natural follow-ups
+  now that the grader supports signalling; and the "restart / supervisor re-verify" step type
+  is still not built (deferred).
 - **Batch D — re-deploy M2 processes + M4 rwlock/atomic + M3 mmap** — **M17-ex01 RWMutex
   shipped 2026-09-03** (re-deploys M4-ex04 rwlock in Go; the read-heavy registry uses
   `RLock` for Get/Snapshot, `Lock` for Inc/Add; verified PASS/FAIL + selftest 45/45). The
