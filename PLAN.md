@@ -1027,6 +1027,17 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-03** **Skill-Reuse Audit closed; three items intentionally deferred.** Forward and
+  backward maps (§16) are resolved except three deliberate design calls, each re-confirmed
+  this pass: (1) **Batch B** M8 switch/framing re-deploy (breaks the switch's format-specific
+  fault proofs or forces a gateway wire-format redesign); (2) **Batch D residual** M12
+  subprocess spawn (risks flagship raft-capstone determinism); (3) **Batch C M6-timeout half**
+  read-deadline re-deployment — **re-investigated and confirmed architecturally blocked**: the
+  natural target M14-ex05 is explicitly non-temporal ("Never read the wall clock; no sleeps,
+  no timestamps"), so re-deploying a real-time `SO_RCVTIMEO` there would negate the exercise's
+  own contract, not merely risk determinism. Documented as deliberate gaps in §16.6, not
+  unfinished work. Selftest **49 fixtures, 0 mismatches**; 92/92 exercises.
+
 - **2026-09-03** **Batch E — PLAN.md closeout sweep.** Documents already landed and now
   reflected where the tracker was stale: the Skill-Reuse Audit (§16) and Batch A/B/C sweeps
   added to §14; net grader signal/wait_exit/restart steps added to §9 fixture inventory;
@@ -1822,5 +1833,31 @@ Not all batches may be warranted after the deeper dive that Batch A/B force; the
 arbiter, not a preset to-dump list. Batches are ordered by de-risking (do A first — it fixes
 the largest single failure). Batches B–D are genuinely grader-touching; each deserves its own
 design decision rather than an unvetted bulk apply.
+
+### 16.6 Audit closed 2026-09-03 — three items intentionally deferred
+
+The Skill-Reuse Audit is **complete**. Forward and backward maps are resolved except three
+deliberate design calls, each re-confirmed on this final pass:
+
+1. **Batch B — M8 switch/framing re-deploy** (M8 atrophy). Routing a later gateway through
+   the learner's fault-injection switch breaks the switch's counter-backend-specific
+   `R<SEQ> <content>` fault proofs (format-specific), or forces a redesign of the later
+   gateway's wire format. Not a clean drop-in.
+2. **Batch D residual — M12 subprocess spawn** (M2 process-lifecycle atrophy). Re-deploying
+   fork/exec/waitpipe as a real subprocess in a later gate risks the flagship M12 raft
+   capstone's byte-determinism. Deferred.
+3. **Batch C M6-timeout half — read-deadline re-deployment** (M6 `SO_RCVTIMEO` atrophy).
+   **Re-investigated 2026-09-03 and confirmed architecturally blocked, not merely risky**:
+   the natural target, `M14-ex05`, is *explicitly non-temporal* — its subject states
+   "Never read the wall clock; no sleeps, no timestamps in replies." Re-deploying a
+   real-time read timeout there would negate the exercise's own contract, not just risk
+   determinism. No other M9–M17 exercise has a natural home for the read-timeout skill
+   without the same contradiction.
+
+These are **documented, deliberate gaps** — the audit's deliverable, not unfinished work.
+The two strong reuse spines (§16.1) and Batches A/C/D-shipped cover the high-value chains;
+the three residuals are lower-value and each would compromise either the grade's
+determinism or an exercise's own stated contract. Revisit only if a future module provides
+a natural, zero-compromise seam.
 
 - Update §3 snapshot + §14 log after every session.
