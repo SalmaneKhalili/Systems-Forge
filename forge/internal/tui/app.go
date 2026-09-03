@@ -5,6 +5,8 @@ package tui
 import (
 	"context"
 	"fmt"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -27,7 +29,6 @@ const (
 )
 
 var (
-	styleHeader = lipgloss.NewStyle().Bold(true)
 	styleModule = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("39"))
 	styleActive = lipgloss.NewStyle().Background(lipgloss.Color("237")).Foreground(lipgloss.Color("15"))
 	styleDim    = lipgloss.NewStyle().Foreground(lipgloss.Color("243"))
@@ -100,6 +101,7 @@ func newApp(root string) (*app, error) {
 		eng.Close()
 		return nil, err
 	}
+	sortModulesNumeric(curriculum.Modules)
 	rmd, err := glamour.NewTermRenderer(glamour.WithAutoStyle(), glamour.WithWordWrap(100))
 	if err != nil {
 		eng.Close()
@@ -114,6 +116,7 @@ func newApp(root string) (*app, error) {
 		leftW:   30,
 		winTop:  0,
 		winH:    20,
+		mode:    "home",
 	}
 	rebuild(a)
 	a.viewPort = viewport.New(80, 24)
@@ -232,6 +235,24 @@ func bar(done, total int) string {
 	return "[" + strings.Repeat("#", filled) + strings.Repeat(".", width-filled) + "]"
 }
 
+// refreshContent renders the viewport content appropriate to the current mode.
+// Full-pane modes (home, activity, profile, score) own the whole width; split
+// modes (browse, spec) reuse the spec pane.
+func (a *app) refreshContent() {
+	switch a.mode {
+	case "home":
+		a.viewPort.SetContent(a.renderHome())
+	case "activity":
+		a.viewPort.SetContent(a.renderHeatmap())
+	case "profile":
+		a.viewPort.SetContent(a.renderProfile())
+	case "score":
+		a.loadScore()
+	default:
+		a.loadSpec()
+	}
+}
+
 // msgCheck signals a completed grading run.
 type msgCheck struct {
 	id     string
@@ -253,11 +274,7 @@ func (a *app) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			a.leftW = 22
 		}
 		a.initViewport()
-		if a.mode == "score" {
-			a.loadScore()
-		} else {
-			a.loadSpec()
-		}
+		a.refreshContent()
 		return a, nil
 
 	case tea.KeyMsg:
@@ -326,7 +343,17 @@ func (a *app) handleKey(m tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "tab":
 		a.enter()
 	case "e", "h", "left":
-		a.mode = "browse"
+		a.mode = "home"
+		a.refreshContent()
+	case "1":
+		a.mode = "home"
+		a.refreshContent()
+	case "2":
+		a.mode = "activity"
+		a.refreshContent()
+	case "3":
+		a.mode = "profile"
+		a.refreshContent()
 	case "x":
 		return a, a.checkSel()
 	case "s":
@@ -429,6 +456,18 @@ func (a *app) View() string {
 }
 
 func (a *app) renderHeader() string {
+	modeChip := func(label string, active bool) string {
+		if active {
+			return styleActive.Render(" " + label + " ")
+		}
+		return styleDim.Render(" " + label + " ")
+	}
+	var tabs string
+	tabs = modeChip("home", a.mode == "home") + " " +
+		modeChip("activity", a.mode == "activity") + " " +
+		modeChip("profile", a.mode == "profile") + " " +
+		modeChip("browse", a.mode == "browse" || a.mode == "spec")
+
 	var allIDs []string
 	for _, mod := range a.cur.Modules {
 		for _, ex := range mod.Exercises {
@@ -436,9 +475,12 @@ func (a *app) renderHeader() string {
 		}
 	}
 	done, _, total, _ := a.eng.Store.OverallProgress(allIDs)
-	left := styleHeader.Render(" forge — systems-forge ")
+
+	left := styleTitle.Render(" systems-forge ")
+	middle := " " + tabs + " "
 	right := fmt.Sprintf(" %d/%d (%.0f%%) ", done, total, pct(done, total))
-	line := styleHeader.Render(left)
+
+	line := left + middle
 	pad := a.width - lipgloss.Width(line) - lipgloss.Width(right)
 	if pad < 1 {
 		pad = 1
@@ -454,9 +496,15 @@ func pct(d, t int) float64 {
 }
 
 func (a *app) renderFooter() string {
-	keys := " ↑↓/jk move · enter view · x check · s score · b browse · ? help · q quit "
 	if a.checking {
 		return styleBanner.Render(a.spinner.View() + " checking " + selectedID(a) + "...")
+	}
+	var keys string
+	switch a.mode {
+	case "browse", "spec":
+		keys = " ↑↓/jk move · enter view · x check · tab: next · 1: home · 2: activity · 3: profile · ? help · q quit "
+	default:
+		keys = " 1: home · 2: activity · 3: profile · b: browse · x check · q quit "
 	}
 	f := " " + keys
 	if a.lastCheck != "" {
@@ -482,14 +530,22 @@ func (a *app) renderBody() string {
 	if bodyH < 1 {
 		bodyH = 1
 	}
+	if a.winH != bodyH {
+		a.winH = bodyH
+	}
+
+	// Full-pane modes: the viewport owns the whole width.
+	if a.mode == "home" || a.mode == "activity" || a.mode == "profile" || a.mode == "score" {
+		a.viewPort.Width = a.width
+		a.viewPort.Height = bodyH
+		return a.viewPort.View()
+	}
+
 	leftW := a.leftW
 	rightW := a.width - leftW
 	if rightW < 20 {
 		rightW = 20
 		leftW = a.width - rightW - 1
-	}
-	if a.winH != bodyH {
-		a.winH = bodyH
 	}
 	a.viewPort.Width = rightW
 	a.viewPort.Height = bodyH
@@ -562,19 +618,42 @@ func maxInt(a, b int) int {
 	return b
 }
 
+// moduleNum extracts the numeric part of a module id like "M14-membership".
+func moduleNum(id string) int {
+	id = strings.TrimPrefix(id, "M")
+	if i := strings.IndexByte(id, '-'); i >= 0 {
+		id = id[:i]
+	}
+	n, err := strconv.Atoi(id)
+	if err != nil {
+		return 0
+	}
+	return n
+}
+
+// sortModulesNumeric orders modules by their number (M0, M1, M2, ...) instead
+// of the lexicographic load order (M0, M10, M11, ...).
+func sortModulesNumeric(mods []*cur.Module) {
+	sort.SliceStable(mods, func(i, j int) bool {
+		return moduleNum(mods[i].ID) < moduleNum(mods[j].ID)
+	})
+}
+
 func helpText() string {
 	return `
 # keys
 
 | key | action |
 |-----|--------|
+| 1 | home dashboard (progress + activity) |
+| 2 | activity heatmap (contribution grid) |
+| 3 | profile · skills earned |
+| b | browse the module tree |
 | j / k / ↑ / ↓ | move in the tree |
 | enter, tab, l | open the exercise spec |
 | x | run the grader for the selected exercise |
 | s | progress score |
-| b / e / h | back to the tree |
 | g / G | top / bottom |
-| n | next exercise |
 | ? | this help |
 | q / ctrl+c | quit |
 `

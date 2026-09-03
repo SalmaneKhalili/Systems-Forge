@@ -149,6 +149,39 @@ func (s *Store) OverallProgress(all []string) (passed, attempted, total int, err
 	return passed, attempted, total, nil
 }
 
+// ActivityDay is the number of graded runs on a UTC calendar day.
+type ActivityDay struct {
+	Day   time.Time // UTC midnight
+	Count int
+}
+
+// ActivityByDay returns the total number of runs per UTC day within the
+// [start, end] window (inclusive), for the contribution heatmap. Days with no
+// runs are omitted; callers fill gaps from the window.
+func (s *Store) ActivityByDay(start, end time.Time) (map[string]int, error) {
+	rows, err := s.db.Query(
+		`SELECT ran_at FROM runs WHERE ran_at >= ? AND ran_at <= ?`,
+		start.UTC().Format(time.RFC3339Nano), end.UTC().Format(time.RFC3339Nano))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	dayKey := func(t time.Time) string { return t.UTC().Format("2006-01-02") }
+	out := map[string]int{}
+	for rows.Next() {
+		var ranAt string
+		if err := rows.Scan(&ranAt); err != nil {
+			return nil, err
+		}
+		t, perr := time.Parse(time.RFC3339Nano, ranAt)
+		if perr != nil {
+			continue
+		}
+		out[dayKey(t)]++
+	}
+	return out, rows.Err()
+}
+
 func scanRun(row interface{ Scan(...any) error }) (*Run, error) {
 	r := new(Run)
 	var ranAt string
