@@ -5,7 +5,8 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-02 (pre-release audit: 92/92 pass, port collision fixed)
+> Last updated: 2026-09-03 (Skill-Reuse Audit §16 + Batch A/B/C sweeps; net grader gained
+> signal/wait_exit/restart steps; selftest 49/49, 0 mismatches)
 
 ---
 
@@ -46,7 +47,7 @@ Core principles (user-set, non-negotiable):
 
 ---
 
-## 3. Status Snapshot (2026-08-30)
+## 3. Status Snapshot (2026-09-03)
 
 ### Done (verified)
 - [x] Toolchain verified: gcc 13.3.0, clang 18.1.3, GNU Make 4.3, python3 3.12.3, git 2.43.0.
@@ -363,7 +364,7 @@ proven by automated fixtures before the exercise is accepted. Verified per metho
 
 ---
 
-## 9. Fixture Inventory (tools/fixtures) — ALL GREEN 2026-08-30
+## 9. Fixture Inventory (tools/fixtures) — ALL GREEN 2026-09-03
 
 Layout: `tools/fixtures/<method>/<expect>/<case>/exercise.json` (+ artifacts). `expect` = `pass|fail`;
 only used by `forge selftest`; selftest runs methods in the fixture dir directly (no answers mirror).
@@ -383,7 +384,10 @@ Module-gate `net` fixtures (ex05 gateways), all both-ways:
 `ex05-telemetry`(pass)/`-telemetryfresh`(fail, M17 telemetry gateway), `ex05-txstore`(pass)/
 `-txstoreleak`(fail, M15 txstore gateway), `ex06-nodewnly`(fail, M12 raft cluster — no
 replication to followers), `ex06-walded`(fail, M15 durable txstore — writes never reach the WAL),
-plus M4/M8/M11/M12/M13/M15 gateways → selftest **45 fixtures, 0 mismatches**.
+plus M4/M8/M11/M12/M13/M15 gateways, the `net` **signal/wait_exit** pair
+`ex06-signal`(pass)/`ex06-signal`(fail, M16 graceful shutdown), and the `net` **restart**
+re-verify pair `ex07-restart`(pass)/`ex07-restart`(fail, server ignores SIGTERM → cannot be
+restarted) → selftest **49 fixtures, 0 mismatches**.
 | scenario | `pass/ex01-ok` exit 0 + FORGE_META | `fail/ex01-ko` exit 1 |
 | fault | `pass/ex01-ok` exit 1 + `FORGE_RESULT: pass` (tests override) | `fail/ex01-ko` exit 0 + `FORGE_RESULT: fail` (tests override) |
 | lincheck | `pass/ex01-lin` linearizable single-register history | `fail/ex01-nonlin` real-time contradiction (read of v1 must follow write of v2) |
@@ -1022,6 +1026,13 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 ---
 
 ## 14. Log / Changelog
+
+- **2026-09-03** **Batch E — PLAN.md closeout sweep.** Documents already landed and now
+  reflected where the tracker was stale: the Skill-Reuse Audit (§16) and Batch A/B/C sweeps
+  added to §14; net grader signal/wait_exit/restart steps added to §9 fixture inventory;
+  selftest count updated 47→**49** throughout; "Last updated" + §3 snapshot rolled to
+  2026-09-03; tracker items #33 (Anki decks) and #34 (`95` TUI survey) confirmed already
+  struck as DONE. Reads consistently as "49 fixtures, 0 mismatches, 92/92 exercises".
 
 - **2026-09-03** **Grader: `net` `restart` re-verify step (closes the Batch C "supervisor
   re-verify" deferral) + 2 new fixtures.** The `net` runner now supports a `restart` step
@@ -1802,8 +1813,10 @@ output).
   M12 subprocess redesign risks the flagship capstone's determinism; M16 already does
   explicit disk I/O (os.File + encoding/binary) — mmap re-deployment violates the
   stdlib-only constraint. Marked done at M17 rwlock; residual deferred.
-- **Batch E — close PLAN md sweep**: add the audits to §14 changelog + "Last updated"; strike
-  #33/#34 tracker lines that are already done.
+- **Batch E — close PLAN md sweep** — **DONE 2026-09-03**: Skill-Reuse Audit (§16) + Batch A/B/C
+  sweeps added to §14; net grader signal/wait_exit/restart steps added to §9 fixture inventory;
+  selftest count updated 47→**49**; "Last updated" + §3 snapshot rolled to 2026-09-03; #33/#34
+  already struck as DONE. Tracker reads consistently: 49 fixtures, 0 mismatches, 92/92 exercises.
 
 Not all batches may be warranted after the deeper dive that Batch A/B force; the map is the
 arbiter, not a preset to-dump list. Batches are ordered by de-risking (do A first — it fixes
