@@ -26,7 +26,13 @@ func (m *Metrics) Get(name string) (int64, bool)
 func (m *Metrics) Snapshot() []KV
 ```
 
-Use a mutex so concurrent goroutines can update safely. The provided `main.go` increments counters from a couple of goroutines, snapshots them, and prints the result. `make all` must build `test`; `./test` must print the reference transcript exactly.
+Use a **read-write lock** (`sync.RWMutex`) so concurrent goroutines can update safely and
+readers don't serialize with each other. This is your M4-ex04 rwlock revenge in Go: a
+metrics registry is read far more than written (snapshots feed dashboards constantly while
+counters are bumped only occasionally), so **reads take `RLock`, writes take `Lock`** — the
+exact asymmetry you built in C. The provided `main.go` increments counters from a couple of
+goroutines, snapshots them, and prints the result. `make all` must build `test`; `./test`
+must print the reference transcript exactly.
 
 ## Constraints
 

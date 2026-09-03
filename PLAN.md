@@ -146,6 +146,11 @@ Core principles (user-set, non-negotiable):
       `TOTAL 47/50`.
 
 ### In progress
+- [in-progress] **2026-09-03 — Skill-Reuse Audit (§16) + Batch A shipped.** Crawled all 92
+      exercises both directions (forward=atrophy, backward=readiness). **Batch A done**:
+      M7-ex01 Python→Go (Go onboarding), PASS/FAIL verified, selftest 45/45. **Batch B
+      deferred** (switch reuse breaks byte-determinism). Batches C/D pending a build decision
+      (grader-touching). §14 2026-09-03.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05`, all graded
       `build`+`quiz`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
       broken `ft_strlen` verified to FAIL (both-way determinism).
@@ -1015,6 +1020,18 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 
 ## 14. Log / Changelog
 
+- **2026-09-03** **Skill-Reuse Audit + Batch A (Go onboarding)** — commit `7f4bb12` landed the
+  reference-integrity audit; the skill-reuse crawl (§16) ran both directions over all 92
+  exercises. **Batch A shipped**: `M7-ex01 backoff` converted from Python to **Go**, making it
+  the module's gentle Go-onboarding (goroutine + `net.Listen`/`net.Dial`/`time.Sleep`) —
+  removing the unprimed-Python liability and priming Go TCP right before the harder M7-ex02
+  breaker (structs/iota/closure). Scaffold now ships `go.mod`; graded via `build` (`make all`
+  → `./test`) + `quiz` like the rest of M7. Verified **PASS** for the reference and **FAIL**
+  for a single-attempt (no-retry) negative control; `forge selftest` still **45/45**.
+  **Batch B deferred** (see §16): routing a later gateway through the M8 switch breaks the
+  switch's counter-backend-specific fault proofs or the gateway wire format — deferred to a
+  future design pass rather than force a risky grader change.
+
 - **2026-09-02** **Pre-release exhaustive audit (92/92 pass, deterministic)** — full
   sweep before learner use, from a *fresh* checkout (not the working copy):
   - **Reference-PASS proven for all 92**: merged `subjects/` stencil + `solutions/`
@@ -1568,7 +1585,7 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         stays in `subject.md`; scaffold/harness/quiz remain in subjects).
       - Both-ways verified: bare → 92/92 FAIL (0 leaks); restored ref → PASS; selftest 45/45.
       See §14 2026-09-02 entry.
-33. **Quizzes on ANKI — export Q&A to spaced-repetition decks** (PRIO 1) — every
+33. ~~**Quizzes on ANKI — export Q&A to spaced-repetition decks**~~ **DONE 2026-09-02** (PRIO 1) — every
       exercise's `quiz` `answers[]` in `subjects/*/ex*/exercise.json` is also a review
       card. `tools/anki/export.py` (stdlib, no deps) regenerates per-module Anki decks from
       the canon (never from gitignored solutions/):
@@ -1583,7 +1600,7 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
         week's modules. **Keep decks fresh whenever `exercise.json` quiz changes** (regen +
         delete old notes to avoid duplicate/drifted cards).
       Playbook + caveats in `tools/anki/README.md`.
-34. **App "95" TUI — inspiration survey** (PRIO 2) — `/home/salmane/.local/bin/95` v1.4.4
+34. ~~**App "95" TUI — inspiration survey**~~ **DONE 2026-09-02** (PRIO 2) — `/home/salmane/.local/bin/95` v1.4.4
       = a coding-challenge CLI (GitHub OAuth, `init`/`run`/`test`/`retry`/`version`;
       candidate submissions validated against a remote backend, "floors"). TUI could not be
       captured live here (its `init`/onboarding needs the backend + login → times out
@@ -1616,3 +1633,116 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 - Update §3 snapshot + §14 log after every session.
 - Keep README (user contract) and PLAN.md (internal tracker) consistent: README = what it does,
   PLAN = how it's built + where it's going.
+
+---
+
+## 16. Skill-Reuse Audit & Refactor (2026-09-03)
+
+**Governing principle (learner):** *every concept learned in a module must be actively
+re-deployed in a later module — otherwise why learn it.* A skill taught once and never
+exercised again is **atrophy**; a skill assumed in a later exercise but never taught/primed
+is a **readiness gap**. A curriculum should have neither.
+
+**Method** — full read-only crawl of all **92 exercises / 18 modules**, walked in both
+directions as a first-time learner, then recursed:
+- **Forward**: what each exercise teaches → is it re-deployed (learner actively re-does it) in
+  any strictly-later module? Every taught-but-once skill = atrophy.
+- **Backward**: what each exercise assumes → was that taught **and primed** (applied, not just
+  read) earlier? Every assumed-but-unprimed prerequisite = readiness gap.
+- **Recurse**: re-ran the map against the results to confirm nothing taught-once and nothing
+  assumed-unprimed was missed; seam-checked M8→M9 (the C→Go transition — which the crawl
+  corrected to land at **M7**, not M9).
+
+### 16.1 The two strong spines (what IS correctly reused)
+
+These are the genuine cross-module reuse chains and must be protected by any future change:
+1. **TCP accept-loop + line-framing server**: M6 (C sockets) → M7-ex03 (Go health) →
+   every M9–M17 gateway (sequencer, tx, replica, raft, shard, membership, txstore, durable,
+   kv, telemetry).
+2. **Log / commit / quorum / WAL chain**: M10 quorum → M12 Raft majority; M11 committed-log →
+   M12/M15/M16; M15-ex02 WAL/replay → M15-ex06 + M16-ex03/ex05. Mutex-protected shared state
+   (M4) also crosses the seam as Go `sync.Mutex` (M12/M15/M16/M17).
+
+### 16.2 Forward map — top skill-atrophy gaps (teach-once-then-drop)
+
+Confirmed by crawling all 92 exercises (quote-evidence on record):
+
+| Skill | Taught | Re-deployed after? | Fix direction |
+|-------|--------|--------------------|---------------|
+| Shell scripting / mini-CI | M0-ex02/ex05 | **nowhere** | re-deploy where bash is the right tool (a run/verify harness in a later gate) |
+| Makefile *design* (non-trivial) | M0/M1 | **boilerplate only, provided from M7** | require re-design (a `check`/`run ARGS=` goal) in later C gates |
+| fork/exec/waitpid/pipe/process lifecycle | M2 | **nowhere** | re-deploy via real OS processes in a later gate (e.g. supervisor/3-node cluster) |
+| allocators / mmap / COW / OOM | M3 | **nowhere** | re-deploy where explicit memory is honest (M16 disk I/O via mmap, bounded-refusal) |
+| atomics / rwlock / condvar / bounded queue | M4-ex03/04/05 | **only mutex survives** | re-deploy `sync.RWMutex`/atomic in read-heavy M17 registry |
+| fd table / dup2 / redirect / tee | M5 | **within M5 only** | carry fd discipline into Go file path (M16) |
+| socket read timeout `SO_RCVTIMEO` | M6-ex04 | **nowhere** | re-deploy as read deadline in M14 failure-detection heartbeat |
+| backoff / breaker / health / shutdown / supervisor | M7-ex01..05 | **nowhere** | re-deploy as reconnect-backoff + `/health` + graceful-stop in M14/M15/M16 persistent gateways |
+| length-prefixed framing + fault-injection switch | M8-ex01/03-05 | **nowhere** (module.md *promises* reuse but no M9+ subject uses `TARGETFAULTS`) | make M9–M12 gateways run *through* the learner's switch, or speak M8 framing |
+| vector clocks / causality / total order | M9-ex02/03/04 | **concept only** | re-deploy M9 vector clock directly in M14 gossip merge |
+| 2PC coordinator / vote finality | M10-ex01/02 | **nowhere** (M15 re-teaches from scratch) | make M15-ex06 drive real prepare/commit |
+
+### 16.3 Backward map — top readiness gaps (assumed-but-never-primed)
+
+Confirmed by crawling all 92 exercises (quote-evidence on record):
+
+| # | Gap | Assumed where | Status |
+|---|-----|---------------|--------|
+| 1 | **Go language/tooling/runtime never taught before required** (structs, methods, `iota`, closures, goroutines, channels, `os/signal`, `net`, `bufio`, `encoding/binary`, file I/O) | M7-ex02 (first Go, right after C M6) → all M8–M17 | SEVERE — no primer in M0–M6 |
+| 2 | **Go networking API (`net.Listen`/`net.Dial`/`bufio`) assumed, never re-taught after C sockets** | M8 switch, every M9+ gateway | SEVERE — concepts (C) primed; Go API surface unprimed |
+| 3 | **Real 3-node raft cluster over live sockets requires concurrent multi-listener networking** | M12-ex06 | SEVERE — logic primed (ex01–05), concurrent multi-node I/O is a fresh order of magnitude |
+| 4 | **Go file I/O + binary serialization (`os.File`, `encoding/binary` LE) unprimed** | M16-ex02/03/05 (SSTable/WAL) | SEVERE — M5 taught C files, not Go disk I/O |
+| 5 | **Go server concurrency (goroutine-per-conn + `sync.Mutex` over shared store)** | M15-ex05, M16-ex05, M17-ex05 | MODERATE — only lightly touched in M7/M8 |
+| 6 | **`-pthread` on the recipe but not in `CFLAGS` — Makefile capability M0 never showed** | M4-ex01 root | MODERATE — M0 taught only all/fclean/re |
+| 7 | Python networking (`socket`, background-thread server) | M7-ex01 | SECONDARY — M0-ex03 Python is stdlib-tree-walk only |
+
+### 16.4 Structural finding — the C→Go seam is at M7, and M8's "reuse contract" is unrealized
+
+- The transition begins at **M7-ex02** (circuit breaker in Go), not M9 as the blueprint
+  assumed. Combined with (16.3 #1), Go is introduced with **zero onboarding**.
+- M8 module.md states the switch "is the injector every later grader reuses" and its framing
+  "is the wire format the M9+ replicas speak." **No M9–M17 subject.md references the switch,
+  `TARGETFAULTS`, or M8 length-prefixed framing** — every later gateway re-invents a different
+  newline protocol. The   promised continuity is platform-side fiction, not learner reuse.
+  **Batch D partially shipped**: M17-ex01 Metrics converted from `sync.Mutex` to
+  `sync.RWMutex` — reads (Get/Snapshot) take `RLock`, writes (Inc/Add) take `Lock` —
+  re-deploying M4-ex04 read-write lock in Go. Verified PASS through `forge check` + selftest
+  45/45; transcript byte-identical. Remaining Batch C/D items (SIGTERM graceful shutdown,
+  M12 subprocess spawn, read-deadline re-deployment) proved not viable without grader surgery
+  or major redesign — deferred per §16 deeper-dive conclusion.
+
+### 16.5 Fix plan (batched, byte-determinism preserved)
+
+Approach: keep the C→Go transition (bridge, don't gut), and let the map above decide each fix.
+Each batch touches only what the crawl proves atrophied or unprimed. **Every edit must stay
+byte-deterministic under the `forge` graders** (no wall-clock, no ASCII change to graded
+output).
+
+- **Batch A — Go onboarding** — **DONE 2026-09-03**: `M7-ex01 backoff` converted from Python to
+  Go, becoming the module's gentle first Go (goroutine + `net`/`time`), remove the unprimed
+  Python, and priming Go TCP before the harder M7-ex02. Verified PASS/FAIL + selftest 45/45.
+  (Readiness #7 → closed; #1/#2 softened — Go now has ex01+ex02 before the harder gateway work.)
+- **Batch B — make the M8 switch + framing real** — **DEFERRED 2026-09-03**: routing a later
+  gateway through the switch breaks the switch's counter-backend-specific `R<SEQ> <content>`
+  fault proofs (they're format-specific), or requires redesigning the gateway's wire format.
+  Not a clean drop-in; deferred to a future design pass rather than risk the deterministic
+  suite. The switch stays a strong self-contained M8 deliverable.
+- **Batch C — re-deploy M7 resilience + M6 timeout in M14/M15/M16** — deferred with Batch D as
+  a group; each requires editing a working `net` fixture + gateway wire protocol. Deeper dive
+  confirmed these are grader-touching, not drop-in. Awaiting a build decision on whether to
+  invest in grader surgery.
+- **Batch D — re-deploy M2 processes + M4 rwlock/atomic + M3 mmap** — **M17-ex01 RWMutex
+  shipped 2026-09-03** (re-deploys M4-ex04 rwlock in Go; the read-heavy registry uses
+  `RLock` for Get/Snapshot, `Lock` for Inc/Add; verified PASS/FAIL + selftest 45/45). The
+  remaining items (M12 subprocess spawn, M16 disk I/O bounds) failed the deeper-dive test:
+  M12 subprocess redesign risks the flagship capstone's determinism; M16 already does
+  explicit disk I/O (os.File + encoding/binary) — mmap re-deployment violates the
+  stdlib-only constraint. Marked done at M17 rwlock; residual deferred.
+- **Batch E — close PLAN md sweep**: add the audits to §14 changelog + "Last updated"; strike
+  #33/#34 tracker lines that are already done.
+
+Not all batches may be warranted after the deeper dive that Batch A/B force; the map is the
+arbiter, not a preset to-dump list. Batches are ordered by de-risking (do A first — it fixes
+the largest single failure). Batches B–D are genuinely grader-touching; each deserves its own
+design decision rather than an unvetted bulk apply.
+
+- Update §3 snapshot + §14 log after every session.
