@@ -150,9 +150,10 @@ func (a *app) renderHeatmap() string {
 
 	weekdayNames := []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
 
-	// Join each weekday's cells horizontally into a row, then stack the rows
-	// vertically so the border strokes form a complete grid (separation in
-	// both axes, exactly like GitHub).
+	// Build the full grid by joining every weekday's bordered cells, first
+	// horizontally (weeks across), then vertically (days stacked) so the border
+	// strokes form a complete grid, then render it line-by-line with a uniform
+	// left prefix so all vertical strokes line up in one column.
 	var dayRows []string
 	for day := 0; day < 7; day++ {
 		var weekCells []string
@@ -161,11 +162,18 @@ func (a *app) renderHeatmap() string {
 		}
 		dayRows = append(dayRows, lipgloss.JoinHorizontal(lipgloss.Top, weekCells...))
 	}
+	grid := lipgloss.JoinVertical(lipgloss.Left, dayRows...)
+
 	var b strings.Builder
 	b.WriteString(styleSection.Render(" Activity") + "\n\n")
 	b.WriteString("     " + monthLine + "\n")
-	for day := 0; day < 7; day++ {
-		b.WriteString(fmt.Sprintf("%-4s %s\n", weekdayNames[day], dayRows[day]))
+	gridLines := strings.Split(grid, "\n")
+	for li, ln := range gridLines {
+		if li%3 == 0 {
+			b.WriteString(fmt.Sprintf("%-4s %s\n", weekdayNames[li/3], ln))
+		} else {
+			b.WriteString("     " + ln + "\n")
+		}
 	}
 	b.WriteString("\n" + heatLegend() + "\n")
 	return b.String()
