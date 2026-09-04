@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What does an empty pool return from get?", "a": "NULL" },
-    { "q": "How is a slot pointer proven to belong to the pool?", "a": "it lies within the pool" }
+    {
+      "q": "What does an empty pool return from get?",
+      "a": "NULL"
+    },
+    {
+      "q": "How is a slot pointer proven to belong to the pool?",
+      "a": "it lies within the pool"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

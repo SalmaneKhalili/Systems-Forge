@@ -4,19 +4,36 @@
   "title": "quorum",
   "lang": "go",
   "answers": [
-    { "q": "What is the smallest quorum for a majority-based decision among n participants?", "a": "floor(n/2) + 1" },
-    { "q": "Can two different majority quorums share no participant at all?", "a": "no" },
-    { "q": "Why does using a strict-majority quorum prevent two decisions?", "a": "every two majorities overlap" }
+    {
+      "q": "What is the smallest quorum for a majority-based decision among n participants?",
+      "a": "floor(n/2) + 1"
+    },
+    {
+      "q": "Can two different majority quorums share no participant at all?",
+      "a": "no"
+    },
+    {
+      "q": "Why does using a strict-majority quorum prevent two decisions?",
+      "a": "every two majorities overlap"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

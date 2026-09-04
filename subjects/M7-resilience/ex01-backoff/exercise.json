@@ -4,9 +4,18 @@
   "title": "backoff",
   "lang": "go",
   "answers": [
-    { "q": "Which algorithm multiplies the wait between retries as they keep failing?", "a": "exponential backoff" },
-    { "q": "What does a successful attempt mean for a retry loop?", "a": "it stops and reports success" },
-    { "q": "Which peer behaviour does this exercise classify as a failed attempt?", "a": "closing the connection before a response" }
+    {
+      "q": "Which algorithm multiplies the wait between retries as they keep failing?",
+      "a": "exponential backoff"
+    },
+    {
+      "q": "What does a successful attempt mean for a retry loop?",
+      "a": "it stops and reports success"
+    },
+    {
+      "q": "Which peer behaviour does this exercise classify as a failed attempt?",
+      "a": "closing the connection before a response"
+    }
   ],
   "methods": [
     {
@@ -14,10 +23,16 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip" }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip"
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

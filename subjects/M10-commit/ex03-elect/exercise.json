@@ -4,19 +4,36 @@
   "title": "elect",
   "lang": "go",
   "answers": [
-    { "q": "What is this leader-election scheme called where the largest id wins?", "a": "bully algorithm" },
-    { "q": "How are equal election timestamps broken?", "a": "by id" },
-    { "q": "Why does a higher election stamp win a leadership race?", "a": "it claims a more recent round" }
+    {
+      "q": "What is this leader-election scheme called where the largest id wins?",
+      "a": "bully algorithm"
+    },
+    {
+      "q": "How are equal election timestamps broken?",
+      "a": "by id"
+    },
+    {
+      "q": "Why does a higher election stamp win a leadership race?",
+      "a": "it claims a more recent round"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

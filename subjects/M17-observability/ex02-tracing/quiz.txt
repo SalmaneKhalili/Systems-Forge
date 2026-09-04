@@ -1,3 +1,0 @@
-Tracing records the lifecycle of a single request as a tree of what?: spans
-A named unit of work that carries a name and a duration is called a what?: span
-In a tracing tree, the span at the root of a request is called the what?: root span

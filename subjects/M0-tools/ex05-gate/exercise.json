@@ -4,14 +4,25 @@
   "title": "Gate: mini-forge",
   "lang": "sh",
   "answers": [
-    { "q": "Which variable holds the exit status of the last command?", "a": "$?" },
-    { "q": "What does `make -C dir` do?", "a": "runs make in that directory" }
+    {
+      "q": "Which variable holds the exit status of the last command?",
+      "a": "$?"
+    },
+    {
+      "q": "What does `make -C dir` do?",
+      "a": "runs make in that directory"
+    }
   ],
   "methods": [
     {
       "type": "scenario",
-      "scenario": { "driver": ["sh", "mini_forge.sh"], "timeout_s": 30 }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "scenario": {
+        "driver": [
+          "sh",
+          "mini_forge.sh"
+        ],
+        "timeout_s": 30
+      }
+    }
   ]
 }

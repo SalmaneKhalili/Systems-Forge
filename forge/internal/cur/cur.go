@@ -30,7 +30,6 @@ var MethodNames = map[string]bool{
 	"artifact": true,
 	"process":  true,
 	"net":      true,
-	"quiz":     true,
 	"report":   true,
 	"scenario": true,
 	"fault":    true,
@@ -79,7 +78,6 @@ type Method struct {
 	Artifact *ArtifactSpec `json:"artifact,omitempty"`
 	Process  *ProcessSpec  `json:"process,omitempty"`
 	Net      *NetSpec      `json:"net,omitempty"`
-	Quiz     *QuizSpec     `json:"quiz,omitempty"`
 	Report   *ReportSpec   `json:"report,omitempty"`
 	Scenario *ScenarioSpec `json:"scenario,omitempty"`
 	Fault    *FaultSpec    `json:"fault,omitempty"`
@@ -197,11 +195,6 @@ type NetStep struct {
 	// service comes back up and serves again after being killed (a bounded
 	// restart policy, cf. M7-ex05 watchdog / Kubernetes Restart Policies).
 	Restart bool `json:"restart,omitempty"`
-}
-
-// QuizSpec grades a checkpoint answers file against the exercise's Answers.
-type QuizSpec struct {
-	File string `json:"file,omitempty"` // default "quiz.txt"
 }
 
 // ReportSpec compares structured output against a reference run.
@@ -428,16 +421,6 @@ func (ex *Exercise) normalize() error {
 			}
 			if m.Net.WaitMs <= 0 {
 				m.Net.WaitMs = defaultWaitMs
-			}
-		case "quiz":
-			if m.Quiz == nil {
-				return errors.New("quiz method requires quiz spec")
-			}
-			if m.Quiz.File == "" {
-				m.Quiz.File = "quiz.txt"
-			}
-			if len(ex.Answers) == 0 {
-				return errors.New("quiz method requires exercise answers")
 			}
 		case "report":
 			if m.Report == nil {

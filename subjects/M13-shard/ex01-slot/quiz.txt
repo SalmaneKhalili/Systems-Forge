@@ -1,3 +1,0 @@
-A fixed-slot scheme assigns each key to a slot by its what?: hash
-The slot of a key is the hash modulo the number of what?: slots
-Two keys that hash to the same slot land on the same what?: shard

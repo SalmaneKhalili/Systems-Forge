@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "strcmp must interpret bytes as which type to be correct on negative bytes?", "a": "unsigned char" },
-    { "q": "When s1 sorts before s2, strcmp returns a value that is what?", "a": "negative" }
+    {
+      "q": "strcmp must interpret bytes as which type to be correct on negative bytes?",
+      "a": "unsigned char"
+    },
+    {
+      "q": "When s1 sorts before s2, strcmp returns a value that is what?",
+      "a": "negative"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -4,19 +4,36 @@
   "title": "memtable",
   "lang": "go",
   "answers": [
-    { "q": "An LSM-tree memtable buffers writes in what?", "a": "memory" },
-    { "q": "To support range scans and efficient flushes, keys in a memtable must be what?", "a": "sorted" },
-    { "q": "In an LSM-tree, are writes applied directly on-disk or buffered in-memory first?", "a": "buffered in-memory first" }
+    {
+      "q": "An LSM-tree memtable buffers writes in what?",
+      "a": "memory"
+    },
+    {
+      "q": "To support range scans and efficient flushes, keys in a memtable must be what?",
+      "a": "sorted"
+    },
+    {
+      "q": "In an LSM-tree, are writes applied directly on-disk or buffered in-memory first?",
+      "a": "buffered in-memory first"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

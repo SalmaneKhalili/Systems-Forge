@@ -4,19 +4,36 @@
   "title": "slot",
   "lang": "go",
   "answers": [
-    { "q": "A fixed-slot scheme assigns each key to a slot by its what?", "a": "hash" },
-    { "q": "The slot of a key is the hash modulo the number of what?", "a": "slots" },
-    { "q": "Two keys that hash to the same slot land on the same what?", "a": "shard" }
+    {
+      "q": "A fixed-slot scheme assigns each key to a slot by its what?",
+      "a": "hash"
+    },
+    {
+      "q": "The slot of a key is the hash modulo the number of what?",
+      "a": "slots"
+    },
+    {
+      "q": "Two keys that hash to the same slot land on the same what?",
+      "a": "shard"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

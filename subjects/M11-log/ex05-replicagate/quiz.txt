@@ -1,3 +1,0 @@
-What must every client of a replicated log read to see the same state?: the committed prefix
-Which log entries may a client never observe?: uncommitted ones
-A log read returns entries only up to which index?: the commit index

@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Anonymous private mappings use copy-on-write across fork by default — true or false?", "a": "true" },
-    { "q": "Which flag makes a forked child's writes visible to the parent?", "a": "MAP_SHARED" }
+    {
+      "q": "Anonymous private mappings use copy-on-write across fork by default \u2014 true or false?",
+      "a": "true"
+    },
+    {
+      "q": "Which flag makes a forked child's writes visible to the parent?",
+      "a": "MAP_SHARED"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "An allocator that assigns memory only by advancing a pointer is called what?", "a": "a bump allocator" },
-    { "q": "Which C11 keyword forces a static buffer to a required alignment?", "a": "_Alignas" }
+    {
+      "q": "An allocator that assigns memory only by advancing a pointer is called what?",
+      "a": "a bump allocator"
+    },
+    {
+      "q": "Which C11 keyword forces a static buffer to a required alignment?",
+      "a": "_Alignas"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

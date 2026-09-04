@@ -1,3 +1,0 @@
-The record of every mutation written to disk before it is applied is called the what?: write-ahead log
-The write-ahead log is what kind of file?: append-only
-On restart, an LSM-tree rebuilds the in-memory state by what process?: replaying the write-ahead log

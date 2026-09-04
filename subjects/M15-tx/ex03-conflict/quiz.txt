@@ -1,3 +1,0 @@
-Two transactions writing the same key risk a what?: lost update
-When both write the same key during a merge, whose value wins?: yours
-A write overwritten by another actor is called a what?: lost update

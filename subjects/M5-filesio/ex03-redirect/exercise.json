@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which function repoints one file descriptor to another open file?", "a": "dup2" },
-    { "q": "What does _exit() skip that exit() runs?", "a": "the atexit handlers and the stdio flush" }
+    {
+      "q": "Which function repoints one file descriptor to another open file?",
+      "a": "dup2"
+    },
+    {
+      "q": "What does _exit() skip that exit() runs?",
+      "a": "the atexit handlers and the stdio flush"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -4,39 +4,66 @@
   "title": "the switch: transparent relay",
   "lang": "go",
   "answers": [
-    { "q": "Which program does the switch itself start so the relay has something to reach?", "a": "the backend" },
-    { "q": "Which octet terminates a frame in this module's wire format?", "a": "the newline" },
-    { "q": "When a client disconnects, what must the switch do with the relay's backend side?", "a": "close it too" }
+    {
+      "q": "Which program does the switch itself start so the relay has something to reach?",
+      "a": "the backend"
+    },
+    {
+      "q": "Which octet terminates a frame in this module's wire format?",
+      "a": "the newline"
+    },
+    {
+      "q": "When a client disconnects, what must the switch do with the relay's backend side?",
+      "a": "close it too"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./switch"],
+        "start": [
+          "./switch"
+        ],
         "port": 17303,
         "wait_ms": 500,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "ping\n", "expect": "R1 ping\n" },
-              { "send": "alpha\n", "expect": "R2 alpha\n" },
-              { "send": "beta\n", "expect": "R3 beta\n" }
+              {
+                "send": "ping\n",
+                "expect": "R1 ping\n"
+              },
+              {
+                "send": "alpha\n",
+                "expect": "R2 alpha\n"
+              },
+              {
+                "send": "beta\n",
+                "expect": "R3 beta\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "one\n", "expect": "R1 one\n" },
-              { "send": "two\n", "expect": "R2 two\n" }
+              {
+                "send": "one\n",
+                "expect": "R1 one\n"
+              },
+              {
+                "send": "two\n",
+                "expect": "R2 two\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

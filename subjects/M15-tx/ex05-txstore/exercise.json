@@ -4,53 +4,122 @@
   "title": "txstore gateway",
   "lang": "go",
   "answers": [
-    { "q": "A gateway reports the cluster's current what?", "a": "live set" },
-    { "q": "A transaction's staged writes are visible to other readers until what point?", "a": "commit" },
-    { "q": "Uncommitted staged writes visible to other connections is the bug for what exercise?", "a": "ex05" }
+    {
+      "q": "A gateway reports the cluster's current what?",
+      "a": "live set"
+    },
+    {
+      "q": "A transaction's staged writes are visible to other readers until what point?",
+      "a": "commit"
+    },
+    {
+      "q": "Uncommitted staged writes visible to other connections is the bug for what exercise?",
+      "a": "ex05"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./txstore"],
+        "start": [
+          "./txstore"
+        ],
         "port": 17440,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "status a\n", "expect": "dead\n" },
-              { "send": "set a 1\n", "expect": "ok\n" },
-              { "send": "get a\n", "expect": "1\n" },
-              { "send": "begin\n", "expect": "ok\n" },
-              { "send": "set a 2\n", "expect": "ok\n" },
-              { "send": "get a\n", "expect": "2\n" },
-              { "send": "status a\n", "expect": "alive\n" },
-              { "send": "commit\n", "expect": "ok\n" },
-              { "send": "get a\n", "expect": "2\n" },
-              { "send": "list\n", "expect": "a\n" }
+              {
+                "send": "status a\n",
+                "expect": "dead\n"
+              },
+              {
+                "send": "set a 1\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get a\n",
+                "expect": "1\n"
+              },
+              {
+                "send": "begin\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "set a 2\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get a\n",
+                "expect": "2\n"
+              },
+              {
+                "send": "status a\n",
+                "expect": "alive\n"
+              },
+              {
+                "send": "commit\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get a\n",
+                "expect": "2\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "a\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "list\n", "expect": "a\n" },
-              { "send": "drop a\n", "expect": "ok\n" },
-              { "send": "status a\n", "expect": "dead\n" },
-              { "send": "list\n", "expect": "\n" },
-              { "send": "begin\n", "expect": "ok\n" },
-              { "send": "set b 3\n", "expect": "ok\n" },
-              { "send": "rollback\n", "expect": "ok\n" },
-              { "send": "get b\n", "expect": "nil\n" },
-              { "signal": "TERM", "wait_exit": 0 }
+              {
+                "send": "list\n",
+                "expect": "a\n"
+              },
+              {
+                "send": "drop a\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "status a\n",
+                "expect": "dead\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "\n"
+              },
+              {
+                "send": "begin\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "set b 3\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "rollback\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get b\n",
+                "expect": "nil\n"
+              },
+              {
+                "signal": "TERM",
+                "wait_exit": 0
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the curriculum's quiz checkpoints (subjects/*/exercise.json answers[])
+"""Export the curriculum's Q&A review decks (subjects/*/exercise.json answers[])
 as Anki-compatible card files.
 
 One card = one question/answer pair from exercise.json. Cards are written to

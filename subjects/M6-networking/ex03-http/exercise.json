@@ -5,18 +5,28 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which HTTP request method does this exercise serve?", "a": "GET" },
-    { "q": "Which number means the resource was not found?", "a": "404" }
+    {
+      "q": "Which HTTP request method does this exercise serve?",
+      "a": "GET"
+    },
+    {
+      "q": "Which number means the resource was not found?",
+      "a": "404"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./test"],
+        "start": [
+          "./test"
+        ],
         "port": 17104,
         "wait_ms": 500,
         "timeout_ms": 4000,
@@ -31,7 +41,6 @@
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

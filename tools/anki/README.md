@@ -1,8 +1,9 @@
-# Anki export of the quiz checkpoints
+# Anki export of the review decks
 
-Every exercise's `quiz` method (its `answers[]` in `exercise.json`) is also a spaced-
+Every exercise's Q&A review metadata (`answers[]` in `exercise.json`) is a spaced-
 repetition review card. This tool regenerates Anki-importable decks directly from the
 canon (`subjects/*/exercise.json`), so the decks never drift from the curriculum.
+Quizzing lives entirely in Anki — it is not part of exercise grading.
 
 ## Regenerate
 

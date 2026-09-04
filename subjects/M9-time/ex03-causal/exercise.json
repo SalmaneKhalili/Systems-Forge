@@ -4,19 +4,36 @@
   "title": "causality",
   "lang": "go",
   "answers": [
-    { "q": "When two vector stamps are incomparable, what are the events called?", "a": "concurrent" },
-    { "q": "Can a vector clock detect concurrency, unlike a scalar Lamport counter?", "a": "yes" },
-    { "q": "If a and b have identical vector stamps, are they causally ordered by happened-before?", "a": "no" }
+    {
+      "q": "When two vector stamps are incomparable, what are the events called?",
+      "a": "concurrent"
+    },
+    {
+      "q": "Can a vector clock detect concurrency, unlike a scalar Lamport counter?",
+      "a": "yes"
+    },
+    {
+      "q": "If a and b have identical vector stamps, are they causally ordered by happened-before?",
+      "a": "no"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

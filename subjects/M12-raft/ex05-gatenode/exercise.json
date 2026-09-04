@@ -4,44 +4,86 @@
   "title": "gatenode",
   "lang": "go",
   "answers": [
-    { "q": "A node commits an entry only once it is safely where?", "a": "in the log" },
-    { "q": "Before any entry is committed a follower's read returns what?", "a": "nothing" },
-    { "q": "An append from a stale term is what by the leader?", "a": "rejected" }
+    {
+      "q": "A node commits an entry only once it is safely where?",
+      "a": "in the log"
+    },
+    {
+      "q": "Before any entry is committed a follower's read returns what?",
+      "a": "nothing"
+    },
+    {
+      "q": "An append from a stale term is what by the leader?",
+      "a": "rejected"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./node"],
+        "start": [
+          "./node"
+        ],
         "port": 17420,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "append x\n", "expect": "not leader\n" },
-              { "send": "see 3\n", "expect": "term 3\n" },
-              { "send": "append a\n", "expect": "ok 0\n" },
-              { "send": "append b\n", "expect": "ok 1\n" },
-              { "send": "read\n", "expect": "a|b\n" },
-              { "send": "see 2\n", "expect": "term 3\n" }
+              {
+                "send": "append x\n",
+                "expect": "not leader\n"
+              },
+              {
+                "send": "see 3\n",
+                "expect": "term 3\n"
+              },
+              {
+                "send": "append a\n",
+                "expect": "ok 0\n"
+              },
+              {
+                "send": "append b\n",
+                "expect": "ok 1\n"
+              },
+              {
+                "send": "read\n",
+                "expect": "a|b\n"
+              },
+              {
+                "send": "see 2\n",
+                "expect": "term 3\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "read\n", "expect": "a|b\n" },
-              { "send": "see 9\n", "expect": "term 9\n" },
-              { "send": "append c\n", "expect": "ok 2\n" },
-              { "send": "read\n", "expect": "a|b|c\n" }
+              {
+                "send": "read\n",
+                "expect": "a|b\n"
+              },
+              {
+                "send": "see 9\n",
+                "expect": "term 9\n"
+              },
+              {
+                "send": "append c\n",
+                "expect": "ok 2\n"
+              },
+              {
+                "send": "read\n",
+                "expect": "a|b|c\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

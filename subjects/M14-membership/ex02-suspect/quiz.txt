@@ -1,3 +1,0 @@
-Before a node is declared failed it is usually marked what?: suspect
-A node becomes failed only after the what threshold elapses?: second
-An incoming heartbeat clears what state immediately?: suspect

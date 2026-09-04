@@ -5,8 +5,8 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-03 (TUI redesign: home dashboard, activity heatmap, profile/skills view;
-> Batch E PLAN sweep; net grader gained signal/wait_exit/restart steps; selftest 49/49, 0 mismatches)
+> Last updated: 2026-09-03 (removed the `quiz` grading method — quizzing is Anki-only; TUI
+> redesign: home/activity/profile views; selftest 47/47, 0 mismatches)
 
 ---
 
@@ -71,27 +71,27 @@ Core principles (user-set, non-negotiable):
 - [x] **TUI redesigned with three new views** — 95-inspired home dashboard (progress bar, activity
       strip), GitHub-style activity heatmap (26-week contribution grid), profile/skills view
       (earned skills + proficiency bars per module). Modules sorted numerically (M0..M17).
-      Tab-style header chips, context-sensitive footer. Verified under tmux; selftest 49/49.
-- [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05` all `build`+`quiz`
+      Tab-style header chips, context-sensitive footer. Verified under tmux; selftest 47/47.
+- [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05` all `build`
       green; both-ways determinism proven; `forge score` → `M1-clib 5/5`.
-- [x] **M2 "Processes" module authored + solved** — `subjects/M2-procs/ex01–ex05` all `build`+`quiz`
+- [x] **M2 "Processes" module authored + solved** — `subjects/M2-procs/ex01–ex05` all `build`
       green; broken no-handler signal caught (`exit -1`) and unclosed write-end caught
       (`timed out`); `forge score` → `M2-procs 5/5`, `TOTAL 11/15`.
 - [x] **M3 "Memory" module authored + solved** — `subjects/M3-memory/ex01–ex05` (bump arena,
       copy-on-write via mmap+fork, fixed slot pool, mmap allocator, OOM-safe gate) all
-      `build`+`quiz` green; broken solutions proven to FAIL (overlapping pool slots,
+      `build` green; broken solutions proven to FAIL (overlapping pool slots,
       `MAP_SHARED` misuse, refusal ignored); `forge score` → `M3-memory 5/5`,
       `TOTAL 16/20`.
 - [x] **M4 "Concurrency" module authored + solved** — `subjects/M4-concurrency/ex01–ex05`
       (join & exit, mutex bomb, atomic counter, readers & writers, bounded-queue gate) all
       graded under ThreadSanitizer (`sanitizers:["thread"]`, runs wrapped in
-      `setarch x86_64 -R` for TSan); all `build`+`quiz` green; broken solutions proven to
+      `setarch x86_64 -R` for TSan); all `build` green; broken solutions proven to
       FAIL — plain-increment bombs (ex02/03), lock-free rwlock client (ex04), mutex-free
       queue (ex05) all exit 66 (TSan `data race`); wrong exit-value plumbing (ex01) → `sum 15`;
       LIFO queue (ex05) → `fifo violated`; `pthread_cond_wait(…, NULL)` rejected by
       `-Werror=nonnull` at build time; `forge score` → `M4-concurrency 5/5`, `TOTAL 21/25`.
 - [x] **M5 "Files & I/O" module authored + solved** — `subjects/M5-filesio/ex01–ex05`
-      (descriptors, read-vs-stdio, dup2 redirect, tee, log-parser gate) all `build`+`quiz`
+      (descriptors, read-vs-stdio, dup2 redirect, tee, log-parser gate) all `build`
       green (ex04 also `artifact`); one run on two fixtures each (ex02/ex05); broken
       solutions proven to FAIL — fd miscount (`3 and 3`), buffer-size counting (`read 49`
       + `mismatch`), missing stdio flush (`captured: ` empty), stdout-only tee (`readback
@@ -99,7 +99,7 @@ Core principles (user-set, non-negotiable):
       an internal `:` breaks `parseKV`'s first-colon split, so ex04 Q2 was reworded;
       `forge score` → `M5-filesio 5/5`, `TOTAL 26/30`.
 - [x] **M6 "Networking" module authored + solved** — `subjects/M6-networking/ex01–ex05`
-      (echo, line chat, HTTP-ish, read timeout, stateful gate) all `build`+`net`+`quiz`
+      (echo, line chat, HTTP-ish, read timeout, stateful gate) all `build`+`net`
       green — **first curriculum use of the `net` grader**; the `net` runner grew
       **multi-connection sessions** (`connections: [{steps}, …]`, one server process,
       one fresh TCP dial per session) so accept-loop persistence and cross-connection
@@ -114,15 +114,15 @@ Core principles (user-set, non-negotiable):
       (backoff, circuit breaker, health checks, graceful shutdown, supervisor gate). ex01 is
       the **first `lang: python` exercise, graded via the `stdout` method**; ex02–ex05 are
       Go (shared Makefile; breaker uses an injected fake clock). All `build`/`stdout`+`net`
-      +`quiz` green; broken solutions proven to FAIL (five bug classes: no retry loop,
+       green; broken solutions proven to FAIL (five bug classes: no retry loop,
       breaker that never trips, `/down` that never flips state, no graceful path, flaky task
       failing every retry); `forge score` → `M7-resilience 5/5`, `TOTAL 36/40`.
 
 - [x] **M8 "Messaging + the Switch" module authored + solved** —
       `subjects/M8-messaging/ex01–ex05` (framing, ordered delivery, transparent switch
       relay, switch fault injection, switch gate). ex01/ex02 harness-shape Go graded
-      `build`+`stdout`+`quiz`; ex03–ex05 whole-program `switch.go` + provided counter
-      backend, graded `build`+`net`+`quiz` — **no grader changes needed** (switch spawns
+      `build`+`stdout`; ex03–ex05 whole-program `switch.go` + provided counter
+      backend, graded `build`+`net` — **no grader changes needed** (switch spawns
       its own backend; `StartEnv` carries `TARGETFAULTS`; fault effects proven at the
       data level). Broken solutions proven to FAIL (five bug classes, see §10 M8
       detail); new fixtures `net/{pass, fail}/ex05-*` (25 fixtures, 0 mismatches);
@@ -137,8 +137,8 @@ Core principles (user-set, non-negotiable):
 
 - [x] **M9 "Time & Ordering" module authored + solved** —
       `subjects/M9-time/ex01–ex05` (lamport clock, vector clock, causality, total
-      order, sequencer). ex01–ex04 harness-shape Go graded `build`+`stdout`+`quiz`;
-      ex05 whole-program `srv.go` TCP gateway, graded `build`+`net`+`quiz` (two
+      order, sequencer). ex01–ex04 harness-shape Go graded `build`+`stdout`;
+      ex05 whole-program `srv.go` TCP gateway, graded `build`+`net` (two
       connections, byte-exact replies). All rules honor the no-wall-clock law.
       Broken solutions proven to FAIL (five bug classes — ignored receive merge,
       ignored vector fold, non-strict happened-before, pid-major ordering, no-stamp
@@ -155,54 +155,54 @@ Core principles (user-set, non-negotiable):
       The restart step — "kill the server, wait for its exit, respawn, re-dial, keep
       verifying" — completes the supervisor re-verify capability (M7-ex05 watchdog
       semantics) and is proven with pass+fail fixtures (server that ignores SIGTERM
-      cannot be restarted → FAIL). Selftest **49 fixtures, 0 mismatches**. §14 2026-09-03.
+      cannot be restarted → FAIL). Selftest **47 fixtures, 0 mismatches**. §14 2026-09-03.
 - [x] **M1 "C gate" module authored + solved** — `subjects/M1-clib/ex01–ex05`, all graded
-      `build`+`quiz`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
+      `build`. See §10 (M1 detail). Reference solutions in `answers/`, all PASS;
       broken `ft_strlen` verified to FAIL (both-way determinism).
 - [x] **M2 "Processes" module authored + solved** — `subjects/M2-procs/ex01–ex05`
-      (fork/wait, exec-spawn, pipes, signals, pipeline gate), graded `build`+`quiz`.
+      (fork/wait, exec-spawn, pipes, signals, pipeline gate), graded `build`.
       Verified: all PASS; broken signal (no handler) caught as `exit -1`; broken pipe
       (unclosed write end) caught as `timed out`.
 - [x] **M3 "Memory" module authored + solved** — `subjects/M3-memory/ex01–ex05` (bump arena,
       CoW virtual-memory experiment, fixed-slot pool, mmap allocator, OOM-safe growable
-      buffer gate), graded `build`+`quiz`. Verified: all PASS; broken solutions proven to
+      buffer gate), graded `build`. Verified: all PASS; broken solutions proven to
       FAIL (three bug classes: slot overlap, wrong mapping flag, ignored refusal).
 - [x] **M4 "Concurrency" module authored + solved** — `subjects/M4-concurrency/ex01–ex05`
       (join & exit, mutex bomb, atomic counter, readers & writers, bounded-queue gate),
-      graded `build`+`quiz` under ThreadSanitizer. Verified: all PASS; broken solutions
+      graded `build` under ThreadSanitizer. Verified: all PASS; broken solutions
       proven to FAIL (six bug classes, see §10 M4 detail).
 - [x] **M5 "Files & I/O" module authored + solved** — `subjects/M5-filesio/ex01–ex05`
       (descriptors, read vs stdio, dup2 redirect, tee, log-parser gate), graded
-      `build`+`quiz` (+ `artifact` on ex04's `out.txt`). Verified: all PASS; broken
+      `build` (+ `artifact` on ex04's `out.txt`). Verified: all PASS; broken
       solutions proven to FAIL (five bug classes, see §10 M5 detail).
 - [x] **M6 "Networking" module authored + solved** — `subjects/M6-networking/ex01–ex05`
       (echo, line chat, HTTP-ish, read timeout, stateful gate), graded
-      `build`+`net`+`quiz` — first curriculum use of the `net` grader; multi-connection
+      `build`+`net` — first curriculum use of the `net` grader; multi-connection
       `connections` sessions added to the grader for accept-loop/state proofs. Verified:
       all PASS; broken solutions proven to FAIL (five bug classes, see §10 M6 detail).
 - [x] **M7 "Resilience" module authored + solved** — `subjects/M7-resilience/ex01–ex05`
       (backoff, circuit breaker, health checks, graceful shutdown, supervisor gate), graded
-      `stdout`/`build`+`net`+`quiz` — ex01 is the first `lang: python` exercise, ex02–ex05
+      `stdout`/`build`+`net` — ex01 is the first `lang: python` exercise, ex02–ex05
       Go on the shared Makefile. Verified: all PASS; broken solutions proven to FAIL (five
       bug classes, see §10 M7 detail).
 - [x] **M8 "Messaging + the Switch" module authored + solved** —
-      `subjects/M8-messaging/ex01–ex05`, graded `stdout`/`build`+`net`+`quiz`. ex01/ex02
+      `subjects/M8-messaging/ex01–ex05`, graded `stdout`/`build`+`net`. ex01/ex02
       harness-shape (frame codec, ordered queue); ex03–ex05 the switch (relay, fault
       injection, gate) with a provided counter backend. Verified: all PASS; broken
       solutions proven to FAIL (five bug classes, see §10 M8 detail).
 - [x] **M9 "Time & Ordering" module authored + solved** —
       `subjects/M9-time/ex01–ex05` (lamport clock, vector clock, causality, total
-      order, sequencer), graded `build`+`stdout`/`net`+`quiz`. ex01–ex04 harness-
+      order, sequencer), graded `build`+`stdout`/`net`. ex01–ex04 harness-
       shape Go; ex05 a whole-program TCP sequencer. Verified: all PASS; broken
       solutions proven to FAIL (five bug classes, see §10 M9 detail).
 - [x] **M10 "Commit & Consensus" module authored + solved** —
       `subjects/M10-commit/ex01–ex05` (coordinator, vote, elect, quorum, transaction),
-      graded `build`+`stdout`/`net`+`quiz`. ex01–ex04 harness-shape Go; ex05 a
+      graded `build`+`stdout`/`net`. ex01–ex04 harness-shape Go; ex05 a
       whole-program 2PC TCP gateway deciding from a `votes.txt` file. Verified: all
       PASS; broken solutions proven to FAIL (five bug classes, see §10 M10 detail).
 - [x] **M11 "Replicated Log & Consistency" module authored + solved** —
       `subjects/M11-log/ex01–ex05` (append, committed, index, snapshot, replica),
-      graded `build`+`stdout`/`net`+`quiz`. ex01–ex04 harness-shape Go; ex05 a
+      graded `build`+`stdout`/`net`. ex01–ex04 harness-shape Go; ex05 a
       whole-program TCP replica serving only the committed prefix across
       connections. Verified: all PASS; broken solutions proven to FAIL (five bug
       classes, see §10 M11 detail); new fixtures `pass/ex05-replica` +
@@ -210,7 +210,7 @@ Core principles (user-set, non-negotiable):
       `forge score` → `M11-log 5/5`, `TOTAL 57/60`.
 - [x] **M12 "Raft — flagship capstone" module authored + solved** —
       `subjects/M12-raft/ex01–ex05` (term, vote, logmatch, election, gatenode),
-      graded `build`+`stdout`/`net`+`quiz`. ex01–ex04 harness-shape Go (monotonic
+      graded `build`+`stdout`/`net`. ex01–ex04 harness-shape Go (monotonic
       term, up-to-date-log vote rule, matching-prefix AppendEntries check,
       strict-majority quorum); ex05 a whole-program TCP raft gate node serving a
       monotonic term + committed log across connections. Verified: all PASS;
@@ -219,7 +219,7 @@ Core principles (user-set, non-negotiable):
       **33 fixtures, 0 mismatches**; `forge score` → `M12-raft 5/5`, `TOTAL 62/65`.
 - [x] **M13 "Sharding" module authored + solved** —
       `subjects/M13-shard/ex01–ex05` (slot, range, ring, rebalance, shardgate),
-      graded `build`+`stdout`/`net`+`quiz`. ex01–ex04 harness-shape Go (FNV slot
+      graded `build`+`stdout`/`net`. ex01–ex04 harness-shape Go (FNV slot
       assignment, key-range routing, consistent-hash ring lookup, move-count
       rebalancing); ex05 a whole-program TCP key-range shard gateway with three
       isolated shards. Verified: all PASS; broken solutions proven to FAIL (five
@@ -228,7 +228,7 @@ Core principles (user-set, non-negotiable):
       `forge score` → `M13-shard 5/5`, `TOTAL 67/70`.
 - [x] **M14 "Membership" module authored + solved** —
       `subjects/M14-membership/ex01–ex05` (heartbeat, suspect, gossip, evict,
-      membershipgate), graded `build`+`stdout`/`net`+`quiz`. ex01–ex04
+      membershipgate), graded `build`+`stdout`/`net`. ex01–ex04
       harness-shape Go (heartbeat countdown, alive→suspect→failed lifecycle,
       commutative version-merge gossip, staleness eviction — all tick-modeled,
       no wall clock); ex05 a whole-program TCP membership gateway tracking
@@ -340,7 +340,6 @@ Data flow for one check:
 | `artifact` | `exec.go` | `artifact{path,exists,is_a,min_size,max_size,symbols[],contains[]}` | existence (both directions), `file -b` prefix, size bounds, `nm` symbols, byte-substring scan of the file |
 | `process` | `procs.go` | `process{start,wait_ms,target_env,probes[],kill}` | spawn stale target, wait, run probes with `TARGET_PID` (pgid) env, expect exit std-out substring |
 | `net` | `procs.go` | `net{start,port,host,wait_ms,timeout_ms,start_env,steps[]}` | spawn server (`TARGETPORT`/`TARGETHOST` env), retry-dial, per-step send bytes / expect bytes (full or substring), Go-style escapes + `*_hex` |
-| `quiz` | `exec.go` | `quiz{file=quiz.txt}` + exercise `answers[]` | parse `key: value`/`key=value`, case-insensitive match, per-answer part |
 | `report` | `exec.go` | `report{cmd,reference,tolerate{key:rel}}` | run cmd, parse k=v, compare to reference file, optional relative tolerance on numeric fields |
 | `scenario` | `scenario.go` | `scenario{driver,env,timeout_s}` | run driver; **contract**: exit 0 ⇒ pass; `FORGE_RESULT: pass|fail` overrides; `FORGE_META: k=v` captured; driver gets `FORGE_ROOT` + `FORGE_EXERCISE_DIR` |
 | `fault` | `scenario.go` | `fault{driver,env,timeout_s}` | same contract as scenario (kept distinct for future divergence) |
@@ -375,7 +374,6 @@ only used by `forge selftest`; selftest runs methods in the fixture dir directly
 | stdout | `pass/ex01-hi` prints "hello forge" (strip-normalized diff) | `fail/ex01-wrong` prints "hello wrong" |
 | build | `pass/ex01-hello` real `Makefile{C}`, compiles under Werror, `./hello` → expected.txt | `fail/ex01-broken` missing `;` never compiles |
 | artifact | `pass/ex01-flag` ASCII text present, populated, contains "FORGE" | `fail/ex01-missing` absent file; `fail/ex02-unexpected` forbidden file exists |
-| quiz | `pass/ex01-ok` both answers right | `fail/ex01-wrong` one answer wrong |
 | report | `pass/ex01-ok` output matches reference (tolerate on writes) | `fail/ex01-drift` writes=99 vs 3 (out of tolerance) |
 | process | `pass/ex01-alive` `sleep 30`, probe `kill -0 $TARGET_PID` | `fail/ex01-gone` target exits immediately |
 | net | `pass/ex01-echo` server replies PONG on one connection (17001); `pass/ex02-sessions` two fresh `connections` on one server (17003) | `fail/ex01-wrong` server replies NOPE (17002); `fail/ex02-once` server serves one connection then exits (17004) |
@@ -388,7 +386,7 @@ replication to followers), `ex06-walded`(fail, M15 durable txstore — writes ne
 plus M4/M8/M11/M12/M13/M15 gateways, the `net` **signal/wait_exit** pair
 `ex06-signal`(pass)/`ex06-signal`(fail, M16 graceful shutdown), and the `net` **restart**
 re-verify pair `ex07-restart`(pass)/`ex07-restart`(fail, server ignores SIGTERM → cannot be
-restarted) → selftest **49 fixtures, 0 mismatches**.
+restarted) → selftest **47 fixtures, 0 mismatches**.
 | scenario | `pass/ex01-ok` exit 0 + FORGE_META | `fail/ex01-ko` exit 1 |
 | fault | `pass/ex01-ok` exit 1 + `FORGE_RESULT: pass` (tests override) | `fail/ex01-ko` exit 0 + `FORGE_RESULT: fail` (tests override) |
 | lincheck | `pass/ex01-lin` linearizable single-register history | `fail/ex01-nonlin` real-time contradiction (read of v1 must follow write of v2) |
@@ -426,26 +424,26 @@ Piscine-style modules; each module ≈ 4–8 exercises + a closing "gate" exerci
 Jobcraft track (resume/LinkedIn/practice/apply pipeline) is **scheduled starting ~month 10–12**, interleaved.
 
 ### Grading language split
-- M0–M4 externals may be auto-graded by `build`+`stdout`+`artifact`+`quiz`+`report`.
+- M0–M4 externals may be auto-graded by `build`+`stdout`+`artifact`+`report`.
 - M2+ process/net exercices use `process`/`net`.
 - M5+ race-free and M8+ distributed exercices use `scenario`/`fault` drivers + `lincheck`.
 - Determinism: keep lincheck windows small; drivers sample histories when big.
 
 ### M0 detail (immediate next milestone — write these next)
 1. `ex01-branch` … Makefile with `all/fclean/re` + ASCII-art discipline. (Grader: `build` with `make re`)
-2. `ex02-shell` … a 20-line shell script with `set -euo pipefail`, arg handling. (Grader: `stdout` + `quiz`)
+2. `ex02-shell` … a 20-line shell script with `set -euo pipefail`, arg handling. (Grader: `stdout`)
 3. `ex03-checker` … a Python stdlib script that checks file/dir invariants (mini-forge clone). (Grader: `stdout` + `artifact`)
 4. `ex04-commits` … git history shape / convention exercise. (Grader: `scenario` or `report`)
 5. `ex05-sanitize` … compile the same program under `-fsanitize=address` and make a real UAF/detect via artifact/symbols. (Grader: `build` + `process`)
 6. `gate-tools` … the M0 gate: combined hygiene + tooling exam.
 
-Each with exact readings (chapters of e.g. "The Linux Programming Interface", man pages, `shellcheck`), and a quiz.
+Each with exact readings (chapters of e.g. "The Linux Programming Interface", man pages, `shellcheck`).
 
 ### M1 detail (authored 2026-08-30) — module `M1-clib`, all green
 Shape: student writes the implementation `.c` + a `Makefile` (`all`→`./test`, `fclean`, `re`);
 `forge` injects `-std=gnu11 -Wall -Wextra -Werror -fsanitize=address,undefined` via CFLAGS and
 compiles `main.c` (provided harness) + their file, then diffs `./test` stdout vs `expected.txt`
-(normalize `strip`) and runs the `quiz`.
+(normalize `strip`).
 
 1. `ex01-ft_strlen` — counting loop incl. embedded-NUL case. **Known trap**: `"a\x00b"` is a
    2-byte string (`\x00b` is one hex escape); the harness now uses `"a\x00" "b"`.
@@ -465,7 +463,7 @@ Readings per exercise are man-page + K&R + TLPI §2.5/§7.1 + cppreference links
 
 ### M2 detail (authored 2026-08-30) — module `M2-procs`, all green
 Shape: the *whole program* is student work — one `main.c` + `Makefile` (`all`→`./test`,
-fclean/re). No scaffold `main.c` provided. Graded `build`+`quiz`, strict
+fclean/re). No scaffold `main.c` provided. Graded `build`, strict
 `-std=gnu11 -Wall -Wextra -Werror -fsanitize=address,undefined`. Determinism rule: no PIDs
 in output, parent prints strictly after `waitpid` returns; signals tested in-process via
 `raise` (async-signal-safe: handler only sets a `volatile sig_atomic_t` flag, NO printf in
@@ -483,7 +481,7 @@ handler — this is also ASan/UBSan-safe).
 5. `ex05-pipeline` — **gate**: two children + pipe + `dup2` + `execlp echo|tr`, parent reaps
    both; two runs (`hello`, `42 school`). Enforces `dup2`/close discipline.
 
-**Grading-method decision**: graded exclusively with proven `build`+`stdout`+`quiz`.
+**Grading-method decision**: graded exclusively with proven `build`+`stdout`.
 `process`/`net` runners exist (both fixture-green) but cross-process timing/zombie-state
 subtleties make graceful-shutdown tests flaky right now; deferring `process`/`net`
 curriculum use until M6 (networking) / M8 (switch), where they are the natural fit.
@@ -491,7 +489,7 @@ curriculum use until M6 (networking) / M8 (switch), where they are the natural f
 ### M3 detail (authored 2026-08-30) — module `M3-memory`, all green
 Shape: **implementation-from-file** ("harness shape") for ex01/ex03/ex04/ex05 — provided
 header + harness `main.c`, student writes the impl `.c` + `Makefile`; ex02 is *whole-program*
-like M2 (observational, needs a `fork` in `main`). Graded `build`+`quiz`, strict
+like M2 (observational, needs a `fork` in `main`). Graded `build`, strict
 `-std=gnu11 -Wall -Wextra -Werror -fsanitize=address,undefined`. Determinism: no dynamic
 `malloc` anywhere — every allocator owns a `static _Alignas(8)` arena/pool/registry, so
 "OOM" is a deterministic boundary, all harness assertions are exact and ASan-safe.
@@ -524,7 +522,7 @@ page shows B (want A)`), gate ignoring refusal (`FAIL refusal (r=0 len=1024)`).
 ### M4 detail (authored 2026-08-30) — module `M4-concurrency`, all green
 
 Shape: whole-program (student `main.c` + `Makefile`) for ex01–ex04, harness shape for the
-ex05 gate (provided `queue.h` + `main.c`, student writes `queue.c`); graded `build`+`quiz`.
+ex05 gate (provided `queue.h` + `main.c`, student writes `queue.c`); graded `build`.
 **All five runs under ThreadSanitizer**: `"sanitizers": ["thread"]` (compile+link get
 `-fsanitize=thread`) and every run command is wrapped `["setarch","x86_64","-R","./test"]`
 — stock gcc TSan crashes on this kernel's ASLR (`FATAL: ThreadSanitizer: unexpected memory
@@ -550,7 +548,7 @@ printed by `main` strictly after `pthread_join`; every aggregate is an exact num
    condvar pair (`not_full`, `not_empty`), the canonical `while(…) pthread_cond_wait`
    loop; harness runs producer(1000)+consumer(1000); expected exact FIFO + `checksum 499500`.
 
-**Grading-method decision**: `build`+`quiz` only (like M1–M3); race detection is done by
+**Grading-method decision**: `build` only (like M1–M3); race detection is done by
 TSan inside the normal `build` run, and `process`/`net` drivers remain deferred to M6/M8.
 
 **Determinism evidence (both-ways)**: all five references PASS; six broken classes proven to
@@ -564,7 +562,7 @@ build error under `-Werror=nonnull` — the platform refuses it before it can ev
 ### M5 detail (authored 2026-08-30) — module `M5-filesio`, all green
 
 Shape: whole-program (student `main.c` + `Makefile`) for ex01–ex04; harness shape for the
-ex05 gate (provided `fix.h` + `main.c`, student writes `log.c`); graded `build`+`quiz`
+ex05 gate (provided `fix.h` + `main.c`, student writes `log.c`); graded `build`
 under `-std=gnu11 -Wall -Wextra -Werror` + ASan/UBSan (no TSan here — nothing shared).
 ex02 and ex05 are **multi-run** (two fixtures, per-run `expect`); ex04 adds an `artifact`
 method pinning `out.txt` to exactly 24 bytes. Determinism: verdicts are exact byte counts
@@ -588,7 +586,7 @@ and exact strings printed after every fd is closed and every child is reaped.
    returns `-1` on malformed/overflow. Fixtures `config.txt`, `apps.txt` → exact token
    lists.
 
-**Grading-method decision**: `build`+`quiz` (+ `artifact` on ex04). The `process`/`net`
+**Grading-method decision**: `build` (+ `artifact` on ex04). The `process`/`net`
 drivers stay deferred to M6/M8; ex03's fork+dup2 stays deterministic via `waitpid`
 because the child is reaped before the parent reads.
 
@@ -610,7 +608,7 @@ masks it), (e) ex05 split on `:` instead of `=` (`parse failed` on stderr, exit 
 ### M6 detail (authored 2026-08-30) — module `M6-networking`, all green
 
 Shape: whole-program (student `main.c` + `Makefile`) for ex01–ex05; graded
-`build`+`net`+`quiz` under `-std=gnu11 -Wall -Wextra -Werror` + ASan/UBSan. **First
+`build`+`net` under `-std=gnu11 -Wall -Wextra -Werror` + ASan/UBSan. **First
 curriculum use of the `net` grader**: the runner spawns the student's `./test`, retry-dials
 until it accepts (`TARGETPORT`/`TARGETHOST` injected), and plays scripted send/expect steps
 with a bounded deadline — verdicts are byte-exact transcript matches, not timing probes, so
@@ -700,7 +698,7 @@ run.
 ### M8 detail (authored 2026-08-30) — module `M8-messaging`, all green
 
 Shape: full Go. ex01/ex02 are harness-shape (provided `main.go` + `go.mod` +
-`Makefile`; student writes `frame.go` / `queue.go`), graded `build`+`stdout`+`quiz`.
+`Makefile`; student writes `frame.go` / `queue.go`), graded `build`+`stdout`.
 ex03–ex05 are whole-program: the student writes **`switch.go`**; the scaffold ships a
 provided **backend** (line server replying `R<seq> <content>` per connection, built as
 `./svc`) the switch spawns itself. M8 rule: nothing printed may depend on wall-clock
@@ -778,8 +776,8 @@ exercise is independently byte-deterministic.
    per conn). Conn 2 opens at `R12` (after `R11`), so a per-connection reset is caught.
    This is the single-writer total-order primitive replicated systems build on.
 
-**Grade shape**: ex01–ex04 `build`+`stdout`+`quiz` (shared Makefile, `go build -o test .`,
-`PATH`-prefixed); ex05 `build`+`net`+`quiz`. No grader changes needed.
+**Grade shape**: ex01–ex04 `build`+`stdout` (shared Makefile, `go build -o test .`,
+`PATH`-prefixed); ex05 `build`+`net`. No grader changes needed.
 
 **Determinism evidence (both-ways)**: references PASS; five broken classes proven FAIL —
 ex01 `Add` ignoring the incoming stamp (`p1 recv m0 t0`), ex02 `Merge` ignoring the
@@ -819,8 +817,8 @@ deterministic, never read the wall clock.
    present, else `ABORT`. The gateway keeps the prepared-set for the process lifetime
    (an absent id is an abort even on a later connection).
 
-**Grade shape**: ex01–ex04 `build`+`stdout`+`quiz` (shared Makefile, `go build -o test .`,
-`PATH`-prefixed); ex05 `build`+`net`+`quiz` (separate port 17410, starts `./gate`). No
+**Grade shape**: ex01–ex04 `build`+`stdout` (shared Makefile, `go build -o test .`,
+`PATH`-prefixed); ex05 `build`+`net` (separate port 17410, starts `./gate`). No
 grader changes.
 
 **Determinism evidence (both-ways)**: references PASS; five broken classes proven FAIL —
@@ -856,8 +854,8 @@ Same discipline — transcript-driven, byte-deterministic, never read the wall c
    reveals an entry beyond the commit index: after appends x,y then `commit 1`, conn 2
    appending z (index 2, uncommitted) must still `read` only `x|y`.
 
-**Grade shape**: ex01–ex04 `build`+`stdout`+`quiz` (shared Makefile, `go build -o test .`,
-`PATH`-prefixed); ex05 `build`+`net`+`quiz` (port 17415, starts `./replica`), a single net
+**Grade shape**: ex01–ex04 `build`+`stdout` (shared Makefile, `go build -o test .`,
+`PATH`-prefixed); ex05 `build`+`net` (port 17415, starts `./replica`), a single net
 method with two connections. No grader changes.
 
 **Determinism evidence (both-ways)**: references PASS; five broken classes proven FAIL —
@@ -901,8 +899,8 @@ byte-deterministic.
    <idx>` or `not leader` while term 0, `read` → committed prefix joined by
    `|`. conn2 shares the state and sees only committed entries.
 
-**Grade shape**: ex01–ex04 `build`+`stdout`+`quiz` (shared Makefile, `go build -o test .`,
-`PATH`-prefixed); ex05 `build`+`net`+`quiz` (port 17420, starts `./node`), a single net
+**Grade shape**: ex01–ex04 `build`+`stdout` (shared Makefile, `go build -o test .`,
+`PATH`-prefixed); ex05 `build`+`net` (port 17420, starts `./node`), a single net
 method with two connections. No grader changes.
 
 **Determinism evidence (both-ways)**: references PASS; five broken classes proven FAIL —
@@ -943,8 +941,8 @@ no-wall-clock, byte-deterministic.
    melon→1 (absent → `1:?`). Shard state persists across connections. Routing a
    key to the wrong shard is the bug (proven FAIL: everything → 0).
 
-**Grade shape**: ex01–ex04 `build`+`stdout`+`quiz` (shared Makefile, `go build -o test .`,
-`PATH`-prefixed); ex05 `build`+`net`+`quiz` (port 17425, starts `./gate`), a single net
+**Grade shape**: ex01–ex04 `build`+`stdout` (shared Makefile, `go build -o test .`,
+`PATH`-prefixed); ex05 `build`+`net` (port 17425, starts `./gate`), a single net
 method with two connections. No grader changes.
 
 **Determinism evidence (both-ways)**: references PASS; five broken classes proven FAIL —
@@ -1002,7 +1000,7 @@ crash recovery; determinism; both-ways fixtures.
 - Concurrency: "The Little Book of Semaphores", cppreference atomics notes.
 - Distributed: "Designing Data-Intensive Applications", Raft paper (raft.github.io), "Patterns of
   Distributed Systems", Herlihy & Wing for linearizability.
-- Every exercise references exact chapters/sections; auto-graded checkpoint via `quiz`.
+- Every exercise references exact chapters/sections.
 
 ---
 
@@ -1027,6 +1025,26 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 ---
 
 ## 14. Log / Changelog
+
+- **2026-09-03** **Removed the `quiz` grading method entirely. Quizzing is Anki-only.** The
+  user's quizzing workflow is spaced repetition (Anki), not in-grader checkpoints, so the
+  `quiz` method (a Q&A file graded against `exercise.json.answers[]`) is gone:
+  - **Data**: stripped the `{"type":"quiz",…}` method from all 92 `subjects/*/ex*/exercise.json`
+    (and the gitignored `answers/` mirror); deleted all 56 `quiz.txt` files. `answers[]` is
+    **kept** — it feeds the Anki exporter.
+  - **Code**: removed `runQuiz`, `findKV`, `truncate` (`exec.go`; kept `parseKV` — still used
+    by `runReport`), the `"quiz"` method-names entry + validation block in `cur.go`, and the
+    dispatch entry in `methods.go`. `DisplayName`/Exercise stay structurally unchanged.
+  - **Fixtures**: deleted `tools/fixtures/quiz/{pass,fail}/` → selftest **49→47 fixtures,
+    0 mismatches** (selfcheck green, build+vet clean).
+  - **Grading impact**: every exercise keeps its substantive grader-controlled methods
+    (`build`/`stdout`/`net`/`artifact`/`scenario`/`report`); no exercise was quiz-only, so
+    nothing becomes ungraded. Exercise pass still requires all remaining methods to pass.
+    The 92-exercise total is unchanged.
+  - **Anki**: `tools/anki/export.py` reads `answers[]` (not the quiz method or `quiz.txt`), so
+    decks are unaffected — regenerated 18 decks / 241 cards successfully.
+  - **Docs**: README (+ grading table, Anki section), PLAN method table (§7), fixture
+    inventory (§9), §3 status snapshot, and §10 blueprints updated; §14 history left intact.
 
 - **2026-09-03** **Skill-Reuse Audit closed; three items intentionally deferred.** Forward and
   backward maps (§16) are resolved except three deliberate design calls, each re-confirmed

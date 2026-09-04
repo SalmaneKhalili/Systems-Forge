@@ -4,51 +4,78 @@
   "title": "health checks",
   "lang": "go",
   "answers": [
-    { "q": "Which routing path reports whether the service is currently healthy?", "a": "/health" },
-    { "q": "Which HTTP status does an unhealthy health endpoint return?", "a": "503" },
-    { "q": "Which path flips the service unhealthy for the next probe?", "a": "/down" }
+    {
+      "q": "Which routing path reports whether the service is currently healthy?",
+      "a": "/health"
+    },
+    {
+      "q": "Which HTTP status does an unhealthy health endpoint return?",
+      "a": "503"
+    },
+    {
+      "q": "Which path flips the service unhealthy for the next probe?",
+      "a": "/down"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./test"],
+        "start": [
+          "./test"
+        ],
         "port": 17301,
         "wait_ms": 500,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n", "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n" }
+              {
+                "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n",
+                "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "GET /down HTTP/1.1\r\nHost: probe\r\n\r\n", "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n" }
+              {
+                "send": "GET /down HTTP/1.1\r\nHost: probe\r\n\r\n",
+                "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n", "expect": "HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\n\r\n" }
+              {
+                "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n",
+                "expect": "HTTP/1.1 503 Service Unavailable\r\nContent-Length: 0\r\n\r\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "GET /up HTTP/1.1\r\nHost: probe\r\n\r\n", "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n" }
+              {
+                "send": "GET /up HTTP/1.1\r\nHost: probe\r\n\r\n",
+                "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n", "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n" }
+              {
+                "send": "GET /health HTTP/1.1\r\nHost: probe\r\n\r\n",
+                "expect": "HTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nok\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

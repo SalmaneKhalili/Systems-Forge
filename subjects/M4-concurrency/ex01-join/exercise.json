@@ -3,10 +3,18 @@
   "module": "M4-concurrency",
   "title": "join and exit",
   "lang": "c",
-  "sanitizers": ["thread"],
+  "sanitizers": [
+    "thread"
+  ],
   "answers": [
-    { "q": "Which pthread call reclaims a thread and captures its exit value?", "a": "pthread_join" },
-    { "q": "Which function terminates the calling thread and returns a value to pthread_join?", "a": "pthread_exit" }
+    {
+      "q": "Which pthread call reclaims a thread and captures its exit value?",
+      "a": "pthread_join"
+    },
+    {
+      "q": "Which function terminates the calling thread and returns a value to pthread_join?",
+      "a": "pthread_exit"
+    }
   ],
   "methods": [
     {
@@ -14,10 +22,20 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["setarch", "x86_64", "-R", "./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "setarch",
+              "x86_64",
+              "-R",
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

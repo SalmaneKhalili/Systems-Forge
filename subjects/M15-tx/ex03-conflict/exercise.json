@@ -4,19 +4,36 @@
   "title": "conflict",
   "lang": "go",
   "answers": [
-    { "q": "Two transactions writing the same key risk a what?", "a": "lost update" },
-    { "q": "When both write the same key during a merge, whose value wins?", "a": "yours" },
-    { "q": "A write overwritten by another actor is called a what?", "a": "lost update" }
+    {
+      "q": "Two transactions writing the same key risk a what?",
+      "a": "lost update"
+    },
+    {
+      "q": "When both write the same key during a merge, whose value wins?",
+      "a": "yours"
+    },
+    {
+      "q": "A write overwritten by another actor is called a what?",
+      "a": "lost update"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

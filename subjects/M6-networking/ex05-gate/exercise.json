@@ -5,38 +5,62 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which environment variable carries the port the grader injects?", "a": "TARGETPORT" },
-    { "q": "Which socket option lets a server rebind an address still in TIME_WAIT?", "a": "SO_REUSEADDR" }
+    {
+      "q": "Which environment variable carries the port the grader injects?",
+      "a": "TARGETPORT"
+    },
+    {
+      "q": "Which socket option lets a server rebind an address still in TIME_WAIT?",
+      "a": "SO_REUSEADDR"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./test"],
+        "start": [
+          "./test"
+        ],
         "port": 17115,
         "wait_ms": 500,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "", "expect": "HELLO 1\n" },
-              { "send": "PING\n", "expect": "PONG\n" },
-              { "send": "ECHO awesome\n", "expect": "ECHO awesome\n" }
+              {
+                "send": "",
+                "expect": "HELLO 1\n"
+              },
+              {
+                "send": "PING\n",
+                "expect": "PONG\n"
+              },
+              {
+                "send": "ECHO awesome\n",
+                "expect": "ECHO awesome\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "", "expect": "HELLO 2\n" },
-              { "send": "PING\n", "expect": "PONG\n" }
+              {
+                "send": "",
+                "expect": "HELLO 2\n"
+              },
+              {
+                "send": "PING\n",
+                "expect": "PONG\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

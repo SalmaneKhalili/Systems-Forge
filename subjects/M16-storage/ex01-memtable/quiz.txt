@@ -1,3 +1,0 @@
-An LSM-tree memtable buffers writes in what?: memory
-To support range scans and efficient flushes, keys in a memtable must be what?: sorted
-In an LSM-tree, are writes applied directly on-disk or buffered in-memory first?: buffered in-memory first

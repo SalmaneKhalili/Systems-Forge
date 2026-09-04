@@ -4,51 +4,114 @@
   "title": "membershipgate",
   "lang": "go",
   "answers": [
-    { "q": "A gateway reports the cluster's current what?", "a": "live set" },
-    { "q": "A suspected but not failed member is still what?", "a": "listed" },
-    { "q": "A dropped member is removed from the what?", "a": "live set" }
+    {
+      "q": "A gateway reports the cluster's current what?",
+      "a": "live set"
+    },
+    {
+      "q": "A suspected but not failed member is still what?",
+      "a": "listed"
+    },
+    {
+      "q": "A dropped member is removed from the what?",
+      "a": "live set"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./watch"],
+        "start": [
+          "./watch"
+        ],
         "port": 17435,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "status a\n", "expect": "dead\n" },
-              { "send": "beat a\n", "expect": "ok\n" },
-              { "send": "beat b\n", "expect": "ok\n" },
-              { "send": "beat c\n", "expect": "ok\n" },
-              { "send": "status a\n", "expect": "alive\n" },
-              { "send": "list\n", "expect": "a|b|c\n" },
-              { "send": "suspect b\n", "expect": "ok\n" },
-              { "send": "status b\n", "expect": "suspect\n" },
-              { "send": "status a\n", "expect": "alive\n" },
-              { "send": "list\n", "expect": "a|b|c\n" }
+              {
+                "send": "status a\n",
+                "expect": "dead\n"
+              },
+              {
+                "send": "beat a\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "beat b\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "beat c\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "status a\n",
+                "expect": "alive\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "a|b|c\n"
+              },
+              {
+                "send": "suspect b\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "status b\n",
+                "expect": "suspect\n"
+              },
+              {
+                "send": "status a\n",
+                "expect": "alive\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "a|b|c\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "list\n", "expect": "a|b|c\n" },
-              { "send": "drop c\n", "expect": "ok\n" },
-              { "send": "status c\n", "expect": "dead\n" },
-              { "send": "list\n", "expect": "a|b\n" },
-              { "send": "beat b\n", "expect": "ok\n" },
-              { "send": "status b\n", "expect": "alive\n" },
-              { "signal": "TERM", "wait_exit": 0 }
+              {
+                "send": "list\n",
+                "expect": "a|b|c\n"
+              },
+              {
+                "send": "drop c\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "status c\n",
+                "expect": "dead\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "a|b\n"
+              },
+              {
+                "send": "beat b\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "status b\n",
+                "expect": "alive\n"
+              },
+              {
+                "signal": "TERM",
+                "wait_exit": 0
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

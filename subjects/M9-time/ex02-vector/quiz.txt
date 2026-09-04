@@ -1,3 +1,0 @@
-In a vector clock, which component does a process advance on a local event?: its own component
-On receiving a vector, which elementwise fold does the receiver apply before advancing?: max
-vc(a) <= vc(b) componentwise holds exactly when what relation exists between a and b?: a happened before b

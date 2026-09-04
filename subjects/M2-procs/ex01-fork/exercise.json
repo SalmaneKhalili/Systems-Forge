@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which syscall waits for a specific child process?", "a": "waitpid" },
-    { "q": "Which macro tests whether a child exited normally?", "a": "WIFEXITED" }
+    {
+      "q": "Which syscall waits for a specific child process?",
+      "a": "waitpid"
+    },
+    {
+      "q": "Which macro tests whether a child exited normally?",
+      "a": "WIFEXITED"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

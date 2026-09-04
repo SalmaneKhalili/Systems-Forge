@@ -1,3 +1,0 @@
-A store that appends every mutation to a log so it survives a restart is called what?: persistent
-On restart, a persistent store rebuilds its in-memory state by what?: replaying the write-ahead log
-A second connection served by the same store still sees data written by the first because of the store's what?: shared persistent state

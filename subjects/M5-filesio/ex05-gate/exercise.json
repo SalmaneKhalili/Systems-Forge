@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What character separates a name from a value in a key=value line?", "a": "=" },
-    { "q": "What should a parsing function return for a malformed line?", "a": "-1" }
+    {
+      "q": "What character separates a name from a value in a key=value line?",
+      "a": "="
+    },
+    {
+      "q": "What should a parsing function return for a malformed line?",
+      "a": "-1"
+    }
   ],
   "methods": [
     {
@@ -14,11 +20,28 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test config.txt", "cmd": ["./test", "config.txt"], "expect": "expected1.txt", "normalize": "strip", "stderr_ok": false },
-          { "name": "test apps.txt", "cmd": ["./test", "apps.txt"], "expect": "expected2.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test config.txt",
+            "cmd": [
+              "./test",
+              "config.txt"
+            ],
+            "expect": "expected1.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          },
+          {
+            "name": "test apps.txt",
+            "cmd": [
+              "./test",
+              "apps.txt"
+            ],
+            "expect": "expected2.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

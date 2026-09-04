@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What is a file descriptor number?", "a": "an index into the process's open file table" },
-    { "q": "Which integer does the first open() usually return?", "a": "3" }
+    {
+      "q": "What is a file descriptor number?",
+      "a": "an index into the process's open file table"
+    },
+    {
+      "q": "Which integer does the first open() usually return?",
+      "a": "3"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

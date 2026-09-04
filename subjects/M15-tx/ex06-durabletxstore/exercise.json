@@ -4,48 +4,102 @@
   "title": "durable txstore",
   "lang": "go",
   "answers": [
-    { "q": "The write-ahead log records every committed write so a crash can do what?", "a": "replay" },
-    { "q": "Which command shows the durable record of committed writes?", "a": "wal" },
-    { "q": "Rolling back a transaction leaves the WAL how?", "a": "unchanged" }
+    {
+      "q": "The write-ahead log records every committed write so a crash can do what?",
+      "a": "replay"
+    },
+    {
+      "q": "Which command shows the durable record of committed writes?",
+      "a": "wal"
+    },
+    {
+      "q": "Rolling back a transaction leaves the WAL how?",
+      "a": "unchanged"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./durable"],
+        "start": [
+          "./durable"
+        ],
         "port": 17540,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "set a 1\n", "expect": "ok\n" },
-              { "send": "set b 2\n", "expect": "ok\n" },
-              { "send": "begin\n", "expect": "ok\n" },
-              { "send": "set a 3\n", "expect": "ok\n" },
-              { "send": "commit\n", "expect": "ok\n" },
-              { "send": "get a\n", "expect": "3\n" },
-              { "send": "list\n", "expect": "a\nb\n" },
-              { "send": "wal\n", "expect": "set a=1\nset b=2\nset a=3\n" }
+              {
+                "send": "set a 1\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "set b 2\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "begin\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "set a 3\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "commit\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get a\n",
+                "expect": "3\n"
+              },
+              {
+                "send": "list\n",
+                "expect": "a\nb\n"
+              },
+              {
+                "send": "wal\n",
+                "expect": "set a=1\nset b=2\nset a=3\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "get a\n", "expect": "3\n" },
-              { "send": "begin\n", "expect": "ok\n" },
-              { "send": "set c 4\n", "expect": "ok\n" },
-              { "send": "rollback\n", "expect": "ok\n" },
-              { "send": "get c\n", "expect": "nil\n" },
-              { "send": "wal\n", "expect": "set a=1\nset b=2\nset a=3\n" }
+              {
+                "send": "get a\n",
+                "expect": "3\n"
+              },
+              {
+                "send": "begin\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "set c 4\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "rollback\n",
+                "expect": "ok\n"
+              },
+              {
+                "send": "get c\n",
+                "expect": "nil\n"
+              },
+              {
+                "send": "wal\n",
+                "expect": "set a=1\nset b=2\nset a=3\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -1,3 +1,0 @@
-# quiz.txt: answer each question as "Question: answer"
-What is a pid?: process id
-Which syscall creates a process?: fork

@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What does ft_strdup return if malloc fails?", "a": "NULL" },
-    { "q": "Which sanitizer reports a leak on exit?", "a": "LeakSanitizer" }
+    {
+      "q": "What does ft_strdup return if malloc fails?",
+      "a": "NULL"
+    },
+    {
+      "q": "Which sanitizer reports a leak on exit?",
+      "a": "LeakSanitizer"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

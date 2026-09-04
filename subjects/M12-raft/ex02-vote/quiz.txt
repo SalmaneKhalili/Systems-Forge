@@ -1,3 +1,0 @@
-A node may only vote for a candidate whose log is at least as what as its own?: up to date
-Which log is considered more up to date, the one with the higher what?: last index
-A node that already voted this term must what for all others?: refuse

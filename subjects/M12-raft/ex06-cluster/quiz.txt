@@ -1,3 +1,0 @@
-A group of 3 nodes needs how many votes to elect a leader?: 2
-The leader commits an entry once it is replicated to what?: a majority
-A node that sees a higher term immediately becomes what?: a follower

@@ -1,3 +1,0 @@
-A transaction's writes are applied atomically at what point?: commit
-Discarding a transaction's staged writes without applying them is called what?: rollback
-Before a transaction commits, are its writes visible to other readers?: no

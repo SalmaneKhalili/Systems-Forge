@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which syscall hands back an anonymous region to the kernel?", "a": "munmap" },
-    { "q": "What granularity does mmap allocate in?", "a": "pages" }
+    {
+      "q": "Which syscall hands back an anonymous region to the kernel?",
+      "a": "munmap"
+    },
+    {
+      "q": "What granularity does mmap allocate in?",
+      "a": "pages"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

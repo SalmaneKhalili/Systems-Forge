@@ -1,3 +1,0 @@
-A gateway reports the cluster's current what?: live set
-A transaction's staged writes are visible to other readers until what point?: commit
-Uncommitted staged writes visible to other connections is the bug for what exercise?: ex05

@@ -21,12 +21,12 @@ make setup        # build the forge binary (requires go 1.27+, gcc/clang, make, 
 ## Where things live
 
 ```
-subjects/     the curriculum — read-only canon: spec (subject.md), scaffold, harness,
-              expected outputs, quiz questions. Never a solved deliverable.
+subjects/     the curriculum — read-only canon: spec (subject.md), scaffold, harness, and
+              expected outputs. Never a solved deliverable.
 answers/      your personal workspace (gitignored) — WRITE your solutions here.
 solutions/    reference solutions (gitignored) — compare AFTER you solve, never before.
-tools/anki/   spaced-repetition review decks, generated from every exercise's quiz
-              questions (see "Review with Anki" below).
+tools/anki/   spaced-repetition review decks, generated from every exercise's Q&A review
+              metadata (see "Review with Anki" below).
 tools/        selfcheck, method fixtures, assistant graders.
 forge/        the platform source (TUI + CLI + grader engine, Go).
 caps/         (reserved) capstone specifications — currently unused, empty.
@@ -64,7 +64,6 @@ Every exercise declares one or more grading methods (see `subjects/*/exercise.js
 | `artifact` | properties of produced files (type, symbols, sizes, contents)              |
 | `process`  | spawns a program, drives it with signals/probes, asserts state             |
 | `net`      | drives a scripted protocol over a socket and asserts responses             |
-| `quiz`     | checks a Q&A checkpoint file against the exercise's answers                |
 | `report`   | parses structured output and compares to a reference run                   |
 | `scenario` | runs a fault-injection driver against a multi-node system                  |
 | `fault`    | asserts a _property_ under injected failures (partition, crash)            |
@@ -77,17 +76,17 @@ design, so keep the code warning-clean.
 
 ## Review with Anki (spaced repetition)
 
-Every exercise ships quiz questions in its `subject.md`-adjacent metadata
-(`subjects/*/ex*/exercise.json`). `tools/anki/export.py` turns those into
-**tab-separated Anki decks**, one per module, with front cards tagged
-`[<module> · <exNN> · <title>]` so you can batch-study per week's modules.
+Every exercise carries Q&A review metadata (`subjects/*/ex*/exercise.json` → `answers[]`).
+`tools/anki/export.py` turns those into **tab-separated Anki decks**, one per module, with
+front cards tagged `[<module> · <exNN> · <title>]` so you can batch-study per week's
+modules. Quizzing happens **only** in Anki — it is not part of exercise grading.
 
 - **Where:** `tools/anki/decks/<MODULE>.txt` (regenerated; e.g. `M12-raft.txt`).
 - **Import:** Anki → File → Import → pick a deck file (Fields separated by **Tab**).
   Optionally rename the imported deck to `systems-forge::<Module>` and tag notes with
   `systems-forge`.
 - **Regenerate:** `python3 tools/anki/export.py` rewrites all 18 decks from the canon.
-  If you add/change quiz questions, regen and re-import (delete old notes first to avoid
+  If you add/change review questions, regen and re-import (delete old notes first to avoid
   duplicating drifted cards).
 - **Details & caveats:** `tools/anki/README.md`.
 

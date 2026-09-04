@@ -1,3 +1,0 @@
-Raft appends only to a log whose immediate prefix what?: matches
-When a follower rejects an AppendEntries, the leader tries what index?: a lower one
-The overlapping prefix between follower and leader must be what?: identical

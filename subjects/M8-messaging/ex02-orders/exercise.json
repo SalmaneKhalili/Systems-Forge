@@ -4,23 +4,35 @@
   "title": "ordered delivery",
   "lang": "go",
   "answers": [
-    { "q": "What must hold between any two entries of the same partition?", "a": "per-partition FIFO" },
-    { "q": "What does the queue do with a partition entry whose predecessor has not arrived?", "a": "holds it back" },
-    { "q": "When several entries are eligible at once, whose entry is delivered first?", "a": "the earliest arrival" }
+    {
+      "q": "What must hold between any two entries of the same partition?",
+      "a": "per-partition FIFO"
+    },
+    {
+      "q": "What does the queue do with a partition entry whose predecessor has not arrived?",
+      "a": "holds it back"
+    },
+    {
+      "q": "When several entries are eligible at once, whose entry is delivered first?",
+      "a": "the earliest arrival"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
       "stdout": {
-        "cmd": ["./test"],
+        "cmd": [
+          "./test"
+        ],
         "expect": "expected.txt",
         "normalize": "strip"
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

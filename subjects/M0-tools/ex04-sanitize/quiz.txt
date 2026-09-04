@@ -1,2 +1,0 @@
-What exact report did ASan emit for this program?: heap-use-after-free
-Which syscall does the libc free() ultimately rely on?: munmap

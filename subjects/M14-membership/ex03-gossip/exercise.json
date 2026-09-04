@@ -4,19 +4,36 @@
   "title": "gossip",
   "lang": "go",
   "answers": [
-    { "q": "Gossip spreads membership facts from node to what?", "a": "node" },
-    { "q": "On a merge, each member keeps the entry with the higher what?", "a": "version" },
-    { "q": "After gossip exchanges a cluster's views eventually what?", "a": "converge" }
+    {
+      "q": "Gossip spreads membership facts from node to what?",
+      "a": "node"
+    },
+    {
+      "q": "On a merge, each member keeps the entry with the higher what?",
+      "a": "version"
+    },
+    {
+      "q": "After gossip exchanges a cluster's views eventually what?",
+      "a": "converge"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

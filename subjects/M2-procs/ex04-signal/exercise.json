@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which integer type is read and written atomically inside a signal handler?", "a": "volatile sig_atomic_t" },
-    { "q": "Which function sends a signal to the current process?", "a": "raise" }
+    {
+      "q": "Which integer type is read and written atomically inside a signal handler?",
+      "a": "volatile sig_atomic_t"
+    },
+    {
+      "q": "Which function sends a signal to the current process?",
+      "a": "raise"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

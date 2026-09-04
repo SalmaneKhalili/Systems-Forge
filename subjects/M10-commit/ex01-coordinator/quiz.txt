@@ -1,3 +1,0 @@
-What are the two phases of a two-phase commit?: prepare and commit
-How many phases does a coordinator drive through?: two
-What does a coordinator send to learn each participant's verdict?: a prepare

@@ -1,3 +1,0 @@
-A leader is elected only after it wins how many votes?: a majority
-The quorum of a group of size n is what?: n half plus one
-In a four node cluster how many votes are needed to win?: three

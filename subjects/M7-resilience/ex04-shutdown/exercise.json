@@ -4,9 +4,18 @@
   "title": "graceful shutdown",
   "lang": "go",
   "answers": [
-    { "q": "Which signal does this exercise handle for graceful shutdown?", "a": "SIGTERM" },
-    { "q": "What should a graceful shutdown do to in-flight work?", "a": "let it finish before exiting" },
-    { "q": "What is the exit code on the clean shutdown path?", "a": "0" }
+    {
+      "q": "Which signal does this exercise handle for graceful shutdown?",
+      "a": "SIGTERM"
+    },
+    {
+      "q": "What should a graceful shutdown do to in-flight work?",
+      "a": "let it finish before exiting"
+    },
+    {
+      "q": "What is the exit code on the clean shutdown path?",
+      "a": "0"
+    }
   ],
   "methods": [
     {
@@ -14,10 +23,16 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip" }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip"
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

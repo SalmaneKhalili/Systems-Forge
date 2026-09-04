@@ -4,19 +4,36 @@
   "title": "metrics",
   "lang": "go",
   "answers": [
-    { "q": "What are small numeric measurements collected from a running service called?", "a": "metrics" },
-    { "q": "A named numeric measurement that can be incremented by other components is called a what?", "a": "counter" },
-    { "q": "In observability, the snapshot that feeds dashboards and alerting comes from the what?", "a": "metrics registry" }
+    {
+      "q": "What are small numeric measurements collected from a running service called?",
+      "a": "metrics"
+    },
+    {
+      "q": "A named numeric measurement that can be incremented by other components is called a what?",
+      "a": "counter"
+    },
+    {
+      "q": "In observability, the snapshot that feeds dashboards and alerting comes from the what?",
+      "a": "metrics registry"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

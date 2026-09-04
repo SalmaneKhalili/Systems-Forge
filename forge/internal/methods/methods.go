@@ -111,7 +111,6 @@ var runners = map[string]Runner{
 	"artifact": runArtifact,
 	"process":  runProcess,
 	"net":      runNet,
-	"quiz":     runQuiz,
 	"report":   runReport,
 	"scenario": runScenario,
 	"fault":    runScenario,

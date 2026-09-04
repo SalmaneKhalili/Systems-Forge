@@ -4,19 +4,36 @@
   "title": "range",
   "lang": "go",
   "answers": [
-    { "q": "Key-range sharding splits the key space into contiguous what?", "a": "ranges" },
-    { "q": "Where on the sorted range does a key fall to pick its shard?", "a": "by value" },
-    { "q": "A key below every boundary belongs to which shard?", "a": "the first" }
+    {
+      "q": "Key-range sharding splits the key space into contiguous what?",
+      "a": "ranges"
+    },
+    {
+      "q": "Where on the sorted range does a key fall to pick its shard?",
+      "a": "by value"
+    },
+    {
+      "q": "A key below every boundary belongs to which shard?",
+      "a": "the first"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

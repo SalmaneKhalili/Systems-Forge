@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "How must a bounded allocator signal that memory is exhausted?", "a": "by refusing (returning an error)" },
-    { "q": "What is the buffer's hard capacity in bytes?", "a": "1024" }
+    {
+      "q": "How must a bounded allocator signal that memory is exhausted?",
+      "a": "by refusing (returning an error)"
+    },
+    {
+      "q": "What is the buffer's hard capacity in bytes?",
+      "a": "1024"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -1,3 +1,0 @@
-What are small numeric measurements collected from a running service called?: metrics
-A named numeric measurement that can be incremented by other components is called a what?: counter
-In observability, the snapshot that feeds dashboards and alerting comes from the what?: metrics registry

@@ -4,9 +4,18 @@
   "title": "circuit breaker",
   "lang": "go",
   "answers": [
-    { "q": "Which breaker state refuses calls without trying the backend?", "a": "Open" },
-    { "q": "Which single probe call decides whether an open breaker recovers?", "a": "HalfOpen" },
-    { "q": "How many consecutive failures does the harness trip the breaker after?", "a": "2" }
+    {
+      "q": "Which breaker state refuses calls without trying the backend?",
+      "a": "Open"
+    },
+    {
+      "q": "Which single probe call decides whether an open breaker recovers?",
+      "a": "HalfOpen"
+    },
+    {
+      "q": "How many consecutive failures does the harness trip the breaker after?",
+      "a": "2"
+    }
   ],
   "methods": [
     {
@@ -14,10 +23,16 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip" }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip"
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

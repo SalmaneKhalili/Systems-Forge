@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What exact report did ASan emit for this program?", "a": "heap-use-after-free" },
-    { "q": "Which syscall does the libc free() ultimately rely on?", "a": "munmap" }
+    {
+      "q": "What exact report did ASan emit for this program?",
+      "a": "heap-use-after-free"
+    },
+    {
+      "q": "Which syscall does the libc free() ultimately rely on?",
+      "a": "munmap"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "micro", "cmd": ["./micro"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "micro",
+            "cmd": [
+              "./micro"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

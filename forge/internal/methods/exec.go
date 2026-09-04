@@ -267,36 +267,6 @@ func symbolNames(nmOut string) map[string]bool {
 	return set
 }
 
-// runQuiz checks a Q&A checkpoint file against the configured answers.
-func runQuiz(ctx context.Context, c *Ctx, m *cur.Method) (*Result, error) {
-	spec := m.Quiz
-	file := spec.File
-	if file == "" {
-		file = "quiz.txt"
-	}
-	res := &Result{}
-	data, err := c.ReadExerciseFile(file)
-	if err != nil {
-		res.Parts = append(res.Parts, &Part{Name: file, Pass: false, Detail: "missing: " + err.Error()})
-		return res, nil
-	}
-	submitted := parseKV(string(data))
-	for _, qa := range c.Ex.Answers {
-		got, found := findKV(submitted, qa.Q)
-		if !found {
-			res.Parts = append(res.Parts, &Part{Name: "Q: " + truncate(qa.Q, 40), Pass: false, Detail: "not answered"})
-			continue
-		}
-		if strings.EqualFold(strings.TrimSpace(got), strings.TrimSpace(qa.A)) {
-			res.Parts = append(res.Parts, &Part{Name: "Q: " + truncate(qa.Q, 40), Pass: true, Detail: "ok"})
-		} else {
-			res.Parts = append(res.Parts, &Part{Name: "Q: " + truncate(qa.Q, 40), Pass: false,
-				Detail: fmt.Sprintf("answer %q (want %q)", truncate(got, 50), truncate(qa.A, 50))})
-		}
-	}
-	return res, nil
-}
-
 // parseKV parses "key: value" or "key=value" lines.
 func parseKV(s string) map[string]string {
 	out := map[string]string{}
@@ -316,11 +286,6 @@ func parseKV(s string) map[string]string {
 		out[strings.ToLower(k)] = v
 	}
 	return out
-}
-
-func findKV(m map[string]string, q string) (string, bool) {
-	v, ok := m[strings.ToLower(strings.TrimSpace(q))]
-	return v, ok
 }
 
 // runReport parses structured output and compares to a reference file.
@@ -396,13 +361,6 @@ func absf(x float64) float64 {
 		return -x
 	}
 	return x
-}
-
-func truncate(s string, n int) string {
-	if len(s) <= n {
-		return s
-	}
-	return s[:n-3] + "..."
 }
 
 func itoa(n int) string {

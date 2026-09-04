@@ -5,37 +5,58 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "What does the accept loop let a server do?", "a": "serve multiple connections" },
-    { "q": "How does a server usually know where one message ends?", "a": "by a framing rule like a newline" }
+    {
+      "q": "What does the accept loop let a server do?",
+      "a": "serve multiple connections"
+    },
+    {
+      "q": "How does a server usually know where one message ends?",
+      "a": "by a framing rule like a newline"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./test"],
+        "start": [
+          "./test"
+        ],
         "port": 17102,
         "wait_ms": 500,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "hello\n", "expect": "1:hello\n" },
-              { "send": "world\n", "expect": "2:world\n" },
-              { "send": "again\n", "expect": "3:again\n" }
+              {
+                "send": "hello\n",
+                "expect": "1:hello\n"
+              },
+              {
+                "send": "world\n",
+                "expect": "2:world\n"
+              },
+              {
+                "send": "again\n",
+                "expect": "3:again\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "hi\n", "expect": "1:hi\n" }
+              {
+                "send": "hi\n",
+                "expect": "1:hi\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

@@ -1,3 +1,0 @@
-What does a snapshot replace in an over-long replicated log?: the compacted prefix
-After a snapshot, which entries remain available in the log?: the uncommitted suffix
-What advantage does snapshotting give a growing replica?: bounded memory

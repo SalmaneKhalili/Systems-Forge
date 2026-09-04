@@ -4,19 +4,36 @@
   "title": "tracing",
   "lang": "go",
   "answers": [
-    { "q": "Tracing records the lifecycle of a single request as a tree of what?", "a": "spans" },
-    { "q": "A named unit of work that carries a name and a duration is called a what?", "a": "span" },
-    { "q": "In a tracing tree, the span at the root of a request is called the what?", "a": "root span" }
+    {
+      "q": "Tracing records the lifecycle of a single request as a tree of what?",
+      "a": "spans"
+    },
+    {
+      "q": "A named unit of work that carries a name and a duration is called a what?",
+      "a": "span"
+    },
+    {
+      "q": "In a tracing tree, the span at the root of a request is called the what?",
+      "a": "root span"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

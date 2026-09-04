@@ -1,3 +1,0 @@
-What is the smallest quorum for a majority-based decision among n participants?: floor(n/2) + 1
-Can two different majority quorums share no participant at all?: no
-Why does using a strict-majority quorum prevent two decisions?: every two majorities overlap

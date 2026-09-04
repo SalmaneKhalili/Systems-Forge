@@ -4,19 +4,36 @@
   "title": "drill",
   "lang": "go",
   "answers": [
-    { "q": "A drill verifies a cluster stays what while nodes fail?", "a": "correct" },
-    { "q": "An operation on a down node returns what?", "a": "fail" },
-    { "q": "Fault-injection testing that deliberately breaks a system is called what?", "a": "chaos engineering" }
+    {
+      "q": "A drill verifies a cluster stays what while nodes fail?",
+      "a": "correct"
+    },
+    {
+      "q": "An operation on a down node returns what?",
+      "a": "fail"
+    },
+    {
+      "q": "Fault-injection testing that deliberately breaks a system is called what?",
+      "a": "chaos engineering"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

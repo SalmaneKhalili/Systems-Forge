@@ -5,8 +5,14 @@
   "lang": "c",
   "sanitize": true,
   "answers": [
-    { "q": "Which character terminates a C string?", "a": "NUL" },
-    { "q": "Which unsigned type do strlen-style functions use for sizes?", "a": "size_t" }
+    {
+      "q": "Which character terminates a C string?",
+      "a": "NUL"
+    },
+    {
+      "q": "Which unsigned type do strlen-style functions use for sizes?",
+      "a": "size_t"
+    }
   ],
   "methods": [
     {
@@ -14,10 +20,17 @@
       "build": {
         "make": "all",
         "runs": [
-          { "name": "test", "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

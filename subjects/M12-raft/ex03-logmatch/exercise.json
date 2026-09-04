@@ -4,19 +4,36 @@
   "title": "logmatch",
   "lang": "go",
   "answers": [
-    { "q": "Raft appends only to a log whose immediate prefix what?", "a": "matches" },
-    { "q": "When a follower rejects an AppendEntries, the leader tries what index?", "a": "a lower one" },
-    { "q": "The overlapping prefix between follower and leader must be what?", "a": "identical" }
+    {
+      "q": "Raft appends only to a log whose immediate prefix what?",
+      "a": "matches"
+    },
+    {
+      "q": "When a follower rejects an AppendEntries, the leader tries what index?",
+      "a": "a lower one"
+    },
+    {
+      "q": "The overlapping prefix between follower and leader must be what?",
+      "a": "identical"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

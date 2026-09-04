@@ -1,3 +1,0 @@
-Key-range sharding splits the key space into contiguous what?: ranges
-Where on the sorted range does a key fall to pick its shard?: by value
-A key below every boundary belongs to which shard?: the first

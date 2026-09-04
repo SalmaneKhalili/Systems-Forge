@@ -1,3 +1,0 @@
-A shard gateway routes a key by looking up which what owns it?: shard
-Key-range routing needs the boundaries kept in what order?: sorted
-Each shard keeps its own isolated what?: key value store

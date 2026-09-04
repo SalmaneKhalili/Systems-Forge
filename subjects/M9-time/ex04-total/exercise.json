@@ -4,19 +4,36 @@
   "title": "total order",
   "lang": "go",
   "answers": [
-    { "q": "How is a total order built from Lamport stamps that tie?", "a": "tie-break by process id" },
-    { "q": "Does the (lamport, pid) total order respect the happens-before partial order?", "a": "yes" },
-    { "q": "Adding a pid tie-break to Lamport stamps turns the partial order into what?", "a": "a total order" }
+    {
+      "q": "How is a total order built from Lamport stamps that tie?",
+      "a": "tie-break by process id"
+    },
+    {
+      "q": "Does the (lamport, pid) total order respect the happens-before partial order?",
+      "a": "yes"
+    },
+    {
+      "q": "Adding a pid tie-break to Lamport stamps turns the partial order into what?",
+      "a": "a total order"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }

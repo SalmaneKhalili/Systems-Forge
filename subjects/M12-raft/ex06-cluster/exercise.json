@@ -4,45 +4,90 @@
   "title": "raft cluster",
   "lang": "go",
   "answers": [
-    { "q": "A group of 3 nodes needs how many votes to elect a leader?", "a": "2" },
-    { "q": "The leader commits an entry once it is replicated to what?", "a": "a majority" },
-    { "q": "A node that sees a higher term immediately becomes what?", "a": "a follower" }
+    {
+      "q": "A group of 3 nodes needs how many votes to elect a leader?",
+      "a": "2"
+    },
+    {
+      "q": "The leader commits an entry once it is replicated to what?",
+      "a": "a majority"
+    },
+    {
+      "q": "A node that sees a higher term immediately becomes what?",
+      "a": "a follower"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "net",
       "net": {
-        "start": ["./cluster"],
+        "start": [
+          "./cluster"
+        ],
         "port": 17430,
         "wait_ms": 700,
         "timeout_ms": 3000,
         "connections": [
           {
             "steps": [
-              { "send": "read\n", "expect": "\n" },
-              { "send": "elect a\n", "expect": "ELECTED a term 1\n" },
-              { "send": "propose x\n", "expect": "ok 0\n" },
-              { "send": "propose y\n", "expect": "ok 1\n" },
-              { "send": "read\n", "expect": "x|y\n" },
-              { "send": "log a\n", "expect": "x|y\n" },
-              { "send": "log b\n", "expect": "x|y\n" },
-              { "send": "log c\n", "expect": "x|y\n" }
+              {
+                "send": "read\n",
+                "expect": "\n"
+              },
+              {
+                "send": "elect a\n",
+                "expect": "ELECTED a term 1\n"
+              },
+              {
+                "send": "propose x\n",
+                "expect": "ok 0\n"
+              },
+              {
+                "send": "propose y\n",
+                "expect": "ok 1\n"
+              },
+              {
+                "send": "read\n",
+                "expect": "x|y\n"
+              },
+              {
+                "send": "log a\n",
+                "expect": "x|y\n"
+              },
+              {
+                "send": "log b\n",
+                "expect": "x|y\n"
+              },
+              {
+                "send": "log c\n",
+                "expect": "x|y\n"
+              }
             ]
           },
           {
             "steps": [
-              { "send": "read\n", "expect": "x|y\n" },
-              { "send": "term a\n", "expect": "term 1\n" },
-              { "send": "log c\n", "expect": "x|y\n" }
+              {
+                "send": "read\n",
+                "expect": "x|y\n"
+              },
+              {
+                "send": "term a\n",
+                "expect": "term 1\n"
+              },
+              {
+                "send": "log c\n",
+                "expect": "x|y\n"
+              }
             ]
           }
         ]
       }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+    }
   ]
 }

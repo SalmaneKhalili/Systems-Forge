@@ -4,18 +4,38 @@
   "title": "A five-minute checker",
   "lang": "python",
   "answers": [
-    { "q": "What is the standard location for the interpreter on unix?", "a": "/usr/bin/env python3" },
-    { "q": "Which module is best for parsing command-line arguments?", "a": "argparse" }
+    {
+      "q": "What is the standard location for the interpreter on unix?",
+      "a": "/usr/bin/env python3"
+    },
+    {
+      "q": "Which module is best for parsing command-line arguments?",
+      "a": "argparse"
+    }
   ],
   "methods": [
     {
       "type": "stdout",
-      "stdout": { "cmd": ["python3", "check.py", "sample/"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
+      "stdout": {
+        "cmd": [
+          "python3",
+          "check.py",
+          "sample/"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
     },
     {
       "type": "artifact",
-      "artifact": { "path": "check.py", "exists": true, "contains": ["#!/usr/bin/env python3"] }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "artifact": {
+        "path": "check.py",
+        "exists": true,
+        "contains": [
+          "#!/usr/bin/env python3"
+        ]
+      }
+    }
   ]
 }

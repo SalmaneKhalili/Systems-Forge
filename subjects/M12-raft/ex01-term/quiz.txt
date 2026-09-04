@@ -1,3 +1,0 @@
-Can a node's term ever move backwards?: no, it only increases
-A node that sees a higher term becomes what?: a follower
-What resets when a node learns of a higher term?: the vote

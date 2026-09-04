@@ -4,19 +4,36 @@
   "title": "wal",
   "lang": "go",
   "answers": [
-    { "q": "The record of every mutation written to disk before it is applied is called the what?", "a": "write-ahead log" },
-    { "q": "The write-ahead log is what kind of file?", "a": "append-only" },
-    { "q": "On restart, an LSM-tree rebuilds the in-memory state by what process?", "a": "replaying the write-ahead log" }
+    {
+      "q": "The record of every mutation written to disk before it is applied is called the what?",
+      "a": "write-ahead log"
+    },
+    {
+      "q": "The write-ahead log is what kind of file?",
+      "a": "append-only"
+    },
+    {
+      "q": "On restart, an LSM-tree rebuilds the in-memory state by what process?",
+      "a": "replaying the write-ahead log"
+    }
   ],
   "methods": [
     {
       "type": "build",
-      "build": { "make": "all" }
+      "build": {
+        "make": "all"
+      }
     },
     {
       "type": "stdout",
-      "stdout": { "cmd": ["./test"], "expect": "expected.txt", "normalize": "strip", "stderr_ok": false }
-    },
-    { "type": "quiz", "quiz": { "file": "quiz.txt" } }
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
   ]
 }
