@@ -17,13 +17,13 @@ server is these three verbs composed.
 - Never modify the `C` discipline learned in M1: every resource you open is closed, every
   return checked, every child reaped.
 
-| ex | topic | artifact you deliver |
-|----|-------|----------------------|
-| ex01 | fork + wait | a `fork1`-style `main.c`: fork, child exits 7, parent reaps and verifies status |
-| ex02 | the spawn idiom | `main.c`: fork → `execvp` → wait, with a correct exec-failure path (exit 127) |
-| ex03 | pipes | `main.c`: child writes through a pipe, parent reads till EOF and reports |
-| ex04 | signals | `main.c`: install a `SIGUSR1` handler, `raise`, prove it ran (flag, not printf) |
-| ex05 | **Gate: pipeline** | `main.c`: two children, one pipe, `dup2` + `echo`→`tr`, parent reaps both |
+| ex   | topic              | artifact you deliver                                                            |
+| ---- | ------------------ | ------------------------------------------------------------------------------- |
+| ex01 | fork + wait        | a `fork1`-style `main.c`: fork, child exits 7, parent reaps and verifies status |
+| ex02 | the spawn idiom    | `main.c`: fork → `execvp` → wait, with a correct exec-failure path (exit 127)   |
+| ex03 | pipes              | `main.c`: child writes through a pipe, parent reads till EOF and reports        |
+| ex04 | signals            | `main.c`: install a `SIGUSR1` handler, `raise`, prove it ran (flag, not printf) |
+| ex05 | **Gate: pipeline** | `main.c`: two children, one pipe, `dup2` + `echo`→`tr`, parent reaps both       |
 
 ---
 
@@ -49,6 +49,7 @@ A shell, an init system, a supervisor, and a CI runner are all this module's ver
 differently; the pipeline gate is a miniature of exactly that.
 
 **Interview questions this module arms you for:**
+
 - What actually happens when you type a command in a shell (`fork`+`execvp`+`wait`)?
 - How do you prevent a zombie process, and what is the missing `wait` doing?
 - What is the exec-failure convention (exit 127) and why is that a contract?

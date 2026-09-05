@@ -20,6 +20,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .coverage
+.idea/
+.vscode/
 
 # Fixture build outputs (private to each self-test case)
 tools/fixtures/**/hello
