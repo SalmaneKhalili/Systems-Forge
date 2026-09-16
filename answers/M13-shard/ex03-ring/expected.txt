@@ -1,0 +1,7 @@
+nodes 100 300 500
+key 50 -> node 0
+key 100 -> node 0
+key 150 -> node 1
+key 300 -> node 1
+key 350 -> node 2
+key 600 -> node 0

@@ -1,0 +1,46 @@
+{
+  "id": "M5-ex04",
+  "module": "M5-filesio",
+  "title": "tee",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which system call copies a set of bytes to an open file descriptor?",
+      "a": "write"
+    },
+    {
+      "q": "Read() and write() return the number of bytes actually transferred.",
+      "a": "true"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "input": "hello world\nsecond line\n",
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    },
+    {
+      "type": "artifact",
+      "artifact": {
+        "path": "out.txt",
+        "wipe": true,
+        "min_size": 24,
+        "max_size": 24
+      }
+    }
+  ]
+}

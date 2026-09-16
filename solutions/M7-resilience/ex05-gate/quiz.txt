@@ -1,0 +1,3 @@
+What unit does the watchdog restart after one of its tasks fails?: the worker
+How many consecutive failures trigger the supervisor to give up on a worker?: 2
+What is the final phase after every worker finishes its tasks?: graceful shutdown

@@ -1,0 +1,36 @@
+{
+  "id": "M3-ex05",
+  "module": "M3-memory",
+  "title": "OOM-safe buffer",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "How must a bounded allocator signal that memory is exhausted?",
+      "a": "by refusing (returning an error)"
+    },
+    {
+      "q": "What is the buffer's hard capacity in bytes?",
+      "a": "1024"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

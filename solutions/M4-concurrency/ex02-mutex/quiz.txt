@@ -1,0 +1,2 @@
+Which function blocks until the caller owns a mutex?: pthread_mutex_lock
+What happens to other threads when one thread owns a mutex?: they block until it unlocks

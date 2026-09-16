@@ -1,0 +1,2 @@
+strcmp must interpret bytes as which type to be correct on negative bytes?: unsigned char
+When s1 sorts before s2, strcmp returns a value that is what?: negative

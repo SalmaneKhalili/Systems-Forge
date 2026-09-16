@@ -1,0 +1,2 @@
+Which character terminates a C string?: NUL
+Which unsigned type do strlen-style functions use for sizes?: size_t

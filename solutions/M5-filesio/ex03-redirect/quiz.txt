@@ -1,0 +1,2 @@
+Which function repoints one file descriptor to another open file?: dup2
+What does _exit() skip that exit() runs?: the atexit handlers and the stdio flush

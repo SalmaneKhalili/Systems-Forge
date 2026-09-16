@@ -1,0 +1,2 @@
+What character separates a name from a value in a key=value line?: =
+What should a parsing function return for a malformed line?: -1

@@ -1,0 +1,39 @@
+{
+  "id": "M10-ex03",
+  "module": "M10-commit",
+  "title": "elect",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "What is this leader-election scheme called where the largest id wins?",
+      "a": "bully algorithm"
+    },
+    {
+      "q": "How are equal election timestamps broken?",
+      "a": "by id"
+    },
+    {
+      "q": "Why does a higher election stamp win a leadership race?",
+      "a": "it claims a more recent round"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

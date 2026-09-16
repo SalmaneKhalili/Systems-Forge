@@ -1,0 +1,2 @@
+child: hello from the child
+parent: reaped the child, exit status 7

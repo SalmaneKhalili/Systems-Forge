@@ -1,0 +1,39 @@
+{
+  "id": "M10-ex02",
+  "module": "M10-commit",
+  "title": "vote",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "What must a participant be able to do once it votes commit for a transaction?",
+      "a": "guarantee it can commit"
+    },
+    {
+      "q": "Why can a participant that voted commit never later change its mind to abort?",
+      "a": "the coordinator may already have told others to commit"
+    },
+    {
+      "q": "A participant votes abort when it cannot guarantee what for the transaction?",
+      "a": "commit"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

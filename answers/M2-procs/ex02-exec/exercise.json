@@ -1,0 +1,49 @@
+{
+  "id": "M2-ex02",
+  "module": "M2-procs",
+  "title": "the spawn idiom",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "On success, what does exec never do?",
+      "a": "return"
+    },
+    {
+      "q": "Which exec family function searches PATH for the program?",
+      "a": "execvp"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "run echo",
+            "cmd": [
+              "./test",
+              "/bin/echo",
+              "hello"
+            ],
+            "expect": "expected_echo.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          },
+          {
+            "name": "run fail",
+            "cmd": [
+              "./test",
+              "/definitely/not/a/command"
+            ],
+            "expect": "expected_fail.txt",
+            "normalize": "strip",
+            "stderr_ok": false,
+            "expect_exit": 127
+          }
+        ]
+      }
+    }
+  ]
+}

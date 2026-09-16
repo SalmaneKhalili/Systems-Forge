@@ -1,0 +1,2 @@
+Which integer type is read and written atomically inside a signal handler?: volatile sig_atomic_t
+Which function sends a signal to the current process?: raise

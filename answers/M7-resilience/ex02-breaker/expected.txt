@@ -1,0 +1,12 @@
+call 1: closed ok -> closed
+call 2: closed ok -> closed
+call 3: closed fail -> closed
+call 4: closed fail -> open
+call 5: open fast-fail
+call 6: open fast-fail
+call 7: half-open probe fail -> open
+call 8: open fast-fail
+call 9: open fast-fail
+call 10: half-open probe ok -> closed
+call 11: closed ok -> closed
+call 12: closed ok -> closed

@@ -1,0 +1,73 @@
+{
+  "id": "M11-ex05",
+  "module": "M11-log",
+  "title": "replica",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "What must every client of a replicated log read to see the same state?",
+      "a": "the committed prefix"
+    },
+    {
+      "q": "Which log entries may a client never observe?",
+      "a": "uncommitted ones"
+    },
+    {
+      "q": "A log read returns entries only up to which index?",
+      "a": "the commit index"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": [
+          "./replica"
+        ],
+        "port": 17415,
+        "wait_ms": 700,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              {
+                "send": "append x\n",
+                "expect": "ok 0\n"
+              },
+              {
+                "send": "append y\n",
+                "expect": "ok 1\n"
+              },
+              {
+                "send": "commit 1\n",
+                "expect": "commit 1\n"
+              },
+              {
+                "send": "read\n",
+                "expect": "x|y\n"
+              }
+            ]
+          },
+          {
+            "steps": [
+              {
+                "send": "append z\n",
+                "expect": "ok 2\n"
+              },
+              {
+                "send": "read\n",
+                "expect": "x|y\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

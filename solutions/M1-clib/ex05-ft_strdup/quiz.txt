@@ -1,0 +1,2 @@
+What does ft_strdup return if malloc fails?: NULL
+Which sanitizer reports a leak on exit?: LeakSanitizer

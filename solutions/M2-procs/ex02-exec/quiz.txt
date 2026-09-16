@@ -1,0 +1,2 @@
+On success, what does exec never do?: return
+Which exec family function searches PATH for the program?: execvp

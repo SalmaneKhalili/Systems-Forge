@@ -1,0 +1,2 @@
+An allocator that assigns memory only by advancing a pointer is called what?: a bump allocator
+Which C11 keyword forces a static buffer to a required alignment?: _Alignas

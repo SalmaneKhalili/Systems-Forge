@@ -1,0 +1,2 @@
+Which function waits on a condition variable while releasing its mutex?: pthread_cond_wait
+Which function wakes one thread waiting on a condition variable?: pthread_cond_signal

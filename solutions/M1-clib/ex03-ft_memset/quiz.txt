@@ -1,0 +1,2 @@
+Which header declares memset?: string.h
+What address does memset return?: the start pointer

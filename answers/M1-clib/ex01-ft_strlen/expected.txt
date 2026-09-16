@@ -1,0 +1,7 @@
+empty: PASS (0)
+hello: PASS (5)
+with-spaces: PASS (11)
+utf8: PASS (5)
+embedded-nul: PASS (1)
+long: PASS (48)
+ALL PASS

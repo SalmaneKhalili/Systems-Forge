@@ -1,0 +1,5 @@
+web
+cache
+queue
+tokens 3
+ALL PASS

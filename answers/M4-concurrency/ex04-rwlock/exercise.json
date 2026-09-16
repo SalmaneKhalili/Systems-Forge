@@ -1,0 +1,41 @@
+{
+  "id": "M4-ex04",
+  "module": "M4-concurrency",
+  "title": "readers and writers",
+  "lang": "c",
+  "sanitizers": [
+    "thread"
+  ],
+  "answers": [
+    {
+      "q": "Which call acquires a read-write lock for reading?",
+      "a": "pthread_rwlock_rdlock"
+    },
+    {
+      "q": "Can two reader threads hold a read-write lock at the same time?",
+      "a": "yes"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "setarch",
+              "x86_64",
+              "-R",
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

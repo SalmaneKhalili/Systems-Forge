@@ -1,0 +1,8 @@
+bounds k p u
+apple -> 0
+kiwi -> 1
+k -> 0
+mango -> 1
+pear -> 2
+u -> 2
+zebra -> 3

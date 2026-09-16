@@ -1,0 +1,6 @@
+empty: PASS
+hello: PASS
+spaces: PASS
+long: PASS
+high-bit: PASS
+ALL PASS

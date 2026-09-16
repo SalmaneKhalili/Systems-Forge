@@ -1,0 +1,36 @@
+{
+  "id": "M2-ex03",
+  "module": "M2-procs",
+  "title": "pipes",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which syscall creates a pipe?",
+      "a": "pipe"
+    },
+    {
+      "q": "When parent and child share a pipe, what must the parent close to see EOF on read?",
+      "a": "the write end"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+What is a file descriptor number?: an index into the process's open file table
+Which integer does the first open() usually return?: 3

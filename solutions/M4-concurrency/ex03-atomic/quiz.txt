@@ -1,0 +1,2 @@
+Which C11 storage qualifier makes a variable updated atomically without locks?: _Atomic
+Which function atomically adds a value and returns the old value?: atomic_fetch_add

@@ -1,0 +1,5 @@
+apple @4 -> 3
+banana @4 -> 0
+cherry @4 -> 0
+date @4 -> 1
+elder @4 -> 3

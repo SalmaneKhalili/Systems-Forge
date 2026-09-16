@@ -1,0 +1,2 @@
+Which call puts a listening socket's address family, port and address on it?: bind
+Which call accepts a pending connection and returns a new socket for it?: accept

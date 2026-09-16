@@ -1,0 +1,3 @@
+Which algorithm multiplies the wait between retries as they keep failing?: exponential backoff
+What does a successful attempt mean for a retry loop?: it stops and reports success
+Which peer behaviour does this exercise classify as a failed attempt?: closing the connection before a response

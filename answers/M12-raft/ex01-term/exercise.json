@@ -1,0 +1,39 @@
+{
+  "id": "M12-ex01",
+  "module": "M12-raft",
+  "title": "term",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "Can a node's term ever move backwards?",
+      "a": "no, it only increases"
+    },
+    {
+      "q": "A node that sees a higher term becomes what?",
+      "a": "a follower"
+    },
+    {
+      "q": "What resets when a node learns of a higher term?",
+      "a": "the vote"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

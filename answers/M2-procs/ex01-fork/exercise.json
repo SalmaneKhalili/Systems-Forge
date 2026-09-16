@@ -1,0 +1,36 @@
+{
+  "id": "M2-ex01",
+  "module": "M2-procs",
+  "title": "fork and wait",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which syscall waits for a specific child process?",
+      "a": "waitpid"
+    },
+    {
+      "q": "Which macro tests whether a child exited normally?",
+      "a": "WIFEXITED"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

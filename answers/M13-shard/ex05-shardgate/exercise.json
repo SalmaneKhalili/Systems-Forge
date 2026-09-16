@@ -1,0 +1,81 @@
+{
+  "id": "M13-ex05",
+  "module": "M13-shard",
+  "title": "shardgate",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "A shard gateway routes a key by looking up which what owns it?",
+      "a": "shard"
+    },
+    {
+      "q": "Key-range routing needs the boundaries kept in what order?",
+      "a": "sorted"
+    },
+    {
+      "q": "Each shard keeps its own isolated what?",
+      "a": "key value store"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": [
+          "./gate"
+        ],
+        "port": 17425,
+        "wait_ms": 700,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              {
+                "send": "set apple red\n",
+                "expect": "set 0\n"
+              },
+              {
+                "send": "get apple\n",
+                "expect": "0:red\n"
+              },
+              {
+                "send": "set mango yellow\n",
+                "expect": "set 1\n"
+              },
+              {
+                "send": "get mango\n",
+                "expect": "1:yellow\n"
+              }
+            ]
+          },
+          {
+            "steps": [
+              {
+                "send": "get apple\n",
+                "expect": "0:red\n"
+              },
+              {
+                "send": "set zebra striped\n",
+                "expect": "set 2\n"
+              },
+              {
+                "send": "get zebra\n",
+                "expect": "2:striped\n"
+              },
+              {
+                "send": "get melon\n",
+                "expect": "1:?\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

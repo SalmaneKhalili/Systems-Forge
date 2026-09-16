@@ -1,0 +1,2 @@
+What does strlcpy return when the source does not fit?: the full length of src
+At most how many bytes of the source can a call with size n copy?: n - 1

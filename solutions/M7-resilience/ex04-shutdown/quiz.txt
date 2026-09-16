@@ -1,0 +1,3 @@
+Which signal does this exercise handle for graceful shutdown?: SIGTERM
+What should a graceful shutdown do to in-flight work?: let it finish before exiting
+What is the exit code on the clean shutdown path?: 0

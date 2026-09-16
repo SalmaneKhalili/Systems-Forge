@@ -1,0 +1,2 @@
+Which socket option makes a blocking read give up after a delay?: SO_RCVTIMEO
+What errno does a timed-out recv return?: EAGAIN

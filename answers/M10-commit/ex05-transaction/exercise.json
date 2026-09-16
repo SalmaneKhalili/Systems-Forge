@@ -1,0 +1,69 @@
+{
+  "id": "M10-ex05",
+  "module": "M10-commit",
+  "title": "transaction",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "In 2PC over the wire, what does the coordinator gather before deciding?",
+      "a": "prepared votes"
+    },
+    {
+      "q": "A participant replies prepared only when it can guarantee what?",
+      "a": "commit"
+    },
+    {
+      "q": "What does the coordinator send when it has not heard prepared from everyone?",
+      "a": "abort"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": [
+          "./gate"
+        ],
+        "port": 17410,
+        "wait_ms": 700,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              {
+                "send": "tx 3\n",
+                "expect": "COMMIT\n"
+              },
+              {
+                "send": "tx 0\n",
+                "expect": "ABORT\n"
+              },
+              {
+                "send": "tx 2\n",
+                "expect": "COMMIT\n"
+              }
+            ]
+          },
+          {
+            "steps": [
+              {
+                "send": "tx 1\n",
+                "expect": "ABORT\n"
+              },
+              {
+                "send": "tx 7\n",
+                "expect": "COMMIT\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

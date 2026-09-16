@@ -1,0 +1,2 @@
+read 19 bytes: hello over the pipe
+pipe ok

@@ -1,0 +1,2 @@
+How must a bounded allocator signal that memory is exhausted?: by refusing (returning an error)
+What is the buffer's hard capacity in bytes?: 1024

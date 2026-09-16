@@ -1,0 +1,36 @@
+{
+  "id": "M2-ex04",
+  "module": "M2-procs",
+  "title": "signals",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which integer type is read and written atomically inside a signal handler?",
+      "a": "volatile sig_atomic_t"
+    },
+    {
+      "q": "Which function sends a signal to the current process?",
+      "a": "raise"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+Which syscall hands back an anonymous region to the kernel?: munmap
+What granularity does mmap allocate in?: pages

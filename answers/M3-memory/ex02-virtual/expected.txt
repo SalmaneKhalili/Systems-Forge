@@ -1,0 +1,2 @@
+private page kept A after child write (copy-on-write)
+shared page shows B (MAP_SHARED)

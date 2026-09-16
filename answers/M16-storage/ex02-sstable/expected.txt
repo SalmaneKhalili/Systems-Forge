@@ -1,0 +1,7 @@
+sstable write ok
+get zed -> (v0)
+get kappa -> (v1)
+get alpha -> ok=true
+get amber -> ok=true
+get missing -> ok=false
+blocks: 3

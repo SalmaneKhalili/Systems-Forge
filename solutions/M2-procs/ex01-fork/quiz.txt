@@ -1,0 +1,2 @@
+Which syscall waits for a specific child process?: waitpid
+Which macro tests whether a child exited normally?: WIFEXITED

@@ -1,0 +1,6 @@
+append a -> 0   append b -> 1   append c -> 2   append d -> 3
+all=0:a|1:b|2:c|3:d
+snapshot(1) -> removed 2
+all=2:c|3:d
+append e -> 4
+all=2:c|3:d|4:e

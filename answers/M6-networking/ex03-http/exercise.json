@@ -1,0 +1,46 @@
+{
+  "id": "M6-ex03",
+  "module": "M6-networking",
+  "title": "http-ish server",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which HTTP request method does this exercise serve?",
+      "a": "GET"
+    },
+    {
+      "q": "Which number means the resource was not found?",
+      "a": "404"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": [
+          "./test"
+        ],
+        "port": 17104,
+        "wait_ms": 500,
+        "timeout_ms": 4000,
+        "steps": [
+          {
+            "send": "GET /ping HTTP/1.1\r\nHost: loopback\r\n\r\n",
+            "expect": "HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\npong\n"
+          },
+          {
+            "send": "GET /nope HTTP/1.1\r\nHost: loopback\r\n\r\n",
+            "expect": "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n"
+          }
+        ]
+      }
+    }
+  ]
+}

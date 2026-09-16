@@ -1,0 +1,38 @@
+{
+  "id": "M8-ex01",
+  "module": "M8-messaging",
+  "title": "message framing",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "Which 4-byte integer in each frame tells the reader how many payload bytes follow?",
+      "a": "length"
+    },
+    {
+      "q": "Which error must GetFrame return when the stream ends halfway through a frame?",
+      "a": "io.ErrUnexpectedEOF"
+    },
+    {
+      "q": "Which io helper loops internally so the codec survives one-byte-at-a-time readers?",
+      "a": "io.ReadFull"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip"
+      }
+    }
+  ]
+}

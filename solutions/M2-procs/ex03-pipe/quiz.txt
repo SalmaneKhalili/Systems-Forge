@@ -1,0 +1,2 @@
+Which syscall creates a pipe?: pipe
+When parent and child share a pipe, what must the parent close to see EOF on read?: the write end

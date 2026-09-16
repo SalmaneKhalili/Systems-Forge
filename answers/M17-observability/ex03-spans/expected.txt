@@ -1,0 +1,7 @@
+request{}=30ms
+  db.query{db=mysql}=40ms
+    db.scan{}=25ms
+  cache.get{hit=true}=15ms
+  db.query{db=postgres}=50ms
+count db.query=2
+slowest=50

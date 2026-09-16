@@ -1,0 +1,2 @@
+Anonymous private mappings use copy-on-write across fork by default — true or false?: true
+Which flag makes a forked child's writes visible to the parent?: MAP_SHARED

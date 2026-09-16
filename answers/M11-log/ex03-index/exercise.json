@@ -1,0 +1,39 @@
+{
+  "id": "M11-ex03",
+  "module": "M11-log",
+  "title": "index",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "With commit index c and length of len, how many entries are uncommitted?",
+      "a": "len - c - 1"
+    },
+    {
+      "q": "What index will the next Append write at?",
+      "a": "the current length"
+    },
+    {
+      "q": "When the log is empty and nothing is committed, what is the commit index?",
+      "a": "-1"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

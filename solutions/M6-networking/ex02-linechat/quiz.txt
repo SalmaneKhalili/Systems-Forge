@@ -1,0 +1,2 @@
+What does the accept loop let a server do?: serve multiple connections
+How does a server usually know where one message ends?: by a framing rule like a newline

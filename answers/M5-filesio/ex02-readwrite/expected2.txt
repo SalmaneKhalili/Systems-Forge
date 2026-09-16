@@ -1,0 +1,4 @@
+second.txt read 11 checksum 715
+second.txt fread 11 checksum 715
+match 1
+ALL PASS

@@ -1,0 +1,36 @@
+{
+  "id": "M1-ex04",
+  "module": "M1-clib",
+  "title": "ft_strcmp",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "strcmp must interpret bytes as which type to be correct on negative bytes?",
+      "a": "unsigned char"
+    },
+    {
+      "q": "When s1 sorts before s2, strcmp returns a value that is what?",
+      "a": "negative"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

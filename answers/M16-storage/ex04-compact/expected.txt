@@ -1,0 +1,6 @@
+after compaction:
+a=stale
+b=new
+d=3
+f=x
+g=1

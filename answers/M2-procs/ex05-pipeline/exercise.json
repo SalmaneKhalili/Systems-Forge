@@ -1,0 +1,47 @@
+{
+  "id": "M2-ex05",
+  "module": "M2-procs",
+  "title": "Gate: pipeline",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which syscall redirects a file descriptor to another?",
+      "a": "dup2"
+    },
+    {
+      "q": "A pipe delivers written bytes in what order?",
+      "a": "FIFO"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "run hello",
+            "cmd": [
+              "./test",
+              "hello"
+            ],
+            "expect": "expected_hello.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          },
+          {
+            "name": "run school",
+            "cmd": [
+              "./test",
+              "42 school"
+            ],
+            "expect": "expected_school.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

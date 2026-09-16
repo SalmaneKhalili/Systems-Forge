@@ -1,0 +1,3 @@
+Which routing path reports whether the service is currently healthy?: /health
+Which HTTP status does an unhealthy health endpoint return?: 503
+Which path flips the service unhealthy for the next probe?: /down

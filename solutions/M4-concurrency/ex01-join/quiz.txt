@@ -1,0 +1,2 @@
+Which pthread call reclaims a thread and captures its exit value?: pthread_join
+Which function terminates the calling thread and returns a value to pthread_join?: pthread_exit

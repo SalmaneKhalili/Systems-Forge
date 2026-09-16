@@ -1,0 +1,3 @@
+Which breaker state refuses calls without trying the backend?: Open
+Which single probe call decides whether an open breaker recovers?: HalfOpen
+How many consecutive failures does the harness trip the breaker after?: 2

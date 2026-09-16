@@ -1,0 +1,36 @@
+{
+  "id": "M3-ex01",
+  "module": "M3-memory",
+  "title": "bump arena",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "An allocator that assigns memory only by advancing a pointer is called what?",
+      "a": "a bump allocator"
+    },
+    {
+      "q": "Which C11 keyword forces a static buffer to a required alignment?",
+      "a": "_Alignas"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

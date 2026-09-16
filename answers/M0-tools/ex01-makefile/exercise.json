@@ -1,0 +1,36 @@
+{
+  "id": "M0-ex01",
+  "module": "M0-tools",
+  "title": "Makefile discipline",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "What target removes build artifacts?",
+      "a": "fclean"
+    },
+    {
+      "q": "What does `make re` do?",
+      "a": "fclean then all"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "hello",
+            "cmd": [
+              "./hello"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

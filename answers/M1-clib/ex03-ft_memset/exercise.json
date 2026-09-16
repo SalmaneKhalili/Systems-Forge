@@ -1,0 +1,36 @@
+{
+  "id": "M1-ex03",
+  "module": "M1-clib",
+  "title": "ft_memset",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which header declares memset?",
+      "a": "string.h"
+    },
+    {
+      "q": "What address does memset return?",
+      "a": "the start pointer"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

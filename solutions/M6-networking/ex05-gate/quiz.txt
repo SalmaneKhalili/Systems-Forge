@@ -1,0 +1,2 @@
+Which environment variable carries the port the grader injects?: TARGETPORT
+Which socket option lets a server rebind an address still in TIME_WAIT?: SO_REUSEADDR

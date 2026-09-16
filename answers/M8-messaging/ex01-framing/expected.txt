@@ -1,0 +1,3 @@
+roundtrip: hello|world|x
+split: alpha|beta
+truncated: unexpected eof

@@ -1,0 +1,2 @@
+Which system call returns bytes to a buffer you provide?: read
+Which stdio function reads fixed-size blocks into a buffer?: fread

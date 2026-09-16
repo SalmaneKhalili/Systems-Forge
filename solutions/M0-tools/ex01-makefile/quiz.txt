@@ -1,0 +1,2 @@
+What target removes build artifacts?: fclean
+What does `make re` do?: fclean then all

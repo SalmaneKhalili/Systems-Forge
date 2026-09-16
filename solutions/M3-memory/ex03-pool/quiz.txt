@@ -1,0 +1,2 @@
+What does an empty pool return from get?: NULL
+How is a slot pointer proven to belong to the pool?: it lies within the pool

@@ -1,0 +1,39 @@
+{
+  "id": "M14-ex02",
+  "module": "M14-membership",
+  "title": "suspect",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "Before a node is declared failed it is usually marked what?",
+      "a": "suspect"
+    },
+    {
+      "q": "A node becomes failed only after the what threshold elapses?",
+      "a": "second"
+    },
+    {
+      "q": "An incoming heartbeat clears what state immediately?",
+      "a": "suspect"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

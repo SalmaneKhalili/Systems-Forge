@@ -1,0 +1,69 @@
+{
+  "id": "M8-ex05",
+  "module": "M8-messaging",
+  "title": "Gate: the switch in anger",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "After a client disconnects mid-scenario, what must a correct switch do?",
+      "a": "keep serving the next connection"
+    },
+    {
+      "q": "Does the dup directive also apply to a freshly connected client?",
+      "a": "yes, per connection"
+    },
+    {
+      "q": "Which ordering of two replies proves a hold was released after the following frame?",
+      "a": "the swapped sequence numbers"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "net",
+      "net": {
+        "start": [
+          "./switch"
+        ],
+        "port": 17305,
+        "wait_ms": 500,
+        "timeout_ms": 3000,
+        "connections": [
+          {
+            "steps": [
+              {
+                "send": "M0\n",
+                "expect": "R1 M0\nR2 M0\n"
+              },
+              {
+                "send": "M1\nM2\n",
+                "expect": "R3 M2\n"
+              },
+              {
+                "send": "M3\nM4\n",
+                "expect": "R4 M4\nR5 M3\n"
+              }
+            ]
+          },
+          {
+            "steps": [
+              {
+                "send": "target\n",
+                "expect": "R1 target\nR2 target\n"
+              },
+              {
+                "send": "power\nup\ndown\nend\n",
+                "expect": "R3 up\nR4 end\nR5 down\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

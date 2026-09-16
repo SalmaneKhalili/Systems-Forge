@@ -1,0 +1,9 @@
+timeout=3
+tick: alive (2 left)
+tick: alive (1 left)
+beat
+tick: alive (2 left)
+tick: alive (1 left)
+tick: failed (0 left)
+tick: failed (0 left)
+beat: alive

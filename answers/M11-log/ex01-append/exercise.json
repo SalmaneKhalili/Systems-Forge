@@ -1,0 +1,39 @@
+{
+  "id": "M11-ex01",
+  "module": "M11-log",
+  "title": "append",
+  "lang": "go",
+  "answers": [
+    {
+      "q": "Does a replicated log ever rewrite or overwrite an existing entry?",
+      "a": "no"
+    },
+    {
+      "q": "Where is a new command appended in a replicated log?",
+      "a": "at the end"
+    },
+    {
+      "q": "What names the position of an entry in the log?",
+      "a": "its index"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all"
+      }
+    },
+    {
+      "type": "stdout",
+      "stdout": {
+        "cmd": [
+          "./test"
+        ],
+        "expect": "expected.txt",
+        "normalize": "strip",
+        "stderr_ok": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "M1-ex01",
+  "module": "M1-clib",
+  "title": "ft_strlen",
+  "lang": "c",
+  "sanitize": true,
+  "answers": [
+    {
+      "q": "Which character terminates a C string?",
+      "a": "NUL"
+    },
+    {
+      "q": "Which unsigned type do strlen-style functions use for sizes?",
+      "a": "size_t"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

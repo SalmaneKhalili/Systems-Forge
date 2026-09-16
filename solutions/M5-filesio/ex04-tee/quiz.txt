@@ -1,0 +1,2 @@
+Which system call copies a set of bytes to an open file descriptor?: write
+Read() and write() return the number of bytes actually transferred.: true

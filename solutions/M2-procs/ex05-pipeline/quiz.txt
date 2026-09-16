@@ -1,0 +1,2 @@
+Which syscall redirects a file descriptor to another?: dup2
+A pipe delivers written bytes in what order?: FIFO

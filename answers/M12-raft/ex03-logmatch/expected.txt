@@ -1,0 +1,3 @@
+log   =b2 c3 d4
+match prev(0,2) -> b2 c3 d4 e5
+mismatch prev(0,3) -> REJECT

@@ -1,0 +1,41 @@
+{
+  "id": "M4-ex02",
+  "module": "M4-concurrency",
+  "title": "mutex bomb",
+  "lang": "c",
+  "sanitizers": [
+    "thread"
+  ],
+  "answers": [
+    {
+      "q": "Which function blocks until the caller owns a mutex?",
+      "a": "pthread_mutex_lock"
+    },
+    {
+      "q": "What happens to other threads when one thread owns a mutex?",
+      "a": "they block until it unlocks"
+    }
+  ],
+  "methods": [
+    {
+      "type": "build",
+      "build": {
+        "make": "all",
+        "runs": [
+          {
+            "name": "test",
+            "cmd": [
+              "setarch",
+              "x86_64",
+              "-R",
+              "./test"
+            ],
+            "expect": "expected.txt",
+            "normalize": "strip",
+            "stderr_ok": false
+          }
+        ]
+      }
+    }
+  ]
+}

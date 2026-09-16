@@ -1,0 +1,2 @@
+Which HTTP request method does this exercise serve?: GET
+Which number means the resource was not found?: 404

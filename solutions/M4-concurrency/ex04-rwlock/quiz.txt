@@ -1,0 +1,2 @@
+Which call acquires a read-write lock for reading?: pthread_rwlock_rdlock
+Can two reader threads hold a read-write lock at the same time?: yes
