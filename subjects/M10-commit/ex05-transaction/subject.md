@@ -39,3 +39,10 @@ So `tx 3`, `tx 2`, `tx 7` must `COMMIT`, and every other id (0, 1, …) must
 `ABORT`. The transcript is byte-deterministic. A gateway that replies
 `COMMIT` for an id absent from the file — or that ties the decision to
 anything other than the whole-file-committed check — fails.
+
+## Readings
+
+- **Reading ladder** — the wire gate composes ex01–ex04; the protocol is 2PC, the framing is M8.
+- *Designing Data-Intensive Applications*, Chapter 9 — 2PC end to end.
+- Reread M10-ex01 (coordinator) and M10-ex02 (the promise).
+- Go `net` / `bufio` docs: https://pkg.go.dev/net, https://pkg.go.dev/bufio

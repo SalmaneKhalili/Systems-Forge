@@ -51,3 +51,12 @@ The coordinator always emits a decision line, then one per-participant action
 (`commit` for every participant on a commit; `abort` for every participant on
 an abort). The tell: even though participants 0 and 1 said yes, participant 2
 said no, so **everyone** is aborted — partial commit is not allowed.
+
+## Readings
+
+- **Reading ladder** — one chapter covers both atomic commit and 2PC; Kleppmann's notes make
+  the coordinator's state machine concrete.
+- *Designing Data-Intensive Applications*, Chapter 9 "Consistency and Consensus" — "Atomic
+  commit and two-phase commit (2PC)".
+- Martin Kleppmann, *Distributed Systems* notes — atomic commit / 2PC:
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf

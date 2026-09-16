@@ -57,3 +57,12 @@ all=2:c|3:d|4:e
 After `snapshot(1)`, entries 0 and 1 are gone but `c` is still reported at
 index 2 and `d` at 3; the next append lands at 4. A log that renumbers the
 tail after compaction (or that fails to drop the compacted prefix) is the bug.
+
+## Readings
+
+- **Reading ladder** — a snapshot is a checkpoint of applied state; the Raft compaction note
+  and The Log each frame the bounded-memory trade-off.
+- Raft paper (log compaction section): https://raft.github.io/raft.pdf
+- Jay Kreps, *The Log* — log compaction and retention.
+- *Designing Data-Intensive Applications*, Chapter 11 "Stream Processing" — log compaction as
+  a design pattern.

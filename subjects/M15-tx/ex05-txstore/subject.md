@@ -54,5 +54,7 @@ its writes anyway, is the bug this gate exists to catch. A gateway that dies on 
 
 ## Readings
 
+- **Reading ladder** — start with how a WAL makes commits durable (replay),
+  then revisit the staging exercises below.
 - Revisit ex01 (transaction staging), ex02 (replay/durability), ex03 (conflict).
 - The Linux Programming Interface: sockets — §56 (accept loop), framing as in M6/M16.

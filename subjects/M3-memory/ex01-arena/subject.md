@@ -45,6 +45,8 @@ Which C11 keyword forces a static buffer to a required alignment?: <answer>
 
 ## Readings
 
+- **Reading ladder** — start with `man 3 malloc`'s contract, then the jemalloc
+  arena overview below, then TLPI §7.1 for the heap model.
 - The Linux Programming Interface, §7.1 "Allocating Memory on the Heap" is the background;
   for the *arena* pattern itself, read the jemalloc overview below.
 - jemalloc's arena overview (skim): https://jemalloc.net/jemalloc.3.html search "arena".

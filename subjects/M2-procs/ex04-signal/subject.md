@@ -47,12 +47,23 @@ Which function sends a signal to the current process?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §21.1 "Designing Signal Handlers", §21.1.2
-  "Reentrant and Async-Signal-Safe Functions", §21.1.3 "Global Variables and the
-  sig_atomic_t Data Type" (why no printf).
+- **Cold-start glossary** — *signal*: a software interrupt delivered to a process; *disposition*:
+  the process-defined action for a signal (default / ignore / handler); *default action*: what
+  happens with no handler installed — for `SIGUSR1` that is **terminate the process**;
+  *delivery*: the moment the disposition runs; *synchronous*: self-inflicted via `raise()`, as
+  opposed to arriving from outside the process. A handler must only do **async-signal-safe**
+  work (set a flag) — calling `printf` inside it is exactly the class of bug this module
+  teaches you to avoid; that is why `volatile sig_atomic_t` exists. With these six words you
+  can open TLPI below without flailing.
+- The Linux Programming Interface, §20.1 "The Concept of Signals", §20.2 "Types of Standard
+  Signals" (default dispositions), §20.4 "Sending Signals: kill() and raise()" — the
+  fundamentals that §21 assumes; read this chapter first.
+- The Linux Programming Interface, §21.1 "Designing Signal Handlers", §21.1.2 "Reentrant and
+  Async-Signal-Safe Functions", §21.1.3 "Global Variables and the sig_atomic_t Data Type".
 - `man 2 signal`, `man 2 raise`, `man 7 signal-safety`.
-- C standard note on `sig_atomic_t`: cppreference
-  https://en.cppreference.com/w/c/program/sig_atomic_t
+- `sig_atomic_t` in the C standard: https://en.cppreference.com/w/c/program/sig_atomic_t
+- **Depth returns later:** terminal-signal handling and `SIGCHLD`-based reaping come back at
+  M7-ex04 (graceful shutdown) and M7-ex05 (mini supervisor).
 
 ## How you are graded
 

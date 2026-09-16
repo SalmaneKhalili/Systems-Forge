@@ -46,3 +46,10 @@ next(c=1,l=5)  = 5      uncommitted = 3
 Empty log: next write is 0, nothing uncommitted. With 3 entries and commit
 at 0, two entries (`1`,`2`) are uncommitted. The next write is always the
 *current length*, never `len-1`.
+
+## Readings
+
+- **Reading ladder** — two integers, seven relations; the Raft index rules supply the
+  arithmetic the exercise checks.
+- Raft paper, §5.3 "Log replication" (nextIndex / commitIndex):
+  https://raft.github.io/raft.pdf

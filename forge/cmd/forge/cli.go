@@ -10,6 +10,7 @@ import (
 	"forge/internal/check"
 	"forge/internal/cur"
 	"forge/internal/methods"
+	"forge/internal/readings"
 	"forge/internal/sandbox"
 	"forge/internal/store"
 	"forge/internal/tui"
@@ -24,6 +25,7 @@ Usage:
   forge list [module]   show modules and exercises (optionally one module)
   forge show <id>       print an exercise specification (subject.md)
   forge check <id>      run the grader for one exercise
+  forge lint readings   check the Reading-Ladder standard on subjects/
   forge score           show passing progress per module
   forge selftest        validate the grader against built-in fixtures
   forge help            this text
@@ -64,6 +66,11 @@ func run(args []string) error {
 		return cmdCheck(root, rest[0])
 	case "score":
 		return cmdScore(root)
+	case "lint":
+		if len(rest) == 1 && rest[0] == "readings" {
+			return cmdLintReadings(root)
+		}
+		return fmt.Errorf("usage: forge lint readings")
 	case "selftest":
 		return cmdSelftest(root)
 	case "help", "--help", "-h":
@@ -215,6 +222,22 @@ func cmdScore(root string) error {
 	}
 	fmt.Println(strings.Repeat("-", 44))
 	fmt.Printf("%-18s %3d/%-3d   (%d attempted, %d remaining)\n", "TOTAL", passed, total, attempted, total-attempted)
+	return nil
+}
+
+// cmdLintReadings checks the Reading-Ladder standard over subjects/.
+func cmdLintReadings(root string) error {
+	issues, err := readings.Check(root)
+	if err != nil {
+		return err
+	}
+	for _, iss := range issues {
+		fmt.Printf("  BAD %s\n", iss)
+	}
+	if len(issues) > 0 {
+		return fmt.Errorf("readings lint: %d issue(s) (see docs/readings-standard.md)", len(issues))
+	}
+	fmt.Println("  readings lint: ok")
 	return nil
 }
 

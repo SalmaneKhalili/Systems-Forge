@@ -52,3 +52,13 @@ Conn 2's first reply is `R12` — the counter carries across connections. And
 `c 9` after `b 9` shows the merge rule: the client's *claimed* stamp does not
 reset the sequencer; wall-clock intuition breaks here, Lamport's max-then-add
 is the law.
+
+## Readings
+
+- **Reading ladder** — the sequencer is the Lamport receive rule wrapped in a TCP server; the
+  wire framing is the part you already trained in M8.
+- Lamport's receive rule, "Time, Clocks…" §2.2:
+  https://lamport.azurewebsites.net/pubs/time-clocks.pdf
+- Kleppmann's total-order-broadcast treatment:
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf
+- Go `net` docs — the TCP accept loop: https://pkg.go.dev/net

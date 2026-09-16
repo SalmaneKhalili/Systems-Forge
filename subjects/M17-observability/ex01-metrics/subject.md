@@ -59,6 +59,8 @@ A registry that loses increments from concurrent goroutines (not mutex-safe), or
 
 ## Readings
 
+- **Reading ladder** — OTel metrics primer first:
+  https://opentelemetry.io/docs/concepts/signals/metrics/
 - Tragically achievable with the Go standard library `sync.Mutex`.
 - DDIA, Chapter 9 "Consistency and Consensus" (consistency guarantees for replicated
   measured state — summary for the module).

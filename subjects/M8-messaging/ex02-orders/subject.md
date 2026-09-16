@@ -48,8 +48,9 @@ Stderr must stay empty. Clean exit (0) is part of the grade.
 
 ## Readings
 
-- Jay Kreps, *The Log: What every software engineer should know about
-  real-time data's unifying abstraction* — partition ordering, offsets.
+- **Reading ladder** — the essay first (partition ordering, offsets):
+  https://www.confluent.io/blog/log-what-every-software-engineer-should-know-about-real-time-datas-unifying/
+- The Log's partition-ordering and offset mechanics — the module's framing.
 - Go maps and slices — an ordered consolidation is map-driven index work.
 
 ## Quiz

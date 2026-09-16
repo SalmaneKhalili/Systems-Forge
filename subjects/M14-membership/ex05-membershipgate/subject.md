@@ -59,3 +59,9 @@ accepting and exit cleanly, not be killed with a non-zero code.
 A gateway that lists a `dead` member, or that fails to revive a `suspect`
 member on `beat`, is the bug. A gateway that dies on SIGTERM (non-zero
 exit) fails the graceful-shutdown step.
+
+## Readings
+
+- **Reading ladder** — the gate is a TCP view of the lifecycle you trained; wiring is M8.
+- SWIM paper, protocol states: https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf
+- Go `net` / `bufio` docs: https://pkg.go.dev/net

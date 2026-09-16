@@ -65,5 +65,7 @@ The tree has two distinct `db.query` spans (one with `db=mysql`, the other with 
 
 ## Readings
 
+- **Reading ladder** — OpenTelemetry Span semantics:
+  https://opentelemetry.io/docs/concepts/signals/traces/#span
 - OpenTelemetry Span attributes and semantic conventions.
 - Distributed tracing querying (finding hot spans).

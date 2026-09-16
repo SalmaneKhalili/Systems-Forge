@@ -1001,6 +1001,12 @@ crash recovery; determinism; both-ways fixtures.
 - Distributed: "Designing Data-Intensive Applications", Raft paper (raft.github.io), "Patterns of
   Distributed Systems", Herlihy & Wing for linearizability.
 - Every exercise references exact chapters/sections.
+- **Reading-ladder standard** (`docs/readings-standard.md`): every `## Readings` block must open
+  with a cold-start entry (glossary / external primer / man page), climb
+  fundamentals → section → verification, cite TLPI as `§N.M "Chapter title"`, and have no
+  silent gaps. The structural invariants are machine-enforced by `forge lint readings`
+  (R1–R4) and gated in `tools/selfcheck.sh`; pedagogic ordering is human review (R5).
+  Standard, lint, and full backfill landing 2026-09-11 (§14).
 
 ---
 
@@ -1025,6 +1031,27 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 ---
 
 ## 14. Log / Changelog
+
+- **2026-09-11** **Reading-Ladder overhaul complete — full backfill + gated lint.** Every
+  exercise (`92/92`) now opens its `## Readings` with a cold-start entry and climbs
+  fundamentals → section → verification per `docs/readings-standard.md` (R1–R5):
+  - **Backfill (R1)**: 34 subjects that had no `## Readings` gained a **Reading ladder**
+    block — all 5 of M9-time, M10-commit, M11-log, M12-raft, M13-shard, M14-membership,
+    plus M15-tx ex01–ex04. Distributed sources chosen to match each exercise's goal
+    target (Lamport 1978 / Kleppmann notes for M9; DDIA Ch 9 for M10; Raft §5.3 for M11;
+    Raft guide + paper for M12; DDIA Ch 6 + Karger for M13; SWIM for M14; DDIA Ch 7 + WAL
+    for M15).
+  - **Cold-jump fixes (R3)**: staggered/cold-TLPI openings in 16 subjects (M3-ex01–05,
+    M4-ex05, M8-ex01/02/05, M12-ex06, M15-ex05/06, M17-ex01/02/03/05) rebuilt to open on
+    `man` pages, URLs, or a **Reading ladder** marker before diving to TLPI sections.
+  - **M8-ex03**: the lone inline-`Readings:` straggler converted to a proper `## Readings`
+    block; stale `## Quiz` section removed (the three answers already live in
+    `exercise.json.answers[]` for Anki).
+  - **Mechanism**: `forge lint readings` (R1–R4, R2 relaxed to numeric §N / Chapter N pin)
+    implemented in `forge/internal/readings/check.go`; wired into `tools/selfcheck.sh` as a
+    gate after selftest. Selftest **47 fixtures, 0 mismatches**; lint clean across 92/92;
+    fmt/vet green. NOTE: lint root is the repo root (`os.Getwd()`), so `forge lint readings`
+    must run from the repo root (as selfcheck does), not from `forge/`.
 
 - **2026-09-03** **Removed the `quiz` grading method entirely. Quizzing is Anki-only.** The
   user's quizzing workflow is spaced repetition (Anki), not in-grader checkpoints, so the

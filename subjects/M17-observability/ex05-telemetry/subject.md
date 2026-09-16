@@ -49,5 +49,7 @@ A server that serves each connection from a fresh registry, miscounts connection
 
 ## Readings
 
+- **Reading ladder** — OpenTelemetry metrics export:
+  https://opentelemetry.io/docs/concepts/signals/metrics/
 - OpenTelemetry metrics export over the network.
 - Reuse `Metrics` from ex01 (mutex-safe registry with sorted snapshot).

@@ -43,3 +43,9 @@ conn2: read     -> x|y
 `z` sits at index 2, beyond the commit index (still 1), so conn 2's `read`
 returns only `x|y`. A replica that leaks `z` (returns it uncommitted) is the
 bug.
+
+## Readings
+
+- **Reading ladder** — the gate is a TCP replica serving one committed log; the wire part is M8.
+- Raft paper, §5.3 (log replication and commit index): https://raft.github.io/raft.pdf
+- Go `net` / `bufio` docs: https://pkg.go.dev/net

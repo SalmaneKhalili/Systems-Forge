@@ -44,3 +44,10 @@ Adding a node at 200 (between 100 and 300) takes over only key `150`; adding
 700 (past 500) claims only `550` from the wrap-around owner; removing 300
 redistributes `150` and `250` to 500. Shuffling every key, or counting by
 position instead of by node hash, is the bug.
+
+## Readings
+
+- **Reading ladder** — the value of consistent hashing appears exactly here: when a node
+  changes, only the keys whose owner changed move.
+- Wikipedia, "Consistent hashing" (why few keys move): https://en.wikipedia.org/wiki/Consistent_hashing
+- *Designing Data-Intensive Applications*, Chapter 6 — "Rebalancing partitions".

@@ -53,6 +53,8 @@ What granularity does mmap allocate in?: <answer>
 
 ## Readings
 
+- **Reading ladder** — start with `man 2 mmap` (MAP_ANONYMOUS), then TLPI
+  §49.1 "Overview" and §49.7 below.
 - The Linux Programming Interface, §49.1 "Overview" and §49.7 "Anonymous Mappings".
 - `man 2 mmap` — the `MAP_ANONYMOUS` paragraph, and why the kernel allocates in pages
   (the `length` fiddling notes near the end).

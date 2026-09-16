@@ -48,3 +48,10 @@ at 1 = add
 ```
 
 Indexes are assigned strictly at the end: `set` is 0, `add` is 1, `del` is 2.
+
+## Readings
+
+- **Reading ladder** — the Log essay frames *why* append-only; the Raft paper routes the log
+  mechanics; Go slices do the data structure.
+- Jay Kreps, *The Log* — https://www.confluent.io/blog/log-what-every-software-engineer-should-know-about-real-time-datas-unifying/
+- Raft paper, §5.3 "Log replication": https://raft.github.io/raft.pdf

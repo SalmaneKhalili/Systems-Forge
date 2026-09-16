@@ -44,7 +44,8 @@ order and fails.
 
 ## Readings
 
-- The M8-ex04 fault contract — per-connection numbering, release-after-next.
+- **Reading ladder** — the M8-ex04 fault contract first (per-connection
+  numbering, release-after-next), then the Go net/bufio teardown docs.
 - Go `net`/`bufio` — half-close and teardown semantics.
 
 ## Quiz

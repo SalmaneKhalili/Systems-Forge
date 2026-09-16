@@ -65,3 +65,10 @@ With `suspectAfter=2` and `failAfter=5`, the peer turns suspect at tick 2 and
 failed at tick 5. A `beat` before failure clears suspicion and restarts the
 count. A lifecycle that skips `suspect` (goes straight to `failed`) or that
 fails before `failAfter` ticks is the bug.
+
+## Readings
+
+- **Reading ladder** — suspicion is a deliberate third lifecycle stage between alive and
+  failed; the SWIM paper motivates why losing a peer immediately is too eager.
+- SWIM paper, suspicion mechanism: https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf
+- Cassandra's practical lifecycle (alive → suspect → dead).

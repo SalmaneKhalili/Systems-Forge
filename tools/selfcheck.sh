@@ -35,6 +35,9 @@ rm -rf bin
 echo "==> selftest (grader fixtures)"
 ./bin/forge selftest
 
+echo "==> readings lint (Reading-Ladder standard)"
+./bin/forge lint readings
+
 echo "==> cli smoke (list/score)"
 ./bin/forge list >/dev/null
 ./bin/forge score >/dev/null

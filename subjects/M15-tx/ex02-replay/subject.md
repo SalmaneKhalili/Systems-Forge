@@ -41,3 +41,10 @@ b -> 2
 After appending `set a=1`, `set b=2`, `set a=3`, replay must give `a=3`
 (last write wins) and `b=2`; entries length is 3. A replay that applies
 out-of-order or lets an earlier write to `a` win is the bug.
+
+## Readings
+
+- **Reading ladder** — write the intent first, replay on crash; the WAL docs and DDIA agree
+  on the order.
+- PostgreSQL, "Write-Ahead Logging (WAL)": https://www.postgresql.org/docs/current/wal-intro.html
+- Wikipedia, "Write-ahead logging": https://en.wikipedia.org/wiki/Write-ahead_logging

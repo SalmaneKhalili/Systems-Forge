@@ -61,5 +61,7 @@ proposed to the leader are actually replicated to the followers over TCP.
 
 ## Readings
 
+- **Reading ladder** — start from the Raft paper's log-replication core, then
+  revisit the term / vote / quorum exercises below.
 - Revisit ex01 (term), ex02 (up-to-date vote rule), ex04 (majority quorum).
 - The module intro: Raft keeps one consistent log across a cluster, safely.

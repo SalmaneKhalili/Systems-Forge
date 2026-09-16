@@ -45,3 +45,10 @@ At logical time 10 with `staleAfter=3`, `a` (seq 7), `b` (8) and `c` (9) are
 within the bound and stay, while `d` (seq 4) is 6 behind and is evicted. A
 sieve that evicts a member exactly at the bound (off-by-one `>=` vs `>`) or
 that keeps a stale member is the bug.
+
+## Readings
+
+- **Reading ladder** — eviction keeps the live set bounded; the paper's cleanup rule does the
+  age-based pruning.
+- SWIM paper, evicting suspected members: https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf
+- Datastax, "Failure Detector" (the remove threshold).

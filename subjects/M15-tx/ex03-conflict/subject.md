@@ -39,3 +39,10 @@ y -> c
 `Conflict({x:1},{x:2})` is true (both write `x`). `Resolve({x:1},{x:b,y:c})`
 must keep `x=1` (yours wins over the conflicting `x=b`) and merge `y=c`.
 Overwriting your own `x` with the other's `b` is the bug.
+
+## Readings
+
+- **Reading ladder** — a conflict is a lost update in waiting; comparing write sets is the
+  detector.
+- *Designing Data-Intensive Applications*, Chapter 7 — write-write conflicts and lost updates.
+- Wikipedia, "Isolation (database systems)": https://en.wikipedia.org/wiki/Isolation_(database_systems)

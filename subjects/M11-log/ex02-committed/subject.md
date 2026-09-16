@@ -53,3 +53,11 @@ committed=a|b|c
 `c` sits beyond the commit index at first, so `committed` is empty; after
 `commit 1`, only `a` and `b` are durable; `c` becomes committed only after
 the commit index reaches 2.
+
+## Readings
+
+- **Reading ladder** — "committed" is a *boundary on the log*, not a state of the node; the
+  Raft safety rules say when an entry is safe to apply.
+- Raft paper, §5.3 (log replication) and §5.4.2 (commitment / election safety):
+  https://raft.github.io/raft.pdf
+- Jay Kreps, *The Log* — durability of committed offsets.
