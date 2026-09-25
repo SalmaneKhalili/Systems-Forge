@@ -1,10 +1,16 @@
 # M16-ex04 · Compaction
 
-## Goal
+Immutable SSTables accumulate overlapping runs, which makes reads fan out across
+more files. This exercise merges those sorted runs into one, resolves duplicate
+keys by run recency, and removes tombstones so stale data and deleted keys do not
+survive cleanup. You deliver `compact.go`, the merge that bounds the on-disk read
+path before the persistent gateway joins the engine.
 
-Over time an LSM-tree accumulates many overlapping SSTables (ex02), and lookups must check them in order. **Compaction** merges a set of sorted runs into fewer, larger sorted runs. During the merge, keys that appear in multiple runs collapse to a single entry — the newest run (last in the input order) wins, so stale overwritten values are dropped.
+## Shape
 
-Implement `compact.go`:
+Harness-style: the provided `main.go` merges a small set of overlapping runs and
+prints the result; you write **`compact.go`** using only the Go standard library
+and implement:
 
 ```go
 // Compact merges several sorted runs (each a sorted []KV) into one sorted
@@ -14,18 +20,17 @@ Implement `compact.go`:
 func Compact(runs ...[]KV) []KV
 ```
 
-The provided `main.go` merges a small set of overlapping runs and prints the result. `make all` must build `test`; `./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `compact.go`. Define `KV` (a `Key, Val string` pair) in this package.
-- Output must be strictly sorted by key, with no duplicate keys.
+Define `KV` as a `Key, Val string` pair in this package. The output must be
+strictly sorted by key with no duplicate keys. A tombstone is represented by
+`Val == ""` and removes the key entirely, even when a later run contains only
+that tombstone. Never read the wall clock.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 after compaction:
 a=stale
 b=new
@@ -34,7 +39,10 @@ f=tombstoned
 g=1
 ```
 
-In the sample, `a` appears in both runs (the newer `stale` wins), `c` and `e` were written then tombstoned (absent), `b`, `d`, `f` survive from the newer run, and `g` survives from the older run. A compaction that leaves duplicate keys, drops a surviving key, or fails to drop a tombstoned key, is the bug.
+In the sample, `a` appears in both runs and the newer `stale` value wins; `c` and
+`e` were written and then tombstoned, so they are absent. `b`, `d`, and `f`
+survive from the newer run, while `g` survives from the older run. Duplicate
+keys, a missing surviving key, or a surviving tombstoned key fails compaction.
 
 ## Readings
 

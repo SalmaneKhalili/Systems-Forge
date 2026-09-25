@@ -1,50 +1,52 @@
-# M6-ex02 · line chat
+# M6-ex02 · Line Chat
 
-## Goal
+The echo server copied raw bytes; a real protocol needs a unit of meaning —
+and a stream has none built in. This exercise adds the first framing rule: you
+read bytes, split on `\n`, and answer every complete line with
+`<lineno>:<line>`, where the number counts complete lines **within the current
+connection** (1, 2, 3, …). The accept loop keeps running after a client
+disconnects, and a fresh connection restarts the counter at 1.
 
-Write `main.c` so `make all` produces `./test` — a **line-oriented chat server**: it reads
-bytes, splits them on `\n` (a framing rule), and for every complete line replies
-`<lineno>:<the line>\n`, where `<lineno>` counts complete lines **within the current
-connection** (1, 2, 3, …). The accept loop keeps running after a client disconnects —
-a fresh connection restarts the counter at 1.
+## Shape
 
-Graded dialogues (two separate server runs):
+Write `main.c` so `make all` produces `./test` — a line-oriented chat server.
+
+- The line is the unit: the client may split a message across several `read`s
+  (or pack several lines into one), so your server must reassemble lines from
+  a buffer either way.
+- Reply prefix and line contents must match exactly — including the counter
+  going back to `1:` on the second connection.
+- `read` may return fewer or multiple lines freely; `write` the reply as its
+  exact bytes (prefix + line text + `\n`).
+- The accept loop is the point: one `accept`, one `serve`, forever. Losing
+  the loop loses the second graded run.
+
+Compile flags: `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan; never redefine
+`CFLAGS`/`LDFLAGS`.
+
+## Acceptance
+
+Graded `build` + `net` + `quiz`. Two separate server runs drive the exact
+dialogues, byte-compared with a bounded deadline:
 
 ```
 send "hello\n"  → expect "1:hello\n"
 send "world\n"  → expect "2:world\n"
 send "again\n"  → expect "3:again\n"
 ```
+
 then a *second* run (proves you accept a new connection and reset state):
+
 ```
 send "hi\n"     → expect "1:hi\n"
 ```
 
-## Constraints
+- Accept once and never loop: the second run finds a dead server → FAIL.
+- No framing (echo raw bytes): the reply never equals `1:hello\n` → FAIL.
+- Reply counter not reset per connection: the second run gets the wrong
+  number → FAIL.
 
-- The line is the unit: the client may split a message across several `read`s (or pack
-  several lines in one), and your server must reassemble lines from a buffer either way.
-- Reply prefix and line contents must match exactly — including the counter going back to
-  `1:` on the second connection.
-- `read` returns fewer/multiple lines freely; `write` the reply as its exact bytes
-  (prefix + line text + `\n`).
-- The accept loop is the point: one `accept`, one `serve`, forever. Losing the loop loses
-  the second graded run.
-- `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan. Never redefine `CFLAGS`/`LDFLAGS`.
-
-## Acceptance criteria
-
-- [ ] `1:hello\n` / `2:world\n` / `3:again\n` on the first connection — exact
-- [ ] second server run answers `1:hi\n` — the counter is per-connection
-- [ ] server survives EOF (client disconnect) and continues accepting
-- [ ] `quiz.txt` complete (see below)
-
-Then complete `quiz.txt`:
-
-```
-What does the accept loop let a server do?: <answer>
-How does a server usually know where one message ends?: <answer>
-```
+`quiz.txt` is complete (see Quiz).
 
 ## Readings
 
@@ -55,10 +57,7 @@ How does a server usually know where one message ends?: <answer>
   Sockets" if you want to see the same framing problem from the client side
   (readall-style loops).
 
-## How you are graded
+## Quiz
 
-- `build` strict; two `net` sessions drive the exact dialogues above, byte-compared with a
-  bounded deadline. Accept once and never loop: the second run finds a dead server → FAIL.
-  No framing (echo raw bytes): reply never equals `1:hello\n` → FAIL. Reply counter not
-  reset per connection: second run gets the wrong number → FAIL.
-- `quiz`: `quiz.txt` answers must match.
+1. What does the accept loop let a server do?
+2. How does a server usually know where one message ends?

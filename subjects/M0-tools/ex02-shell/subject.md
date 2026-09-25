@@ -1,38 +1,59 @@
 # M0-ex02 · Shell hygiene
 
-## Goal
+After the Makefile fixes the build entry points, shell hygiene makes the commands around
+that build safe to compose. This exercise hands you a small integer-sum script and makes
+its failure policy part of the artifact. You deliver `solve.sh` with strict shell settings,
+bounded dependencies, and one deterministic line of output.
+
+## Shape
 
 Write `solve.sh` that sums its positional arguments (all integers) and prints the sum on a
-single line. It is invoked by the grader as:
+single line. The grader invokes it as:
 
-```
+```text
 sh solve.sh 1 2 -3 7      # must print:  7
 ```
 
-## Constraints
+The script must begin with a _working_ shebang and enable `set -euo pipefail`. We grep
+the file to prove it, and the quiz checks you know what each flag does. Use only POSIX
+`sh` built-ins, `printf`, and arithmetic: no `awk`, no `bc`, no `python`. Arguments are
+integers, possibly negative, with at least one argument; input is well-formed.
 
-- The script must begin with a _working_ shebang and enable `set -euo pipefail`.
-  We grep the file to prove it, and the quiz checks you know what each flag does.
-- No external tools beyond POSIX `sh`: use built-ins, `printf`, arithmetic.
-  No `awk`, no `bc`, no `python`.
-- Arguments are integers, possibly negative, at least one. Input is well-formed.
+The ground-truth implementation pattern is small and explicit. `$@` represents all
+positional arguments, so iterate over them with:
 
-## Acceptance criteria
-
-- [x] `sh solve.sh 1 2 -3 7` prints exactly `7`
-- [x] running with `solve.sh` unbound-variable traps (`set -u`) — try calling it with
-      an empty string arg (`sh solve.sh "" 5`) and explain why it does not crash
-      (empty is a defined value; an _unset_ variable is the trap)
-- [x] first line is `#!/usr/bin/env bash` or `#!/bin/bash`
-- [x] the four flags dominate the whole script (no `set +e` shenanigans)
-- [x] `quiz.txt` complete
-
-Then complete `quiz.txt`:
-
+```bash
+for arg in "$@"; do
+    # process $arg
+done
 ```
-Which flag makes a script exit on any failing command?: <answer>
-What does pipefail do?: <answer>
+
+POSIX shell arithmetic uses `$(( expression ))`; inside it variables do not need the `$`
+prefix and standard operators such as `+` and `-` behave as expected. Accumulate with:
+
+```bash
+sum=$(( sum + arg ))
 ```
+
+Initialize the variable before use, especially under `set -u`, which fails on unbound
+variables:
+
+```bash
+sum=0
+```
+
+## Acceptance
+
+`sh solve.sh 1 2 -3 7` must print exactly `7`. The grader also calls the script with an
+empty string argument (`sh solve.sh "" 5`) under the unbound-variable trap and expects it
+not to crash: empty is a defined value, while an _unset_ variable is the trap.
+
+- The first line is `#!/usr/bin/env bash` or `#!/bin/bash`.
+- The four flags dominate the whole script, with no `set +e` shenanigans.
+- `quiz.txt` is complete.
+
+Graded `stdout` + `artifact` + `quiz`: stdout must match the expected line, `solve.sh`
+must literally contain `set -euo pipefail`, and the answers from `quiz.txt` must match.
 
 ## Readings
 
@@ -42,32 +63,7 @@ What does pipefail do?: <answer>
   "everything is a file" idea is the universal I/O model of §5.1–5.2 (deep-dive in M5;
   process basics come in M2).
 
-### Ground Truth: Shell Control Flow & Arithmetic
+## Quiz
 
-To sum a list of arguments in a POSIX-compliant shell script:
-
-1.  **Iterating over Arguments:**
-    The special parameter `$@` represents all positional arguments passed to the script. You can loop over them using:
-    ```bash
-    for arg in "$@"; do
-        # process $arg
-    done
-    ```
-
-2.  **Arithmetic Expansion:**
-    POSIX shell arithmetic uses the `$(( expression ))` syntax. Inside this structure, variables do not need the `$` prefix, and standard operators (`+`, `-`, etc.) behave as expected:
-    ```bash
-    sum=$(( sum + arg ))
-    ```
-
-3.  **Initializing Variables:**
-    In shell scripting, make sure variables are initialized before use, especially when `set -u` (fail on unbound variables) is active:
-    ```bash
-    sum=0
-    ```
-
-## How you are graded
-
-- `stdout`: your script's output must match the expected line.
-- `artifact`: `solve.sh` must literally contain `set -euo pipefail`.
-- `quiz`: answers from `quiz.txt`.
+1. Which flag makes a script exit on any failing command?
+2. What does pipefail do?

@@ -1,13 +1,14 @@
 # M14-ex01 · Heartbeat
 
-## Goal
+Failure detection begins with the signal the later lifecycle, gossip, and eviction
+exercises consume: a peer stays alive while heartbeats arrive. Here the harness,
+not the wall clock, advances time by `Tick`, and a late heartbeat can revive a
+failed peer. You deliver `peer.go` with the countdown state and its transition.
 
-Failure detection starts with heartbeats. A peer is **alive** while heartbeats
-keep arriving; if nothing arrives for a configured timeout, the peer moves to
-**failed**. In this deterministic model, time is advanced by the harness as a
-`Tick` count — never by reading the wall clock.
+## Shape
 
-Implement `peer.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`peer.go`** using only the Go standard library and implement:
 
 ```go
 // Peer tracks one monitored peer's liveness by heartbeat countdown.
@@ -31,22 +32,17 @@ func (p *Peer) Tick() string
 func (p *Peer) Failed() bool
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `peer.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- A `Beat` always resets the countdown to the full timeout, even if the peer
-  just failed (a late heartbeat revives it).
-- Never read the wall clock — tick/beat are the only time model.
+A `Beat` always resets the countdown to the full timeout, even if the peer just
+failed: a late heartbeat revives it. Never read the wall clock; `Tick` and `Beat`
+are the only time model. The reference transcript is `expected.txt` with
+whitespace normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 timeout=3
 tick: alive (2 left)
 tick: alive (1 left)
@@ -58,10 +54,10 @@ tick: failed (0 left)
 beat: alive
 ```
 
-With a timeout of 3, each `Tick` counts the peer down; a `Beat` resets to 3.
-After three consecutive unbeat ticks the peer fails, and a late `beat` revives
-it. A peer that fails one tick early (off-by-one on the countdown), or that
-fails and never revives on a beat, is the bug.
+With a timeout of 3, each `Tick` counts the peer down and a `Beat` resets it to
+3. Three consecutive unbeat ticks fail the peer; a late `beat` then revives it.
+Failing one tick early breaks the inclusive countdown, and refusing to revive on
+a beat fails the final transition.
 
 ## Readings
 

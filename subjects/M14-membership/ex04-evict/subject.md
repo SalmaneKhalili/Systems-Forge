@@ -1,13 +1,15 @@
 # M14-ex04 · Evict
 
-## Goal
+A peer that has remained failed long enough must leave the live set, or the
+cluster keeps routing work toward a node it cannot use. This exercise applies an
+inclusive staleness bound to logical heartbeat sequences, turning the lifecycle's
+failure state into a bounded membership set. You deliver `evict.go` with the
+filter that retains every still-valid member in stable order.
 
-A failed node's membership must eventually be dropped, or the cluster will keep
-sending it traffic forever. Each member carries the sequence number of its last
-heartbeat; a node whose `now - seq` exceeds a **staleness bound** is evicted
-from the live set. Members at or inside the bound stay live.
+## Shape
 
-Implement `evict.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`evict.go`** using only the Go standard library and implement:
 
 ```go
 type Member struct {
@@ -20,31 +22,27 @@ type Member struct {
 func EvictStale(members []Member, now, staleAfter int) []Member
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `evict.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- A member with `now-Seq == staleAfter` is still live (the bound is inclusive).
-- Never read the wall clock — `now` is a logical sequence, not wall time.
+A member with `now-Seq == staleAfter` is still live because the bound is
+inclusive. Return live members sorted by node name. Never read the wall clock;
+`now` is a logical sequence, not wall time. The reference transcript is
+`expected.txt` with whitespace normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 now=10 staleAfter=3
 members a7 b8 c9 d4
 live: a7 b8 c9
 evicted: d4
 ```
 
-At logical time 10 with `staleAfter=3`, `a` (seq 7), `b` (8) and `c` (9) are
-within the bound and stay, while `d` (seq 4) is 6 behind and is evicted. A
-sieve that evicts a member exactly at the bound (off-by-one `>=` vs `>`) or
-that keeps a stale member is the bug.
+At logical time 10 with `staleAfter=3`, `a` at sequence 7, `b` at 8, and `c` at
+9 stay within the bound; `d` at sequence 4 is 6 behind and is evicted. Evicting
+a member exactly at the bound confuses `>=` with the required `>`, while keeping
+a stale member defeats eviction.
 
 ## Readings
 

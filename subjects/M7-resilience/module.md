@@ -1,33 +1,49 @@
 # M7 · Resilience
 
-Last module you made programs *talk* to each other. This module covers the equally
-important half of operations: what your program does when the other side misbehaves — slow,
-down, half-open, crashing mid-task. The five exercises are five named resilience
-primitives you will meet every day in infrastructure work:
+Last module you made programs *talk* to each other. This module covers the
+equally important half of operations: what your program does when the other
+side misbehaves — slow, down, half-open, crashing mid-task. The five exercises
+are five named resilience primitives you will meet every day in infrastructure
+work: backoff, a circuit breaker, health checks, graceful shutdown, and a
+watchdog — and it is also where Go is introduced, so each primitive is built
+with the goroutines and channels that make supervising concurrent work
+tractable.
 
-| exercise | kind      | what you build                                          |
-|----------|-----------|---------------------------------------------------------|
-| ex01     | retries   | a client that retries a flaky peer with exponential backoff (Python) |
-| ex02     | breaker   | a circuit breaker with closed/open/half-open states (Go) |
-| ex03     | health    | a health-check endpoint that reports and switches state (Go, graded over TCP) |
-| ex04     | shutdown  | a worker that shuts down gracefully on SIGTERM (Go)      |
-| ex05     | **gate**  | a mini-supervisor: watchdog + bounded restarts + graceful shutdown (Go) |
+## The build
 
-Most exercises are **whole-program**: write `main.go` (ex01: `main.py`) + a `Makefile` so
-`make all` produces `./test`, then run and diff your printed transcript. ex02 is a
-**harness shape** (like M3–M5): a `main.go` driver is provided, you implement the breaker.
+- **ex01 · Backoff: your first Go** — a self-contained TCP client that spins
+  up a flaky peer and survives by retrying with exponential backoff; the
+  gentlest possible Go onboarding (goroutine, `net.Listen`/`net.Dial`,
+  `time.Sleep`), and the concurrency pieces every later exercise reuses.
+- **ex02 · Circuit breaker** — harness shape: implement `breaker.go` behind a
+  provided driver; Closed/Open/HalfOpen with an injected clock, fail-fast, and
+  the one-probe decision the supervisor's restart loop depends on.
+- **ex03 · Health checks** — a `GET /health` endpoint that reports live or
+  dead and can be flipped over the wire (`/down`, `/up`), state surviving
+  across connections; graded over real TCP.
+- **ex04 · Graceful shutdown** — a worker sequences its completions through a
+  channel, raises SIGTERM to itself, and drains instead of dying on the spot.
+- **ex05 · Gate: mini supervisor** — a watchdog that catches a worker
+  crashing mid-shift, restarts it a bounded number of times with real backoff
+  without replaying completed work, then shuts down gracefully: the smallest
+  honest version of what runs your containers.
 
-Two engine notes that keep this module deterministic:
+## Rules
 
-- Go is built by the same `make` framework: your `Makefile` runs `go build -o test .`
-  (a `go.mod` is provided). The C sanitizer flags the grader injects are irrelevant to Go
-  — they sit in env vars Go ignores.
-- **Nothing you print may depend on wall-clock time**: no elapsed durations, no timestamps,
-  no "after 3 s". Every transcript is event-driven. When you need real backoff/sleep for
-  the *behavior*, use millisecond sleeps — but never print them. This is the rule that
-  makes each exercise deterministic, both ways.
-
----
+- Almost every exercise is whole-program: write `main.go` (ex01 included) plus
+  a `Makefile` so `make all` produces `./test`, then run and diff your printed
+  transcript. ex02 is a **harness shape** (like M3–M5): the `main.go` driver
+  is provided, you implement the breaker.
+- Go is built by the same `make` framework: your `Makefile` runs
+  `go build -o test .` (a `go.mod` is provided). The C sanitizer flags the
+  grader injects are irrelevant to Go — they sit in env vars Go ignores.
+- **Nothing you print may depend on wall-clock time**: no elapsed durations,
+  no timestamps, no "after 3 s". Every transcript is event-driven. When you
+  need real backoff/sleep for the *behavior*, use millisecond sleeps — but
+  never print them. This is the rule that makes each exercise deterministic,
+  both ways.
+- ex03 is additionally graded over TCP: bind `127.0.0.1` on the `TARGETPORT`
+  environment variable, exactly as in M6.
 
 ## Prerequisites
 
@@ -72,8 +88,6 @@ first (takes ~1 hour). Then come back and verify you can do these specific thing
 If you've never written Go before, the first exercise (M7-ex01 backoff) is deliberately a
 gentle onboarding: goroutine + `net.Listen`/`net.Dial` + `time.Sleep`. The second exercise
 (circuit breaker) is where the pace picks up.
-
----
 
 ## So what? (interview / portfolio)
 

@@ -1,10 +1,14 @@
-# M3-ex01 · bump arena
+# M3-ex01 · Bump Arena
 
-## Goal
+M3 leaves `malloc` behind. Your first allocator is the simplest one that
+exists: a **bump arena** — a fixed 512-byte region where every allocation is
+served by advancing a single offset pointer. It is the foundation of real
+allocators (jemalloc's arenas) and the base the gate's buffer (ex05) grows out
+of. You implement `arena.c` behind the provided header.
 
-Implement `arena.c` backing the provided `arena.h` — a **bump allocator**: a fixed 512-byte
-region of memory where every allocation is served by advancing a single offset pointer. It is
-the simplest allocator that exists, and the foundation of real systems like jemalloc arenas.
+## Shape
+
+The exercise provides `arena.h` and a harness `main.c`; you write **`arena.c`**:
 
 ```c
 void  *arena_alloc(size_t n);   /* 8-aligned, NULL if n==0 or not enough room */
@@ -12,36 +16,37 @@ size_t arena_left(void);        /* bytes still available */
 void   arena_reset(void);       /* all memory available again */
 ```
 
-`forge` compiles `main.c` (provided harness) + `arena.c`, runs `./test`, diffs stdout.
+`forge` compiles `main.c` (provided harness) + `arena.c`, runs `./test`, and
+diffs stdout. The arena lives in your `arena.c` as a `static` 512-byte buffer —
+nothing else global. The contract:
 
-## Constraints
-
-- The arena lives in your `arena.c`: a `static` 512-byte buffer, nothing else global.
-- Every returned pointer must be **8-byte aligned** — even after calls like `arena_alloc(3)`.
-  You may pad the offset up to an 8-boundary; prefer `_Alignas(8)` on the buffer so the base
-  never wastes a byte.
-- Never hand out memory past the end of the 512 bytes; when `n` doesn't fit, return `NULL`.
-  `arena_alloc(0)` returns `NULL` too.
+- Every returned pointer must be **8-byte aligned**, even after calls like
+  `arena_alloc(3)`. Pad the offset up to an 8-boundary, and prefer
+  `_Alignas(8)` on the buffer so the base never wastes a byte.
+- Never hand out memory past the end of the 512 bytes: when `n` doesn't fit,
+  return `NULL`, and `arena_alloc(0)` returns `NULL` too.
 - No `malloc`, no `mmap` — the arena is the only source of memory.
 - `arena_reset` makes the whole 512 bytes available again (no clearing needed).
 - No `CFLAGS` redefines.
 
-## Acceptance criteria
+## Acceptance
 
-- [ ] `arena_alloc(3)+(5)+(7)+(1)` all succeed, all aligned
-- [ ] 60 more `arena_alloc(8)` calls succeed; the *next* call returns `NULL` (512 bytes exact)
-- [ ] `arena_left()` reports exactly 0 at exhaustion
-- [ ] no block overwrites its neighbor (the harness tags every block and re-reads them)
-- [ ] after `arena_reset`: `arena_left() == 512`, `arena_alloc(512)` succeeds,
-      `arena_alloc(1)` fails cleanly
-- [ ] `quiz.txt` complete (see below)
+Graded `build`: strict compile + harness stdout diff (whitespace-insensitive),
+exit 0, empty stderr. The harness verifies alignment, exact 512-byte
+exhaustion, tag-based non-overlap, reset semantics, and the NULL-on-full
+contract:
 
-Then complete `quiz.txt`:
+- `arena_alloc(3)` + `(5)` + `(7)` + `(1)` all succeed, all aligned.
+- 60 more `arena_alloc(8)` calls succeed; the *next* call returns `NULL`
+  (512 bytes exact).
+- `arena_left()` reports exactly 0 at exhaustion.
+- No block overwrites its neighbor (the harness tags every block and re-reads
+  them); a bumper that overwrites its boundary fails that check and likely
+  trips ASan's global redzone.
+- After `arena_reset`: `arena_left() == 512`, `arena_alloc(512)` succeeds, and
+  `arena_alloc(1)` fails cleanly.
 
-```
-An allocator that assigns memory only by advancing a pointer is called what?: <answer>
-Which C11 keyword forces a static buffer to a required alignment?: <answer>
-```
+`quiz.txt` is complete (see Quiz).
 
 ## Readings
 
@@ -53,9 +58,7 @@ Which C11 keyword forces a static buffer to a required alignment?: <answer>
 - `_Alignas` / `_Alignof`: cppreference https://en.cppreference.com/w/c/language/_Alignas
 - Basic pointer-arithmetic refresher if needed: K&R §5.4 "Address Arithmetic".
 
-## How you are graded
+## Quiz
 
-- `build`: strict compile + harness stdout diff (whitespace-insensitive), exit 0, empty
-  stderr. The harness checks alignment, exact 512-byte exhaustion, tag-based non-overlap,
-  reset semantics, and the `NULL`-on-when-full contract. A bumper that overwrites its
-  boundary fails the tag check (and likely trips ASan's global redzone).
+1. An allocator that assigns memory only by advancing a pointer is called what?
+2. Which C11 keyword forces a static buffer to a required alignment?

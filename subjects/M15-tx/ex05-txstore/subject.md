@@ -1,18 +1,16 @@
 # M15-ex05 · txstore gateway
 
-## Goal
+The transaction, replay, conflict, and drill exercises now need a network
+boundary. This gateway keeps staged writes private to each connection while
+sharing committed, durable state across sockets, then proves the isolation
+boundary and rollback path over its line protocol. You deliver `txstore.go`, the
+TCP form of the store built in ex01–ex04.
 
-Expose the transactional store you built in ex01–ex04 over TCP. Write `txstore.go` — a
-line-based gateway: each connection speaks a small command language. Committed writes are
-shared and durable across connections; a transaction's staged writes are visible only to the
-connection that staged them, until `commit`.
+## Shape
 
-`make all` must produce `./txstore`. `forge` starts the server, opens sockets on
-`TARGETPORT`, and checks the protocol transcript.
-
-## Protocol
-
-One command per line, CRLF-free; each reply is one line:
+Whole-program. You write **`txstore.go`** as a single `main` package using only
+the Go standard library. One command arrives per line without CRLF, and each
+reply occupies one line:
 
 | Command | Reply | Meaning |
 |---|---|---|
@@ -25,18 +23,18 @@ One command per line, CRLF-free; each reply is one line:
 | `drop <k>` | `ok` | remove `k` from the live set |
 | `list` | keys, one per line | the committed live set, sorted; blank line if empty |
 
-## Constraints
-
-- Go, standard library only; file is `txstore.go` (single `main` package).
-- Bind to `os.Getenv("TARGETPORT")` (fallback `17440`); `net.Listen("tcp", ":"+port)`.
-- One goroutine per connection; committed state shared behind a mutex.
-- A connection's staged writes must never be visible to another connection before `commit`.
-- `rollback` must discard staged writes without touching the committed store.
-- No wall clock beyond the grader's socket timeout — the protocol is fully deterministic.
+Bind to `os.Getenv("TARGETPORT")` with fallback `17440`, using
+`net.Listen("tcp", ":"+port)`. Run one goroutine per connection and protect
+committed state with a mutex. A connection's staged writes must never be visible
+to another connection before `commit`, and `rollback` must discard them without
+touching the committed store. The protocol is fully deterministic; the only
+wall-clock use permitted is the grader's socket timeout. `make all` must produce
+`./txstore`, and `forge` starts the server and checks the protocol transcript.
 
 ## Acceptance
 
-The grader's two connections must observe this exact transcript:
+`make all` must produce `./txstore`; `forge` starts the server, opens sockets on
+`TARGETPORT`, and requires this exact two-connection transcript:
 
 - **conn 1:** `status a` → `dead`; `set a 1`; `get a` → `1`; `begin`; `set a 2`;
   `get a` → `2` (staged, own txn); `status a` → `alive`; `commit`; `get a` → `2`;

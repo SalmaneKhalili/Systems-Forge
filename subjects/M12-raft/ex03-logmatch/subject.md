@@ -1,14 +1,16 @@
 # M12-ex03 · Log-match
 
-## Goal
+The election safety rules from ex02 still need follower logs to stay aligned
+with the leader. This exercise implements Raft's **matching-prefix check**:
+AppendEntries may add an entry only after a predecessor with the expected
+term.
 
-Raft keeps every replica's log in lockstep with a single rule: the leader
-sends the entry before `prevIndex`; the follower accepts only if its entry at
-`prevIndex` has the same term as `prevTerm` — the **matching-prefix check**.
-If it does not match, the follower rejects and the leader backs up to a lower
-index.
+## Shape
 
-Implement `match.go`:
+The leader sends the entry before `prevIndex`. The follower accepts only if
+its entry at `prevIndex` has the same term as `prevTerm`; otherwise it rejects
+and the leader backs up to a lower index. You write **`match.go`** and
+implement:
 
 ```go
 type Entry struct {
@@ -22,34 +24,30 @@ type Entry struct {
 func AppendEntries(log []Entry, prevIndex int, prevTerm int, ent Entry) []string
 ```
 
-The follower's log holds `Entry{term, cmd}` at indexes 0,1,…  The check is:
-if `prevIndex` is a valid index and `log[prevIndex].Term == prevTerm`, then
-the new entry is appended after it.
+The follower's log holds `Entry{term, cmd}` at indexes 0,1,… . If `prevIndex`
+is a valid index and `log[prevIndex].Term == prevTerm`, the new entry is
+appended after it.
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `match.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- A match at `prevIndex` with the right term appends; anything else rejects.
-- Never read the wall clock.
+The exercise ships `main.go`, which prints the transcript. `make all` must
+build `test`, and `./test` must print the reference transcript exactly. Use Go
+and the standard library only. The reference transcript is `expected.txt`, with
+whitespace normalized. A match at `prevIndex` with the right term appends;
+anything else rejects. Never read the wall clock.
 
 ## Acceptance
 
-Reference transcript:
+The reference transcript is:
 
-```
+```text
 log   =b2 c3 d4
 match prev(0,1) -> b2 c3 d4 e5
 match prev(0,1) -> b2 c3 d4 e5
 mismatch prev(0,2) -> REJECT
 ```
 
-The tell: when the follower's entry at the previous index does not carry the
-leader's `prevTerm`, nothing is appended (the log is left untouched and
-"REJECT" is returned) — the leader must back up. Appending anyway is the bug.
+If the follower's entry at the previous index does not carry the leader's
+`prevTerm`, nothing is appended: the log remains untouched and `"REJECT"` is
+returned so the leader can back up. Appending anyway breaks log matching.
 
 ## Readings
 

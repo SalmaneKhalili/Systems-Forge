@@ -1,23 +1,28 @@
 # M10 · Commit & Consensus
 
-A distributed system only works if its members can agree: on a transaction's
-fate, on who leads, on which decisions reached a quorum. This module turns
-the ordering ideas from M9 into the machinery of agreement.
+This module turns M9's ordering rules into agreement: a transaction's fate,
+one leader and the vote count that makes a decision durable. The exercises move
+from coordinator state and participant promises to quorums, then compose those
+pieces in a two-phase commit gateway.
 
-Milestones:
+## The build
 
-- ex01 · The coordinator — the two-phase state machine that drives commit.
-- ex02 · Voting — how one participant turns a prepare into a commit/abort
-  verdict, and why an abort is final.
-- ex03 · Leader election — breaking leader ties with a logical-time stamp.
-- ex04 · Quorum — counting votes to decide commit versus abort.
-- ex05 · The transaction — a real TCP gateway that runs two-phase commit
+- **ex01 · The coordinator** — a two-phase state machine that prepares every
+  participant, chooses one decision and drives the final commit or abort.
+- **ex02 · Voting** — the participant promise behind that decision: one
+  environment yields a commit/abort verdict, and an abort is final.
+- **ex03 · Leader election** — break competing leader candidates with a logical
+  election stamp, then its id, producing the deterministic leader the remaining
+  decisions rely on.
+- **ex04 · Quorum** — count votes for a strict majority so opposing decisions
+  cannot both reach a quorum.
+- **ex05 · The transaction** — a real TCP gateway that runs two-phase commit
   over the wire.
 
-Rule: nothing printed or compared may depend on wall-clock time. All
-exercises are transcript-driven and byte-deterministic.
+## Rules
 
----
+Nothing printed or compared may depend on wall-clock time. All exercises are
+transcript-driven and byte-deterministic.
 
 ## Prerequisites
 
@@ -38,8 +43,6 @@ Before starting M10, you should be comfortable with everything from M0–M9, plu
   for a coordinator.
 
 You do NOT need to know: Raft, Paxos, or leader election. Those come in M11–M12.
-
----
 
 ## So what? (interview / portfolio)
 

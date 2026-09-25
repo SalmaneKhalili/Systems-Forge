@@ -1,10 +1,15 @@
 # M17-ex04 · Latency Summaries
 
-## Goal
+Individual spans expose work, but a glanceable latency view needs aggregation
+across many observations. This exercise reduces explicit durations to count,
+sum, maximum, and deterministic quantiles such as p50 and p95 for SLOs. You
+deliver `summary.go` with the exact index convention the telemetry handoff uses.
 
-Raw spans are too noisy to review at a glance. A **summary** aggregates many observed durations into a small set of statistics: count, sum, maximum, and **quantiles** (percentiles) such as p50 and p95 used for SLOs.
+## Shape
 
-Implement `summary.go`:
+Harness-style: the provided `main.go` records durations and prints their
+summary; you write **`summary.go`** using only the Go standard library and
+implement:
 
 ```go
 // Summary aggregates observed durations in milliseconds.
@@ -34,18 +39,17 @@ func (s *Summary) Quantile(q float64) float64
 func (s *Summary) SummaryValues() []KV
 ```
 
-The provided `main.go` records a set of durations and prints the summary. `make all` must build `test`; `./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `summary.go`. Define `KV` (a `Key, Val string` pair) in this package.
-- Quantiles must be deterministic. `SummaryValues` should include keys `count`, `sum`, `max`, `p50`, `p95` in that order.
+Define `KV` as a `Key, Val string` pair in this package. Quantiles must remain
+deterministic, and `SummaryValues` must include the keys `count`, `sum`, `max`,
+`p50`, and `p95` in that order. Durations are passed in, never measured from a
+wall clock.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 count=5
 sum=150
 max=50
@@ -53,7 +57,9 @@ p50=30
 p95=50
 ```
 
-For recorded durations 10, 20, 30, 40, 50: count 5, sum 150, max 50, p50 30, p95 50. A summary that miscounts, sums, reports the wrong max, or computes a wrong quantile is the bug.
+For durations 10, 20, 30, 40, and 50, the count is 5, sum is 150, maximum is
+50, p50 is 30, and p95 is 50. A wrong count, sum, maximum, or quantile breaks
+the summary's deterministic contract.
 
 ## Readings
 

@@ -1,25 +1,27 @@
 # M11 · Replicated Log & Consistency
 
 A replicated state machine drives every replica through the same ordered
-sequence of entries — the **log** — so each converges to the same state. This
-module builds the log mechanics: append-only entries, the commit point, index
-math, snapshots, and a wire gateway that exposes a single consistent log to
-clients.
+entries, so this module builds the log those replicas share. The sequence moves
+from append-only storage and its commit boundary through index arithmetic and
+compaction, then exposes one process-wide committed log over TCP.
 
-Milestones:
+## The build
 
-- ex01 · Append — the log is append-only state, one entry at a time.
-- ex02 · Committed — marking the committed prefix of the log.
-- ex03 · Index — translating an index and length to the committed window and
-  the next write slot.
-- ex04 · Snapshot — compacting the log without losing the committed prefix.
-- ex05 · The replica — a TCP gateway that serves one consistent committed
+- **ex01 · Append** — append-only state that assigns one stable public index per
+  command; the ordered log ex02 marks as durable.
+- **ex02 · Committed** — track the commit index and expose only the durable
+  prefix; the boundary whose arithmetic ex03 isolates.
+- **ex03 · Index** — translate an index and length into the next write slot and
+  uncommitted count; the arithmetic that keeps public indexes stable for ex04.
+- **ex04 · Snapshot** — compact the committed prefix without losing or
+  renumbering the surviving suffix.
+- **ex05 · The replica** — a TCP gateway that serves one consistent committed
   log to many clients.
 
-Rule: nothing printed or compared may depend on wall-clock time. All
-exercises are transcript-driven and byte-deterministic.
+## Rules
 
----
+Nothing printed or compared may depend on wall-clock time. All exercises are
+transcript-driven and byte-deterministic.
 
 ## Prerequisites
 
@@ -42,8 +44,6 @@ Before starting M11, you should be comfortable with everything from M0–M10, pl
 
 You do NOT need to know: Raft, leader election, or log replication across nodes. M12 handles
 that. Here you build the log mechanics for ONE node.
-
----
 
 ## So what? (interview / portfolio)
 

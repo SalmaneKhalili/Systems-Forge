@@ -1,29 +1,24 @@
 # M5 · Files & I/O
 
-Every byte in and out of your program travels through a small table of small integers:
-**file descriptors**. `open` hands you the next free one, `read`/`write` move bytes through
-them, and `dup2` lets you swap what a handle means — that is all a redirection really is.
-Once you own these, `printf` and `fgets` stop being magic: they are thin wrappers over the
-same table.
+M5 works below the language runtime: every byte travels through a small table of integers,
+the file descriptors that `open`, `read`, `write`, and `close` manage. ex01 makes that table
+visible, ex02 compares system-call and stdio transfers, ex03 redirects a child's stdout with
+`dup2`, ex04 builds a real `tee`, and ex05 parses structured text from one descriptor. The
+same descriptor model carries the rest of the curriculum's I/O.
 
-This module is the "mechanical keyboard" of systems programming — you build the tools
-(nothing but `open`, `read`, `write`, and `dup2`) that the rest of the curriculum leans on.
+## The build
 
-| exercise | kind       | what you build |
-|----------|-----------|----------------|
-| ex01     | descriptors | the fd table: numbers, reuse, lowest-available |
-| ex02     | readwrite   | `read()`/`write()` vs stdio, byte for byte |
-| ex03     | redirect    | repoint stdout with `dup2` across a fork |
-| ex04     | tee         | a real `tee`: stdin → stdout + file |
-| ex05     | **gate**    | a log parser over an fd (harness shape) |
+- **ex01 · descriptors** — the fd table: numbers, reuse, and the lowest available descriptor.
+- **ex02 · read vs stdio** — `read()`/`write()` versus stdio, byte for byte.
+- **ex03 · redirect** — repoint stdout with `dup2` across a `fork`.
+- **ex04 · tee** — a real `tee`: stdin → stdout + file.
+- **ex05 · Gate: log parser** — a log parser over an fd (harness shape).
 
-All five are graded `build` + `quiz` under `-std=gnu11 -Wall -Wextra -Werror` with
-ASan/UBSan. ex04's copied file is additionally asserted by an `artifact` check.
+## Rules
 
-Determinism is the whole point: verdicts are exact byte counts and exact strings, printed
-only after every fd is closed or every child is reaped — no PIDs, no addresses, no races.
+All five exercises are graded `build` + `quiz` under `-std=gnu11 -Wall -Wextra -Werror` with ASan/UBSan. ex04's copied file is additionally asserted by an `artifact` check.
 
----
+Determinism is the point: verdicts are exact byte counts and exact strings, printed only after every fd is closed or every child is reaped — no PIDs, no addresses, and no races.
 
 ## Prerequisites
 
@@ -42,14 +37,12 @@ Before starting M5, you should be comfortable with everything from M0–M4, plus
 
 You do NOT need to know: `dup2`, pipes, `lseek`, or `select`/`poll`. You will learn them here.
 
----
-
 ## So what? (interview / portfolio)
 
-The file-descriptor table is the mental model behind I/O of every kind — "everything is a
-fd" is the sentence that unlocks redirects, sockets, and pipes alike. Knowing `read`/`write`
-vs. stdio, and why `dup2` is all a redirect is made of, is the kind of low-level fluency
-that separates systems engineers from application programmers in interviews.
+The file-descriptor table is the mental model behind I/O of every kind: the same integer
+interface explains redirects, sockets, and pipes. Knowing the difference between `read`/`write`
+and `fread`/`fwrite`, and why `dup2` is all a redirect needs, is low-level fluency that
+transfers directly to systems work.
 
 **Interview questions this module arms you for:**
 - When do file descriptors get reused, and what is "the lowest available fd"?

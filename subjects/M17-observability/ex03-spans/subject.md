@@ -1,12 +1,15 @@
 # M17-ex03 · Spans with Attributes
 
-## Goal
+A rendered request tree becomes searchable when each span also carries key=value
+attributes. This exercise adds those tags, preserves distinct same-named spans,
+and answers tree-wide match and slowest-span queries. You deliver `spans.go`
+with attributed rendering, depth-first lookup, and recursive duration analysis.
 
-A **span** carries more than a name and duration: it also carries **attributes** (key=value tags) that enrich it, e.g. `db=f'postgres'`, `hit=true`. A tracer must let components attach attributes to spans and then answer queries over the collected tree: how many spans match a name, and which span is the slowest.
+## Shape
 
-Durations remain **explicit** (no wall clock).
-
-Implement `spans.go`:
+Harness-style: the provided `main.go` builds two `db.query` spans in different
+subtrees, attaches attributes, and queries the result; you write **`spans.go`**
+using only the Go standard library and implement:
 
 ```go
 // Span is a named unit of work with a duration and key=value attributes.
@@ -39,19 +42,16 @@ func (s *Span) FindAll(name string) []*Span
 func (s *Span) MaxDur() int64
 ```
 
-The provided `main.go` builds a request with two `db.query` spans in different subtrees, attaches attributes, then queries. `make all` must build `test`; `./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `spans.go`.
-- No wall clock.
-- FindAll must return spans in depth-first order; MaxDur must consider every descendant.
+Durations remain explicit; never read the wall clock. `FindAll` returns every
+matching span in depth-first order, and `MaxDur` considers the current span and
+every descendant's own duration.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 request{}=30ms
   db.query{db=mysql}=40ms
     db.scan{}=25ms
@@ -61,7 +61,10 @@ count db.query=2
 slowest=50
 ```
 
-The tree has two distinct `db.query` spans (one with `db=mysql`, the other with `db=postgres`), so `FindAll` returns 2 and the slowest own-duration is a descendant (50), proving `MaxDur` recurses. A tracer that merges same-named spans, loses attributes, or reports the wrong slowest span is the bug.
+The tree contains two distinct `db.query` spans, one tagged `db=mysql` and one
+`db=postgres`, so `FindAll` returns 2. The slowest span is a descendant with own
+duration 50, proving `MaxDur` recurses. Merging same-named spans, losing an
+attribute, or reporting the wrong slowest span fails the contract.
 
 ## Readings
 

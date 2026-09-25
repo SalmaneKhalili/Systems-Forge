@@ -1,29 +1,31 @@
 # M12 · Raft — the flagship capstone
 
-Everything so far converges here. M9 gave ordering, M10 agreement, M11 a
-single replicated log with a commit point. **Raft** is how a leader drives ONE
-consistent log across a whole cluster — safely, even when leaders crash and
-re-election happens. This module builds the core mechanics of Raft's
-safety: the monotonic term, the up-to-date-log vote rule, the log-matching
-prefix invariant, and majority leader election.
+Everything so far converges here: M9 supplies ordering, M10 agreement and M11
+a replicated log with a commit point. Raft drives one consistent log across a
+cluster through a monotonic term, an up-to-date vote rule, a matching-prefix
+check and majority election, ending with a real three-node network.
 
-Milestones:
+## The build
 
-- ex01 · Term — the monotonically increasing election term; every node obeys it.
-- ex02 · Vote — a node votes only for a candidate whose log is at least as
-  up-to-date as its own.
-- ex03 · Log-match — the AppendEntries consistency check (the matching-prefix
-  property that keeps logs in lockstep).
-- ex04 · Election — a leader is elected when it holds a majority of votes.
-- ex05 · The gate node — a TCP gateway serving one raft node's state to a
-  client.
-- ex06 · The cluster — a real 3-node raft cluster: peers exchange
-  RequestVote/AppendEntries over real TCP and replicate one log.
+- **ex01 · Term** — the monotonically increasing election term every node
+  obeys; the version rule that gates the vote rule in ex02.
+- **ex02 · Vote** — grant a vote only when the candidate's log is at least as
+  up-to-date as the node's own; the election restriction that keeps a stale
+  candidate from overtaking a fresh one.
+- **ex03 · Log-match** — enforce AppendEntries' matching-prefix check; the
+  consistency rule that keeps follower logs in lockstep.
+- **ex04 · Election** — elect a leader only after a majority of votes; the
+  quorum rule that completes one node's safety logic.
+- **ex05 · The gate node (Gate)** — a TCP gateway serving one Raft node's
+  term and committed log; the complete single-node contract handed to the
+  cluster.
+- **ex06 · The cluster** — a real three-node Raft cluster whose peers exchange
+  RequestVote/AppendEntries over TCP and replicate one log.
 
-Rule: nothing printed or compared may depend on wall-clock time. All
-exercises are transcript-driven and byte-deterministic.
+## Rules
 
----
+Nothing printed or compared may depend on wall-clock time. All exercises are
+transcript-driven and byte-deterministic.
 
 ## Prerequisites
 
@@ -50,8 +52,6 @@ Before starting M12, you should be comfortable with everything from M0–M11, pl
 
 You do NOT need to know: log compaction/snapshotting, cluster membership changes, or
 linearizability proofs. Those are advanced topics outside this module.
-
----
 
 ## So what? (interview / portfolio)
 

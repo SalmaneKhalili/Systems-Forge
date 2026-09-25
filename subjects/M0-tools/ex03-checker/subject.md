@@ -1,53 +1,49 @@
 # M0-ex03 · A five-minute checker
 
-## Goal
+Shell hygiene gives commands a reliable execution context; this exercise turns that
+context into an inspection tool. The checker is the first small program whose output is
+its contract: required files are reported in a fixed order and extra files are ignored.
+You deliver `check.py`, using only Python's standard library, to audit a supplied tree.
 
-Write `check.py` — Python 3, standard library only — that audits the `sample/` tree in this
-directory and reports which *required* files are present.
+## Shape
 
-`forge` invokes it as:
+Write `check.py` — Python 3, standard library only — that audits the `sample/` tree in
+this directory and reports which _required_ files are present. `forge` invokes it as:
 
-```
+```text
 python3 check.py sample/
 ```
 
-Rules for what "good" means:
+The required relative paths are `src/main.c` and `src/util.h`. For each required file that
+exists, print exactly `ok: src/main.c` or `ok: src/util.h`, one per line, in that order.
+For each missing required file, print `missing: src/main.c` (or the corresponding path).
+Exit 0 either way because the report is the answer. `sample/` may contain other files such
+as `extra.txt`; ignore them.
 
-- Required files (relative paths): `src/main.c` and `src/util.h`.
-- For each required file that exists, print exactly `ok: src/main.c` etc., one per line,
-  in the order given above.
-- For each required file that is missing, print `missing: src/main.c`.
-- Exit 0 either way: the report is the answer.
-- `sample/` may contain other files (`extra.txt`); ignore them.
+`os`, `sys`, and `pathlib` from the standard library are enough. The script must start
+with `#!/usr/bin/env python3` because the grader greps for it. Handle the tree path as
+`sys.argv[1]`, do not hard-code `sample`, and use cross-platform-friendly path joining with
+`os.path` or `pathlib`.
 
-The grader's `sample/` currently contains both required files, so the run must print:
+## Acceptance
 
-```
+With the grader's current `sample/`, `python3 check.py sample/` must exit 0 and print
+exactly:
+
+```text
 ok: src/main.c
 ok: src/util.h
 ```
 
-## Constraints
+- The two `ok:` lines prove that both required paths were found and emitted in order.
+- Removing `src/main.c` must produce `missing: src/main.c` rather than a traceback or a
+  reordered report.
+- The shebang is present and no import comes from outside the standard library.
+- `quiz.txt` is complete.
 
-- `os`, `sys`, `pathlib` (stdlib) are enough. No third-party packages.
-- The script must start with `#!/usr/bin/env python3` (we grep for it).
-- Handle the tree path as `sys.argv[1]`; do not hard-code `sample`.
-- Cross-platform-friendly path joining (use `os.path` / `pathlib`).
-
-## Acceptance criteria
-
-- [ ] `python3 check.py sample/` prints the two `ok:` lines in order
-- [ ] `python3 check.py sample/` with `src/main.c` removed prints `missing: src/main.c`
-- [ ] shebang present
-- [ ] no imports outside the standard library
-- [ ] `quiz.txt` complete
-
-Then complete `quiz.txt`:
-
-```
-What is the standard location for the interpreter on unix?: <answer>
-Which module is best for parsing command-line arguments?: <answer>
-```
+Graded `stdout` + `artifact` + `quiz`: stdout is the diff of `check.py sample/` against
+`expected.txt`; the artifact check requires the shebang, and quiz answers come from
+`quiz.txt`.
 
 ## Readings
 
@@ -55,8 +51,7 @@ Which module is best for parsing command-line arguments?: <answer>
 - The pathlib docs tutorial: https://docs.python.org/3/library/pathlib.html
   (the page you need more than any other this week).
 
-## How you are graded
+## Quiz
 
-- `stdout`: diff of `check.py sample/` against `expected.txt`.
-- `artifact`: `check.py` contains the shebang.
-- `quiz`: answers from `quiz.txt`.
+1. What is the standard location for the interpreter on unix?
+2. Which module is best for parsing command-line arguments?

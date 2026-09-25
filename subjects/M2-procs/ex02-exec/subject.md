@@ -1,6 +1,11 @@
 # M2-ex02 · the spawn idiom
 
-## Goal
+The first exercise proved that a parent can reap a child; this one replaces the child's
+image with a requested command. The interesting path is the boundary: `execvp` only returns
+when it fails, and the parent must turn that failure into the conventional status 127. You
+deliver the complete `main.c` and preserve both the success and failure transcripts.
+
+## Shape
 
 Write `main.c` so `make all` produces `./test`, a program that takes a command and its
 arguments on the command line and spawns it the Unix way:
@@ -8,57 +13,54 @@ arguments on the command line and spawns it the Unix way:
 1. `fork()` a child;
 2. in the child, `execvp(cmd, argv + 1)` — `argv[1]` is the program, `argv[1..]` is its
    argument vector;
-3. exec *theoretically never returns*: the only way you reach the next statement is a
+3. exec theoretically never returns: the only way you reach the next statement is a
    failure — then print `exec failed for <cmd>` and `return 127`;
 4. the parent `waitpid`s the child; when the child exited normally with status 127 (that is,
    an exec failure was *reported*), it prints `parent: exec failed and was reported (127)`;
    when the child exited normally with status 0, it prints `parent: exec ok`. Then the parent
-   **exits with the child's exit status** — 0 on success, 127 on exec failure. This is how a
-   shell propagates a child's status outward.
+   **exits with the child's exit status** — 0 on success, 127 on exec failure. This is how
+   a shell propagates a child's status outward.
 
-`forge` runs `./test /bin/echo hello` (must produce `hello` followed by `parent: exec ok`,
-exit 0) and runs it a second time with a bogus command:
+Use `fork`, `execvp`, `waitpid`, and `WIFEXITED`/`WEXITSTATUS`. No `system(3)` and no
+`popen(3)`: the point is the exec boundary. Forward the program name as `argv[0]` of the
+exec'd image by forwarding `&argv[1]`; do not hard-code the argument list. On the failure
+path, after `execvp` returns, `cmd` is `argv[1]` of the *current* process — print it as
+knowledge, then return 127. No `perror` (stderr must stay empty). All output is on stdout;
+exit statuses are 0 on successful spawn and 127 on exec failure, and the parent must
+report the 127 it observed. No `CFLAGS` redefines.
 
+## Acceptance
+
+`forge` runs `./test /bin/echo hello`; it must exit 0 and print:
+
+```text
+hello
+parent: exec ok
 ```
+
+It then runs the bogus command:
+
+```text
 ./test /definitely/not/a/command
 ```
 
-which must print `exec failed for /definitely/not/a/command`, then
-`parent: exec failed and was reported (127)`, and exit with status **127**. Both runs are
-diffed against their expected files.
+That run must print exactly:
 
-## Constraints
-
-- Use `fork`, `execvp`, `waitpid`, `WIFEXITED`/`WEXITSTATUS`. **No `system(3)`, no
-  `popen(3)`** — the point is the exec boundary.
-- cmd argument vector: pass the program name as `argv[0]` of the exec'd image by forwarding
-  `&argv[1]`. Do not hard-code the argument list.
-- exec failure path: after `execvp` returns, that `cmd` is `argv[1]` of the *current* process
-  — print it as knowledge, then return 127. No `perror` (stderr must stay empty).
-- All output on stdout; exit statuses: 0 on the successful spawn, 127 on exec failure, and
-  the parent must report the 127 it observed.
-- No `CFLAGS` redefines.
-
-## Acceptance criteria
-
-- [ ] `./test /bin/echo hello` prints exactly:
-      ```
-      hello
-      parent: exec ok
-      ```
-      and exits 0.
-- [ ] `./test /definitely/not/a/command` prints `exec failed for /definitely/not/a/command`,
-      then `parent: exec failed and was reported (127)`, and **the program exits 127**
-      (the parent's exit status mirrors the child's)
-- [ ] no stderr, deterministic, no zombies (both must wait)
-- [ ] `quiz.txt` complete (see below)
-
-Then complete `quiz.txt`:
-
+```text
+exec failed for /definitely/not/a/command
+parent: exec failed and was reported (127)
 ```
-On success, what does exec never do?: <answer>
-Which exec family function searches PATH for the program?: <answer>
-```
+
+and exit with status **127**. Both runs are diffed against their expected files.
+
+- The successful run proves `execvp` replaced the child image and the parent observed 0.
+- The failure run proves the exec-failure path ran, was reported, and propagated as 127.
+- Neither run writes stderr or leaves a zombie; both must wait, and output is deterministic.
+- `quiz.txt` is complete.
+
+Graded `build` + `quiz`: `build` has two runs, success path (diff + exit 0) and failure
+path (diff + exit 127), each separately. The failure run cannot merge its output into the
+success output. `quiz.txt` answers must match.
 
 ## Readings
 
@@ -70,9 +72,7 @@ Which exec family function searches PATH for the program?: <answer>
   fast) — skim; §26.1 "Waiting on a Child Process" for conflict-free reaping.
 - exec(3) family reference: https://man7.org/linux/man-pages/man3/exec.3.html
 
-## How you are graded
+## Quiz
 
-- `build` with two runs: success path (diff + exit 0) and failure path (diff + exit 127).
-  Each run separately. The failure run proves you actually code the exec-failure path — you
-  cannot merge the two outputs into one.
-- `quiz`: `quiz.txt` answers must match.
+1. On success, what does exec never do?
+2. Which exec family function searches PATH for the program?

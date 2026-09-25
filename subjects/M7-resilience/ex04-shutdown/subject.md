@@ -1,14 +1,18 @@
-# M7-ex04 · Graceful shutdown
+# M7-ex04 · Graceful Shutdown
 
-## Goal
+A resilient program also exits well. This exercise runs a **worker**, gets five
+units of work done, then shuts down **gracefully on SIGTERM** instead of
+dying on the spot — sequencing completions through a channel so the transcript
+is ordered by the worker, not by the wall clock. It is the drain phase your
+supervisor (ex05) and every long-running service you write from here on will
+perform.
 
-Write a Go program, whole-program (`main.go` + `Makefile`), that runs a **worker**, gets
-five units of work done, then shuts down **gracefully on SIGTERM** instead of dying on the
-spot.
+## Shape
 
-The graded transcript is exact:
+Write a Go program, whole-program (`main.go` + `Makefile`). The graded
+transcript is exact:
 
-```
+```text
 task 1 done
 task 2 done
 task 3 done
@@ -18,34 +22,32 @@ received SIGTERM
 shutdown complete
 ```
 
-## Constraints
+Rules:
 
-- A **worker goroutine** does the work and reports each finished task through a channel;
-  `main` prints `task N done` only when that completion is received (so the transcript is
-  ordered by the worker, not by wall clock).
-- After every unit of work is done and acknowledged, the program **raises SIGTERM to
-  itself** (`syscall.Kill(syscall.Getpid(), syscall.SIGTERM)`), and must not die from it —
-  this is the point. It waits for the signal, prints `received SIGTERM`, then
-  `shutdown complete`, and exits **0**.
-- A correct program exits 0; a program that never installs a handler is killed by SIGTERM
-  and exits non-zero with a truncated transcript.
-- Small `time.Sleep` for task simulation is fine; never print durations or timestamps.
+- A **worker goroutine** does the work and reports each finished task through
+  a channel; `main` prints `task N done` only when that completion is received
+  (so the transcript is ordered by the worker, not by wall clock).
+- After every unit of work is done and acknowledged, the program **raises
+  SIGTERM to itself** (`syscall.Kill(syscall.Getpid(), syscall.SIGTERM)`), and
+  must not die from it — this is the point. It waits for the signal, prints
+  `received SIGTERM`, then `shutdown complete`, and exits **0**.
+- A correct program exits 0; a program that never installs a handler is killed
+  by SIGTERM and exits non-zero with a truncated transcript.
+- Small `time.Sleep` for task simulation is fine; never print durations or
+  timestamps.
 - Exit code 0, nothing on stderr.
 
-## Acceptance criteria
+## Acceptance
 
-- [ ] the seven graded lines, in order, exit 0
-- [ ] SIGTERM is handled, not fatal
-- [ ] worker completion is sequenced through a channel
-- [ ] `quiz.txt` complete
+Graded `build` + `quiz`: compile + run `./test`, stdout diffed against
+`expected.txt`, exit 0, empty stderr:
 
-Then complete `quiz.txt`:
+- The seven graded lines, in order, exit 0.
+- SIGTERM is handled, not fatal — a program that aborts on SIGTERM, or prints
+  completion lines without the shutdown phase, fails.
+- Worker completion is sequenced through a channel.
 
-```
-Which signal does this exercise handle for graceful shutdown?: <answer>
-What should a graceful shutdown do to in-flight work?: <answer>
-What is the exit code on the clean shutdown path?: <answer>
-```
+`quiz.txt` is complete (see Quiz).
 
 ## Readings
 
@@ -54,8 +56,8 @@ What is the exit code on the clean shutdown path?: <answer>
   draining".
 - Go `os/signal` docs — `signal.Notify` semantics for graceful-shutdown goroutines.
 
-## How you are graded
+## Quiz
 
-- `build` compiles + runs `./test`, syslout diffed against `expected.txt` (exit 0,
-  empty stderr) + `quiz`. A program that aborts on SIGTERM, or prints completion lines
-  without the shutdown phase → FAIL.
+1. Which signal does this exercise handle for graceful shutdown?
+2. What should a graceful shutdown do to in-flight work?
+3. What is the exit code on the clean shutdown path?

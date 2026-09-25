@@ -1,44 +1,42 @@
 # M10-ex05 · The transaction
 
-## Goal
+M10 ends by composing the coordinator, participant promise and quorum work on
+the wire. The result is a real 2PC gateway whose commit decision is strict and
+all-or-nothing across every client connection.
 
-Bring two-phase commit to the wire. Write `gate.go`: a TCP server on
-`TARGETPORT` whose participants' votes come from a provided `votes.txt`
-(the scaffold supplies it — a line `3` means "transaction 3 has prepared
-votes from every participant", a line `1` means "transaction 1 does not").
+## Shape
+
+You write **`gate.go`**, a TCP server on `TARGETPORT`. A provided `votes.txt`
+supplies the participants' votes: a line `3` means transaction 3 has prepared
+votes from every participant, while a line `1` means transaction 1 does not.
 
 For each client line `tx <id>`:
 
 - if the id is in `votes.txt` (all participants prepared), the coordinator
-  reply `COMMIT\n`;
-- otherwise (someone did not prepare / could not commit), reply `ABORT\n`.
+  replies `COMMIT\n`;
+- otherwise (someone did not prepare / could not commit), it replies `ABORT\n`.
 
-`make all` must build `gate`; the grader starts `./gate` and dials multiple
-connections; replies must match byte-for-byte. The coordinator's decision is
-a strict all-or-nothing: a missing entry is an abort.
-
-## Constraints
-
-- Go, standard library only; file is `gate.go`.
-- `make all` must build `gate` (the grader starts `./gate`).
-- Multiple concurrent connections must be served (an accept loop).
-- Never read the wall clock; no timestamps, no sleeps in replies.
-- Port number comes from `TARGETPORT`.
+Use Go and the standard library only. `make all` must build `gate`; the grader
+starts `./gate` and dials multiple connections, which an accept loop must
+serve concurrently. Replies must match byte-for-byte. The coordinator's
+decision is strict all-or-nothing: a missing entry is an abort. The port comes
+from `TARGETPORT`; never read the wall clock, and put no timestamps or sleeps
+in replies.
 
 ## Acceptance
 
-`votes.txt` (scaffold) lists transactions whose participants all prepared:
+The scaffold's `votes.txt` lists transactions whose participants all prepared:
 
-```
+```text
 3
 2
 7
 ```
 
-So `tx 3`, `tx 2`, `tx 7` must `COMMIT`, and every other id (0, 1, …) must
-`ABORT`. The transcript is byte-deterministic. A gateway that replies
-`COMMIT` for an id absent from the file — or that ties the decision to
-anything other than the whole-file-committed check — fails.
+Therefore `tx 3`, `tx 2` and `tx 7` must receive `COMMIT`; every other id,
+including 0 and 1, must receive `ABORT`. The transcript is byte-deterministic.
+A gateway that replies `COMMIT` for an absent id, or ties the decision to
+anything other than the whole-file-committed check, fails.
 
 ## Readings
 

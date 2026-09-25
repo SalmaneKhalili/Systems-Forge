@@ -1,13 +1,15 @@
 # M15-ex03 · Conflict
 
-## Goal
+Staged transactions prevent partial commits, but concurrent transactions can
+still target the same key and turn one write into a silent lost update. This
+exercise makes overlap explicit through write-set comparison and resolves the
+merged state with the local transaction's value protected. You deliver
+`conflict.go` with detection, deterministic resolution, and stable key order.
 
-When two transactions edit overlapping data a **conflict** (potential lost
-update) arises. Optimistic schemes detect the conflict and then resolve by
-merging — but a write you made must never be silently overwritten by the other
-transaction's write to the same key (that would be a lost update).
+## Shape
 
-Implement `conflict.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`conflict.go`** using only the Go standard library and implement:
 
 ```go
 func Conflict(writesA, writesB map[string]string) bool // same key in both -> true
@@ -15,30 +17,27 @@ func Resolve(mine, theirs map[string]string) map[string]string // merge; your ke
 func SortedKeys(m map[string]string) []string          // map keys sorted (for tests)
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `conflict.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- `Resolve` returns a new map; keys only in `theirs` are merged in; a key in
-  BOTH keeps `mine`'s value.
-- No wall clock.
+`Conflict` is true when both write sets contain the same key. `Resolve` returns
+a new map, merges keys found only in `theirs`, and keeps `mine`'s value for a
+key in both. `SortedKeys` provides sorted map keys for the tests. Never read the
+wall clock. The reference transcript is `expected.txt` with whitespace
+normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 conflicts -> true
 x -> 1
 y -> c
 ```
 
-`Conflict({x:1},{x:2})` is true (both write `x`). `Resolve({x:1},{x:b,y:c})`
-must keep `x=1` (yours wins over the conflicting `x=b`) and merge `y=c`.
-Overwriting your own `x` with the other's `b` is the bug.
+`Conflict({x:1},{x:2})` is true because both transactions write `x`.
+`Resolve({x:1},{x:b,y:c})` keeps the local `x=1` instead of accepting the
+conflicting `x=b`, and merges `y=c`. Replacing the local value with the other
+transaction's value is the lost update this exercise rules out.
 
 ## Readings
 

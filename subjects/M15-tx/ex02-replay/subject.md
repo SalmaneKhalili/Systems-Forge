@@ -1,13 +1,15 @@
 # M15-ex02 · Replay
 
-## Goal
+Atomic commit defines what a transaction publishes; the write-ahead log defines
+how that result survives a crash. This exercise records intended changes before
+they become state, then reconstructs that state by replaying entries in order.
+You deliver `log.go` with the deterministic last-writer-wins model the durable
+store will persist.
 
-A **write-ahead log** is the backbone of durability. Every intended change is
-appended to a log first; a crash is recovered by replaying the log. Replay must
-be deterministic and *last-writer-wins*: a later `set` on the same key
-overwrites the earlier one.
+## Shape
 
-Implement `log.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`log.go`** using only the Go standard library and implement:
 
 ```go
 type Log struct{ entries []string }
@@ -18,29 +20,25 @@ func (l *Log) Entries() []string         // a copy of the entries
 func (l *Log) Replay() map[string]string // replay ops in order -> key-value state
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `log.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- Each op is `set k=v`; replay applies op 0..n-1 in order, later wins.
-- No wall clock; the log is a pure in-memory model.
+Each op is `set k=v`. `Entries` returns a copy, and `Replay` applies entries
+`0..n-1` in order so later writes win. Never read the wall clock; the log is a
+pure in-memory model. The reference transcript is `expected.txt` with whitespace
+normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 entries -> 3
 a -> 3
 b -> 2
 ```
 
-After appending `set a=1`, `set b=2`, `set a=3`, replay must give `a=3`
-(last write wins) and `b=2`; entries length is 3. A replay that applies
-out-of-order or lets an earlier write to `a` win is the bug.
+After appending `set a=1`, `set b=2`, and `set a=3`, replay yields `a=3` because
+the last write wins, plus `b=2`; the entry count is 3. Applying entries out of
+order, or allowing the earlier `a=1` to win, breaks deterministic recovery.
 
 ## Readings
 

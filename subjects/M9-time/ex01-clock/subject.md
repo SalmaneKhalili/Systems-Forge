@@ -1,14 +1,15 @@
 # M9-ex01 · Lamport logical clock
 
-## Goal
+M9 starts with the scalar clock that gives every later ordering mechanism a
+causal baseline. The provided `main.go` runs a fixed script of local events,
+sends and receives across two clocks; you implement the counter so its receive
+rule preserves the send's position in happens-before.
 
-Implement a Lamport logical clock in `clock.go`. The provided `main.go`
-plays a fixed, deterministic script of local events, sends, and receives on
-two clocks and prints the transcript. Your clock must produce exactly the
-reference transcript.
+## Shape
 
-Complete a type `Lamport` with three methods (add any private fields you
-need):
+The exercise ships `main.go` with a fixed, deterministic local-event/send/
+receive script. You write **`clock.go`** in the same package and complete a type
+`Lamport` with three methods, adding any private fields you need:
 
 ```go
 // Tick counts a local event (including a send) and returns the new value.
@@ -23,25 +24,21 @@ func (l *Lamport) Now() int
 func (l *Lamport) Add(other int) int
 ```
 
-The receive rule is the heart of Lamport's clock: a message tells the
-receiver "the sender was at least at `other`", so the receiver's counter
-must jump past it before counting the receive itself.
+The receive rule is the core operation: a message tells the receiver that the
+sender was at least at `other`, so the receiver jumps past that stamp before
+counting the receive itself.
 
-## Constraints
-
-- Go, standard library only; file is `clock.go`.
-- `make all` must build a `test` binary and `./test` must print the exact
-  reference transcript (`expected.txt` is authoritative; whitespace is
-  normalized).
-- Never read the wall clock. No time, no sleeps.
-- quiz.txt answered.
+Use Go and the standard library only. `make all` must build a `test` binary,
+and `./test` must print the exact reference transcript; `expected.txt` is
+authoritative and whitespace is normalized. Never read the wall clock: no time,
+no sleeps. `quiz.txt` must be answered.
 
 ## Acceptance
 
-Run `python3 - <<'EOF'`-style check of anyone with a broken clock — transcripts
-will differ. The reference prints:
+The `python3 - <<'EOF'`-style check exposes a broken clock through a differing
+transcript. The reference prints exactly:
 
-```
+```text
 e0 t1
 p0 send m0 t2
 p1 recv m0 t3
@@ -52,8 +49,10 @@ p0 recv m1 t6
 e3 t7
 ```
 
-`e2 t3` is the tell: p0's local events proceed independently of p1, and when
-p0 finally receives m1 (stamp 5) it must jump to 6, never stay at 3.
+- `e2 t3` proves p0's local events advance independently of p1; the final
+  receive of m1 must jump from 3 to 6, never leave the counter at 3.
+- A counter that does not fold the received stamp into its own produces a
+  different line and fails the transcript.
 
 ## Readings
 

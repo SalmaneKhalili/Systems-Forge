@@ -1,13 +1,15 @@
 # M11-ex02 · Commit index
 
-## Goal
+The append-only log from ex01 can contain tentative entries as well as durable
+ones. This exercise adds the commit index so the state machine applies only
+the safe prefix and can still roll back everything above it after a leader
+change.
 
-Not every log entry can be applied to the replicated state machine. Only the
-entries at or below the **commit index** are durable and safe to apply; the
-ones above it are tentative and may still be rolled back by a leader change.
-Track the commit index alongside the log.
+## Shape
 
-Implement `log.go`:
+Only entries at or below the **commit index** are durable and safe to apply;
+entries above it may still be rolled back. You write **`log.go`** and track the
+boundary beside the log:
 
 ```go
 type Log struct {
@@ -25,21 +27,17 @@ func (l *Log) Commit(idx int) int
 func (l *Log) Committed() []string
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `log.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- `Committed` returns only the durable prefix.
-- Never read the wall clock.
+The exercise ships `main.go`, which prints the transcript. `make all` must
+build `test`, and `./test` must print the reference transcript exactly. Use Go
+and the standard library only. The reference transcript is `expected.txt`, with
+whitespace normalized. `Committed` returns only the durable prefix; never read
+the wall clock.
 
 ## Acceptance
 
-Reference transcript:
+The reference transcript is:
 
-```
+```text
 append a -> 0
 append b -> 1
 append c -> 2
@@ -50,9 +48,9 @@ commit 2 -> 2
 committed=a|b|c
 ```
 
-`c` sits beyond the commit index at first, so `committed` is empty; after
-`commit 1`, only `a` and `b` are durable; `c` becomes committed only after
-the commit index reaches 2.
+- Initially `c` is beyond the commit index, so the committed prefix is empty.
+- After `commit 1`, only `a` and `b` are durable; `c` becomes committed only
+  when the commit index reaches 2.
 
 ## Readings
 

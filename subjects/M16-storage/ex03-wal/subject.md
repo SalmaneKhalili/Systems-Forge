@@ -1,10 +1,16 @@
 # M16-ex03 · Write-Ahead Log (WAL)
 
-## Goal
+The memtable and SSTable are only durable after the disk handoff, so every
+mutation first needs an append-only record outside memory. This exercise defines
+the length-prefixed WAL and deterministic replay used to reconstruct sorted state
+after a crash. You deliver `wal.go`, the recovery record the persistent gateway
+writes before applying a change.
 
-An LSM-tree buffers writes in a memtable (ex01), but memtables are volatile. To survive a crash before the next flush, every mutation is first appended to an append-only **write-ahead log** (WAL) on disk, then applied to the memtable. On restart, the WAL is **replayed** to rebuild the in-memory state.
+## Shape
 
-Implement `wal.go`:
+Harness-style: the provided `main.go` appends writes, opens the file fresh to
+simulate a crash, reads the log back, and replays it; you write **`wal.go`** using
+only the Go standard library and implement:
 
 ```go
 // LogEntry is one recorded operation.
@@ -26,18 +32,16 @@ func ReadLog(path string) ([]LogEntry, error)
 func Replay(entries []LogEntry) []KV
 ```
 
-The provided `main.go` appends writes (simulating a crash by opening the file fresh), reads the log back, and replays it. `make all` must build `test`; `./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `wal.go`. Define `KV` (a `Key, Val string` pair) in this package.
-- Append-only: never rewrite the log in place; replay order must preserve write order.
+Define `KV` as a `Key, Val string` pair in this package. The log is append-only:
+never rewrite it in place, and preserve write order during replay. Never read the
+wall clock.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 append ok
 log entries: 4
 replay:
@@ -47,7 +51,9 @@ c=3
 d=4
 ```
 
-A replay that applies writes out of order, or that does not preserve the last write to a key, is the bug.
+The entry count proves the length-prefixed records survive the fresh open, and
+the replay proves ordered application and key-sorted output. Applying writes out
+of order or failing to preserve the last write to a key breaks recovery.
 
 ## Readings
 

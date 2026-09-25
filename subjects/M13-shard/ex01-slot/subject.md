@@ -1,12 +1,14 @@
 # M13-ex01 · Slot
 
-## Goal
+Fixed slots establish the placement primitive that ex02 and ex03 refine into key
+ranges and a consistent-hash ring. Here every key is pinned by an exact FNV-1a
+hash and slot count, so repeated calls always choose the same slot. You deliver
+`slot.go` with the hash and lookup functions used to identify that stable owner.
 
-The simplest shard placement: a fixed set of slots, and each key is pinned to
-one slot by hashing it. The slot owning a key must be **stable** — the same
-key always maps to the same slot for a given slot count.
+## Shape
 
-Implement `slot.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`slot.go`** using only the Go standard library and implement:
 
 ```go
 // Hash returns the FNV-1a 32-bit hash of key (offset 2166136261, prime
@@ -17,24 +19,16 @@ func Hash(key string) uint32
 func SlotOf(key string, nSlots int) int
 ```
 
-`SlotOf` = `int(Hash(key) % uint32(nSlots))` and must be deterministic across
-calls.
-
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `slot.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- FNV-1a is fully specified above — reproduce it exactly so the slots match.
-- Never read the wall clock.
+`SlotOf` must be `int(Hash(key) % uint32(nSlots))` and deterministic across
+calls. Reproduce FNV-1a exactly so the slots match, and never read the wall
+clock. The reference transcript is `expected.txt` with whitespace normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 apple @4 -> 3
 banana @4 -> 0
 cherry @4 -> 0
@@ -42,8 +36,8 @@ date @4 -> 1
 elder @4 -> 3
 ```
 
-The tell: `banana` and `cherry` collide on slot 0, `apple` and `elder` on slot
-3 — two keys hashing to the same slot always land on the same shard.
+`banana` and `cherry` collide on slot 0, while `apple` and `elder` collide on
+slot 3. Keys that hash to the same slot must always land on the same shard.
 
 ## Readings
 

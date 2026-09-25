@@ -1,33 +1,32 @@
-# M8-ex05 — Gate: the switch in anger
+# M8-ex05 · Gate: the switch in anger
 
-## Goal
-
-The gate of M8: your switch, complete with broadcast-plane and teardown
-discipline, must survive a **full fault scenario** across two connections —
-including an abrupt client disconnect in the middle of bookkeeping — and hand
+The gate of M8: your switch — complete with fault plane and teardown
+discipline — must survive a **full fault scenario** across two connections,
+including an abrupt client disconnect in the middle of bookkeeping, and hand
 the next connection a clean, per-connection-faulted stream. This switch is the
-injector every later module's grader will throw in front of a cluster.
+injector every later module's grader will throw in front of a cluster, so the
+transcript below is the contract everything after this module builds on.
 
 ## Shape
 
 Whole-program, evolving from M8-ex04. The switch must now prove:
 
-- **Mixed faults in one stream**, in any order (dup, drop, hold can all fire
-  in the same connection).
+- **Mixed faults in one stream**, in any order — dup, drop and hold can all
+  fire within the same connection.
 - **Mid-scenario teardown.** A client may drop its connection while the switch
   is holding a frame or mid-relay; the switch must close the relay's backend
   side (unreleased held frames are simply gone — they were never forwarded)
   and stay ready for the next connection.
-- **Re-applied faults, reset numbering.** Connect 2 restarts frame numbers and
-  the backend repeats its `R1…` sequence.
+- **Re-applied faults, reset numbering.** Connection 2 restarts frame numbers
+  and the backend repeats its `R1…` sequence.
 
 `TARGETFAULTS` (default `./faults.txt`) carries the directives; per-connection
 numbering and the `R<k> <content>` reply contract are exactly as in M8-ex04.
 
-## Acceptance criteria (all graded)
+## Acceptance
 
-With the shipped `faults.txt` (`dup:1`, `drop:2`, `hold:4`), `make all` and the
-grader's two connections must produce **exactly**:
+With the shipped `faults.txt` (`dup:1`, `drop:2`, `hold:4`), `make all` and
+the grader's two connections must produce **exactly**:
 
 connection 1:
 - `M0` → `R1 M0`, `R2 M0` (duplicated);
@@ -41,6 +40,8 @@ connection 2 (fresh connection, faults re-applied, backend reset):
 A switch that releases a held frame before the following frame (or not at
 all), or that leaks fault state across connections, prints a different reply
 order and fails.
+
+Graded `build` + `net` + `quiz`.
 
 ## Readings
 

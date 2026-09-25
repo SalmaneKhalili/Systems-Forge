@@ -1,13 +1,16 @@
 # M11-ex04 · Snapshot
 
-## Goal
+A log that only grows is unbounded. This exercise compacts it with a
+**snapshot**, replacing the committed prefix with state captured at an index
+while retaining the uncommitted suffix and every surviving entry's original
+public index.
 
-A log that only ever grows is unbounded. Replicas compact it with a
-**snapshot**: the state machine state at some index is captured, and everything
-at or below that index is dropped from the in-memory log. The committed prefix
-is replaced by the snapshot; only the uncommitted suffix stays as raw entries.
+## Shape
 
-Implement `log.go`:
+The state machine state at some index is captured, and everything at or below
+that index is dropped from the in-memory log. The committed prefix is replaced
+by the snapshot; only the uncommitted suffix remains as raw entries. You write
+**`log.go`**:
 
 ```go
 type Log struct {
@@ -27,25 +30,21 @@ func (l *Log) Snapshot(upto int) int
 func (l *Log) All() []string
 ```
 
-After a snapshot the log no longer knows the compacted entries, but the
+After compaction the log no longer knows the removed entries, but the
 *indexes* of the remaining ones stay stable. Use a `base` offset so `All`
-keeps reporting original indexes.
+continues to report original indexes.
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `log.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- `All` must preserve each entry's pre-snapshot index.
-- Never read the wall clock.
+The exercise ships `main.go`, which prints the transcript. `make all` must
+build `test`, and `./test` must print the reference transcript exactly. Use Go
+and the standard library only. The reference transcript is `expected.txt`, with
+whitespace normalized. `All` must preserve every entry's pre-snapshot index;
+never read the wall clock.
 
 ## Acceptance
 
-Reference transcript:
+The reference transcript is:
 
-```
+```text
 append a -> 0   append b -> 1   append c -> 2   append d -> 3
 all=0:a|1:b|2:c|3:d
 snapshot(1) -> removed 2
@@ -54,9 +53,9 @@ append e -> 4
 all=2:c|3:d|4:e
 ```
 
-After `snapshot(1)`, entries 0 and 1 are gone but `c` is still reported at
-index 2 and `d` at 3; the next append lands at 4. A log that renumbers the
-tail after compaction (or that fails to drop the compacted prefix) is the bug.
+After `snapshot(1)`, entries 0 and 1 are gone, while `c` remains at public
+index 2 and `d` at 3; the next append lands at 4. Renumbering the tail after
+compaction, or failing to drop the compacted prefix, fails the contract.
 
 ## Readings
 

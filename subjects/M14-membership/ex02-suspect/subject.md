@@ -1,13 +1,15 @@
 # M14-ex02 · Suspect
 
-## Goal
+A single missed heartbeat is too eager to declare failure, so the heartbeat
+model gains a second threshold and a reversible suspicion state. This exercise
+makes `alive → suspect → failed` explicit under harness-driven ticks; a beat
+during suspicion returns the peer to alive and restarts its clock. You deliver
+`lifecycle.go` with that state machine.
 
-Losing a peer instantly would be too eager — a slow reply is not a dead node.
-Membership uses a **suspect** state: after the first threshold a peer is
-`suspect`, and only after a second, longer threshold does it become `failed`.
-A heartbeat that arrives while `suspect` clears the suspicion entirely.
+## Shape
 
-Implement `lifecycle.go`:
+Harness-style: the provided `main.go` prints the transcript; you write
+**`lifecycle.go`** using only the Go standard library and implement:
 
 ```go
 // Lifecycle tracks a peer through alive -> suspect -> failed.
@@ -33,22 +35,17 @@ func (lc *Lifecycle) Beat()
 func (lc *Lifecycle) State() string
 ```
 
-The provided `main.go` prints the transcript. `make all` must build `test`;
-`./test` must print the reference transcript exactly.
-
-## Constraints
-
-- Go, standard library only; file is `lifecycle.go`.
-- Reference transcript is `expected.txt` (whitespace normalized).
-- `failAfter > suspectAfter`; a tick at exactly `suspectAfter` yields
-  `suspect`, at exactly `failAfter` yields `failed`.
-- Never read the wall clock — ticks are the only time model.
+`failAfter` is greater than `suspectAfter`. A tick at exactly `suspectAfter`
+yields `suspect`, and one at exactly `failAfter` yields `failed`. Never read the
+wall clock; ticks are the only time model. The reference transcript is
+`expected.txt` with whitespace normalized.
 
 ## Acceptance
 
-Reference transcript:
+`make all` must build `test`; `./test` must print the reference transcript
+exactly:
 
-```
+```text
 suspectAfter=2 failAfter=5
 tick 1: alive
 tick 2: suspect
@@ -61,10 +58,10 @@ tick 4: suspect
 tick 5: failed
 ```
 
-With `suspectAfter=2` and `failAfter=5`, the peer turns suspect at tick 2 and
-failed at tick 5. A `beat` before failure clears suspicion and restarts the
-count. A lifecycle that skips `suspect` (goes straight to `failed`) or that
-fails before `failAfter` ticks is the bug.
+With `suspectAfter=2` and `failAfter=5`, the peer becomes suspect at tick 2 and
+failed at tick 5. A beat before failure clears suspicion and restarts the count.
+Skipping `suspect`, or declaring failure before `failAfter` ticks, breaks the
+lifecycle contract.
 
 ## Readings
 

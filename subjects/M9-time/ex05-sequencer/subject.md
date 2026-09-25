@@ -1,45 +1,41 @@
 # M9-ex05 · The sequencer
 
-## Goal
+M9 ends by putting the logical clock on the network. A **sequencer** turns
+concurrent clients' unordered streams into one strictly ordered stream by
+assigning every frame an increasing sequence number; that single-writer order
+is the foundation replicated state machines build on.
 
-A **sequencer** is a single process that turns concurrent clients' unordered
-streams into one strictly ordered stream: every frame it receives is assigned a
-sequence number, and the numbers only ever increase. This is the "single-writer
-total order" that replicated state machines build on.
+## Shape
 
-Write `srv.go`: a TCP server that listens on `TARGETPORT` and applies the
-Lamport **receive rule** to every frame. Frames are lines
+You write **`srv.go`**: a TCP server that listens on `TARGETPORT` and applies
+the Lamport **receive rule** to every frame. Frames are lines:
 
-```
+```text
 <content> <stamp>
 ```
 
-where `<stamp>` is the client's claimed Lamport value. For each frame the
-server assigns
+`<stamp>` is the client's claimed Lamport value. For each frame the server
+assigns:
 
-```
+```text
 seq = max(seq, stamp) + 1
 ```
 
-and replies `R<seq> <content> <stamp>`. The sequence counter lives for the
-life of the process — never reset per connection.
+It then replies `R<seq> <content> <stamp>`. The sequence counter lives for the
+life of the process and is never reset per connection. The grader dials at
+least two connections back-to-back, so an accept loop must serve multiple
+concurrent connections and replies must match the reference transcript
+byte-for-byte.
 
-The grader dials at least two connections back-to-back; replies must match the
-reference transcript byte-for-byte.
-
-## Constraints
-
-- Go, standard library only; file is `srv.go`.
-- `make all` must build `srv` (the grader starts `./srv`).
-- Multiple concurrent connections must be served (an accept loop).
-- Never read the wall clock; no timestamps, no sleeps in replies.
-- Port number comes from `TARGETPORT`.
+Use Go and the standard library only. `make all` must build `srv`; the grader
+starts `./srv`. The port comes from `TARGETPORT`. Never read the wall clock:
+replies contain no timestamps and the server performs no sleeps.
 
 ## Acceptance
 
-Reference transcript (`a` = conn 1, `b` = conn 2):
+The reference transcript (`a` = conn 1, `b` = conn 2) is:
 
-```
+```text
 R1 a 0
 R10 b 9
 R11 c 9
@@ -48,10 +44,10 @@ R13 e 0
 R21 f 20
 ```
 
-Conn 2's first reply is `R12` — the counter carries across connections. And
-`c 9` after `b 9` shows the merge rule: the client's *claimed* stamp does not
-reset the sequencer; wall-clock intuition breaks here, Lamport's max-then-add
-is the law.
+- Conn 2's first reply is `R12`, proving the counter carries across connections.
+- `c 9` after `b 9` proves the merge rule: the client's *claimed* stamp does
+  not reset the sequencer; wall-clock intuition fails here, while Lamport's
+  max-then-add rule governs the reply.
 
 ## Readings
 

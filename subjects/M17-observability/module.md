@@ -1,26 +1,27 @@
 # M17 · Observability
 
-A distributed system you cannot see is a distributed system you cannot debug.
-**Observability** is the tooling that makes a production service legible:
-**metrics** (numeric counters and gauges for dashboards and alerting),
-**tracing** (a request's lifecycle as a tree of named spans with durations), and
-**summaries** (aggregating many latencies into count/max/percentiles for SLOs).
+This module makes the finished distributed stack legible through numeric metrics,
+request traces, and latency summaries. The thread runs from a concurrency-safe
+registry to nested spans, attributed-span queries, and quantile aggregation,
+then exposes the live registry through a TCP telemetry gateway.
 
-Milestones:
+## The build
 
-- ex01 · Metrics — a concurrency-safe registry of counters and gauges with a
-  snapshot.
-- ex02 · Tracing — a request rendered as a root span with nested child spans.
-- ex03 · Spans with attributes — attach key=value tags and query the collected
-  tree (match, slowest).
-- ex04 · Summaries — aggregate durations into count/sum/max, p50 and p95.
-- ex05 · Telemetry gateway — the Mini-Capstone: a TCP service exposing the
-  metrics registry, with a live `conn_total`.
+- **ex01 · Metrics** — maintain named counters behind a read-write lock and
+  return deterministic name-sorted snapshots.
+- **ex02 · Tracing** — model one request as a root span with nested children and
+  render the tree in insertion order.
+- **ex03 · Spans with attributes** — attach key=value tags, query matching spans,
+  and find the slowest own-duration in the collected tree.
+- **ex04 · Summaries** — aggregate explicit durations into count, sum, maximum,
+  p50, and p95 for SLO reporting.
+- **ex05 · Telemetry gateway** — **Gate**: serve live registry updates and sorted
+  snapshots over TCP while counting every accepted connection in `conn_total`.
 
-Rule: durations are **explicit** (passed in), never measured from a wall
-clock — the whole module stays byte-deterministic.
+## Rules
 
----
+Durations are **explicit** (passed in), never measured from a wall clock — the
+whole module stays byte-deterministic.
 
 ## Prerequisites
 
@@ -48,8 +49,6 @@ Before starting M17, you should be comfortable with everything from M0–M16, pl
 
 You do NOT need to know: Prometheus, Grafana, Jaeger, or any external tooling. This module
 builds the concepts from scratch.
-
----
 
 ## So what? (interview / portfolio)
 

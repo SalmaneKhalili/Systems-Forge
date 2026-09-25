@@ -1,27 +1,28 @@
 # M9 · Time & Ordering
 
-Logical time has nothing to do with the wall clock: it is about **causality** —
-deciding, from the messages exchanged, which events necessarily happened
-before which others, and turning that partial order into something machines can
-compare.
+This module turns message exchange into explicit causal facts. A scalar logical
+clock becomes a per-process vector, vector stamps expose happened-before and
+concurrency, and a deterministic tie-break turns the resulting partial order
+into the sequence assigned by a TCP sequencer.
 
-Milestones:
+## The build
 
-- ex01 · Lamport logical clock — a monotonically increasing counter that
-  respects the happens-before order.
-- ex02 · Vector clocks — per-process counters that can *test* causality in
-  both directions.
-- ex03 · Causality — decide happened-before and concurrency from vector
-  stamps.
-- ex04 · Total order — extend the partial order to a deterministic total
-  order with a (lamport, pid) tie-break.
-- ex05 · Sequencer — a real TCP gateway that assigns a Lamport-stamped,
+- **ex01 · Lamport logical clock** — a monotonically increasing counter that
+  respects happens-before; the scalar clock that hands ex02 its first vector
+  component.
+- **ex02 · Vector clocks** — per-process counters that can *test* causality in
+  both directions; the stamps that hand ex03 a relation to decide.
+- **ex03 · Causality** — classify two stamps as happened-before, happened-after
+  or concurrent; the relation that exposes the partial order ex04 must totalize.
+- **ex04 · Total order** — extend the partial order to a deterministic total
+  order with a `(lamport, pid)` tie-break.
+- **ex05 · Sequencer** — a real TCP gateway that assigns a Lamport-stamped,
   totally ordered sequence number to every frame it receives.
 
-Rule: nothing printed or compared may depend on wall-clock time. All
-exercises are transcript-driven and byte-deterministic.
+## Rules
 
----
+Nothing printed or compared may depend on wall-clock time. All exercises are
+transcript-driven and byte-deterministic.
 
 ## Prerequisites
 
@@ -43,8 +44,6 @@ Before starting M9, you should be comfortable with everything from M0–M8, plus
   goroutine per client).
 
 You do NOT need to know: Raft, 2PC, Paxos, or distributed consensus. Those come in M10–M12.
-
----
 
 ## So what? (interview / portfolio)
 
