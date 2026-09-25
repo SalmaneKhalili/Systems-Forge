@@ -1,39 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { api, fmtDate, fmtMins } from "../lib/api";
+  import { api, fmtMins } from "../lib/api";
   import { goto } from "../lib/router.svelte";
-  import { surprise } from "../lib/quests";
-  import { confetti, ding } from "../lib/celebrate";
-  import type { Curriculum, DailyPlan, Progress } from "../lib/types";
+  import type { Curriculum, Progress } from "../lib/types";
   import ProgressRing from "../components/ProgressRing.svelte";
   import Heatmap from "../components/Heatmap.svelte";
 
   let prog = $state<Progress | null>(null);
   let cur = $state<Curriculum | null>(null);
-  let plan = $state<DailyPlan | null>(null);
-  let questCeleb = $state(false);
   let err = $state("");
 
   const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   onMount(async () => {
     try {
-      [prog, cur, plan] = await Promise.all([
-        api.progress(),
-        api.curriculum(),
-        api.dailyPlan(),
-      ]);
+      [prog, cur] = await Promise.all([api.progress(), api.curriculum()]);
     } catch (e) {
       err = String(e);
-    }
-  });
-
-  // Celebrate once (per mount) when every quest is done.
-  $effect(() => {
-    if (plan?.doneAll && !questCeleb) {
-      questCeleb = true;
-      confetti(160);
-      ding();
     }
   });
 
@@ -86,50 +69,6 @@
       {/if}
     </div>
   </div>
-
-  {#if plan}
-    <!-- today: daily quests -->
-    <div class="card bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 rounded-2xl p-6 mt-8">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <div>
-          <h2 class="font-semibold text-lg">Today {plan.doneAll ? "🎉" : ""}</h2>
-          <p class="text-xs opacity-60">Your daily quests · {plan.date}</p>
-        </div>
-        <div class="flex items-center gap-2">
-          {#if plan.dueToday > 0}
-            <button class="btn btn-sm btn-outline" onclick={() => goto("review")}>
-              🃏 {plan.dueToday} card{plan.dueToday === 1 ? "" : "s"} due
-            </button>
-          {/if}
-          <button class="btn btn-sm btn-primary" onclick={() => surprise(cur)}>🎲 Surprise me</button>
-        </div>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-3">
-        {#each plan.quests as q}
-          {@const done = q.done >= q.target}
-          <div class="flex items-center gap-3 bg-base-200/70 rounded-xl px-4 py-3">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 {done ? 'bg-success/20 text-success' : 'bg-primary/15 text-primary'}"
-            >
-              {done ? "✓" : q.key === "solve" ? "⚔️" : q.key === "review" ? "🃏" : "🎯"}
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="text-sm font-medium truncate">{q.label}</div>
-              <div class="flex items-center gap-2 mt-1">
-                <div class="flex-1 h-1.5 rounded-full bg-base-300 overflow-hidden">
-                  <div
-                    class="h-full rounded-full {done ? 'bg-success' : 'bg-primary'} transition-all"
-                    style="width:{Math.min(100, (q.done / Math.max(1, q.target)) * 100)}%"
-                  ></div>
-                </div>
-                <span class="text-xs opacity-60 shrink-0">{q.done}/{q.target} {q.unit}</span>
-              </div>
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
-  {/if}
 
   {#if prog && cur}
     <!-- main grid -->
