@@ -6,12 +6,22 @@
   import { api, logError } from "../lib/api";
   import type { WorkDirInfo } from "../lib/types";
 
+  const PROBE = "__sf_term_ok"; // echoed back by the interactive shell
+
   let dirs = $state<WorkDirInfo[]>([]);
   let selectedKey = $state("");
   let err = $state("");
   let running = $state(false);
+  let sessionKind = $state<"shell" | "nvim" | null>(null);
   let pid = $state("");
   let container: HTMLDivElement;
+
+  // Round-trip probe: after starting, one echoed marker proves keystrokes are
+  // reaching the pty (shell echo would not appear otherwise).
+  let connected = $state<"unknown" | "ok" | "fail">("unknown");
+  let probePending = $state(false);
+  let probeTimer: ReturnType<typeof setTimeout> | undefined;
+  let outBuf = "";
 
   let term: Terminal | null = null;
   let fit: FitAddon | null = null;
@@ -27,6 +37,18 @@
       const arr = new Uint8Array(bin.length);
       for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
       term?.write(arr);
+      if (probePending) {
+        outBuf += bin;
+        if (outBuf.length > 8192) outBuf = outBuf.slice(-4096);
+        if (outBuf.includes(PROBE)) {
+          probePending = false;
+          connected = "ok";
+          if (probeTimer) {
+            clearTimeout(probeTimer);
+            probeTimer = undefined;
+          }
+        }
+      }
     } catch {
       /* ignore malformed chunk */
     }
@@ -38,6 +60,13 @@
       rt.EventsOn(`term:out:${id}`, onTermOut);
       rt.EventsOn(`term:exit:${id}`, () => {
         running = false;
+        sessionKind = null;
+        probePending = false;
+        connected = "unknown";
+        if (probeTimer) {
+          clearTimeout(probeTimer);
+          probeTimer = undefined;
+        }
         term?.write("\r\n\x1b[90m[process exited]\x1b[0m\r\n");
       });
     }
@@ -105,7 +134,20 @@
       await api.termStart(id, selectedDir(), kind === "nvim" ? ["nvim"] : []);
       running = true;
       pid = id;
+      sessionKind = kind;
       if (term) void api.termResize(pid, term.cols, term.rows).catch(() => {});
+      // Verify the keystroke round trip once per session.
+      connected = "unknown";
+      probePending = true;
+      outBuf = "";
+      void api.termInput(id, `echo ${PROBE}\r`).catch(() => {});
+      probeTimer = setTimeout(() => {
+        if (probePending) {
+          probePending = false;
+          connected = "fail";
+        }
+      }, 6000);
+      term.focus();
     } catch (e) {
       logError("TermStart", e);
       unregisterSession(id);
@@ -118,9 +160,27 @@
       const id = pid;
       pid = "";
       running = false;
+      sessionKind = null;
+      connected = "unknown";
+      probePending = false;
+      if (probeTimer) {
+        clearTimeout(probeTimer);
+        probeTimer = undefined;
+      }
       void api.termStop(id).catch(() => {});
       unregisterSession(id);
     }
+  }
+
+  function connPill() {
+    if (connected === "ok")
+      return { cls: "badge badge-success badge-sm gap-1", txt: "connected" };
+    if (connected === "fail")
+      return {
+        cls: "badge badge-warning badge-sm gap-1",
+        txt: "no echo — typing is not reaching the shell",
+      };
+    return { cls: "badge badge-ghost badge-sm gap-1", txt: "idle" };
   }
 </script>
 
@@ -133,20 +193,17 @@
       </p>
     </div>
     <div class="flex items-center gap-2 flex-wrap">
-      <select class="select select-sm select-bordered" bind:value={selectedKey}>
+      <select class="select select-sm select-bordered max-w-56" bind:value={selectedKey} title={selectedDir()}>
         {#each dirs as d}
           <option value={d.key}>{d.title}</option>
         {/each}
       </select>
-      <button class="btn btn-sm btn-ghost" onclick={() => startSession("shell")} disabled={!selectedDir()}>
-        Shell
+      <button class="btn btn-sm btn-ghost" onclick={() => startSession("shell")} disabled={!selectedDir() && dirs.length === 0}>
+        ⟩ Shell
       </button>
-      <button class="btn btn-sm btn-primary" onclick={() => startSession("nvim")} disabled={!selectedDir()}>
-        Open nvim
+      <button class="btn btn-sm btn-primary" onclick={() => startSession("nvim")} disabled={!selectedDir() && dirs.length === 0}>
+        nvim
       </button>
-      {#if running}
-        <button class="btn btn-sm btn-warning" onclick={stopSession}>Stop</button>
-      {/if}
     </div>
   </div>
 
@@ -154,7 +211,30 @@
     <div class="alert alert-error mb-3 py-2">{err}</div>
   {/if}
 
-  <div class="flex-1 min-h-0 rounded-xl overflow-hidden border border-base-300 bg-[#0f1115]">
-    <div bind:this={container} class="h-full w-full"></div>
+  <div class="flex-1 min-h-0 rounded-xl overflow-hidden border border-base-300 flex flex-col">
+    <!-- session strip -->
+    <div class="flex items-center gap-2 px-3 py-2 border-b border-base-300 bg-base-200/60 shrink-0">
+      <span class={`w-2 h-2 rounded-full ${running ? "bg-success animate-pulse" : "bg-base-300"}`}></span>
+      <span class="text-xs font-semibold">{running ? (sessionKind === "nvim" ? "nvim" : "shell") : "not running"}</span>
+      <span class="text-[11px] opacity-50 font-mono truncate hidden md:inline max-w-64" title={selectedDir()}>
+        {selectedDir() || "pick a working directory"}
+      </span>
+      <div class="ml-auto flex items-center gap-2">
+        <span class={connPill().cls} title="A marker is echoed back through the shell to confirm keystrokes reach it.">
+          <span class="w-1.5 h-1.5 rounded-full {connected === 'ok' ? 'bg-success' : connected === 'fail' ? 'bg-warning' : 'bg-base-300'}"></span>
+          {connPill().txt}
+        </span>
+        {#if running}
+          <button class="btn btn-xs btn-ghost text-error" onclick={stopSession} title="Kill the process and close the session">
+            Stop
+          </button>
+        {/if}
+      </div>
+    </div>
+
+    <!-- terminal surface -->
+    <div class="flex-1 min-h-0 bg-[#0f1115] p-2">
+      <div bind:this={container} class="h-full w-full"></div>
+    </div>
   </div>
 </div>

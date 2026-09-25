@@ -16,6 +16,23 @@ const fileContents = (fixture.fileContents ?? {}) as Record<string, string>;
 let sessionSeq = 1;
 let cardSeq = 1;
 
+// Dev-only terminal emulation: sessions echo typed input so the full
+// EventsOn -> term:out -> xterm pipeline (and the round-trip probe) can be
+// exercised without the Go pty side.
+const termSessions: Record<string, { buf: string }> = {};
+const listeners: Record<string, Array<(d: unknown) => void>> = {};
+
+function b64(s: string): string {
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+function emit(name: string, data: unknown) {
+  (listeners[name] ?? []).forEach((cb) => cb(data));
+}
+
 function checkResult(id: string) {
   const d = detail[id] ?? {};
   const methods = (d.methods as Array<{ type: string; label: string; parts: number }>) ?? [];
@@ -113,11 +130,37 @@ const handlers: Record<string, Fn> = {
     streak: 0,
     doneAll: false,
   }),
-  WorkDirs: () => [],
-  TermStart: () => undefined,
-  TermInput: () => undefined,
+  WorkDirs: () => [{ key: "", title: "Repository root", dir: "/tmp/opencode/mock-repo" }],
+  TermStart: (id: unknown) => {
+    termSessions[String(id)] = { buf: "" };
+    emit(
+      `term:out:${String(id)}`,
+      b64("\r\n[mock shell]  type here — echo __sf_term_ok is answered\r\n$ "),
+    );
+    return undefined;
+  },
+  TermInput: (id: unknown, data: unknown) => {
+    const s = termSessions[String(id)];
+    if (!s) return;
+    const chunk = String(data ?? "");
+    s.buf += chunk;
+    emit(`term:out:${String(id)}`, b64(chunk)); // echo typing back
+    if (chunk.includes("\r") || chunk.includes("\n")) {
+      const line = s.buf.split(/\r?\n/).pop()?.replace(/\r/g, "") ?? "";
+      if (line.trim() === "echo __sf_term_ok") {
+        emit(`term:out:${String(id)}`, b64("__sf_term_ok\r\n$ "));
+      } else if (line.trim() === "exit") {
+        emit(`term:exit:${String(id)}`, true);
+      } else {
+        emit(`term:out:${String(id)}`, b64("$ "));
+      }
+    }
+  },
   TermResize: () => undefined,
-  TermStop: () => undefined,
+  TermStop: (id: unknown) => {
+    delete termSessions[String(id)];
+    emit(`term:exit:${String(id)}`, true);
+  },
   Log: (msg: unknown) => {
     console.log("[mock-log]", String(msg));
     return undefined;
@@ -138,9 +181,18 @@ export function installMockBackend(): void {
   );
   (window as any).go = { main: { App } };
   (window as any).runtime = {
-    EventsOn: () => {},
-    EventsOff: () => {},
-    EventsEmit: (_name: unknown, _data?: unknown) => {},
+    EventsOn: (name: string, cb: (d: unknown) => void) => {
+      listeners[name] = [...(listeners[name] ?? []), cb];
+      return undefined;
+    },
+    EventsOff: (name: string) => {
+      delete listeners[name];
+      return undefined;
+    },
+    EventsEmit: (name: string, data: unknown) => {
+      emit(name, data);
+      return undefined;
+    },
     Log: (msg: unknown) => Promise.resolve(console.log("[mock-log]", String(msg))),
   };
 }

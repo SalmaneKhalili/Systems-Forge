@@ -210,10 +210,32 @@ func termAnswer(q []byte) ([]byte, bool) {
 	if bytes.Equal(q, []byte{0x1b, '[', '0', 'c'}) || bytes.Equal(q, []byte{0x1b, '[', 'c'}) {
 		return []byte{0x1b, '[', '?', '6', '2', ';', '2', '2', ';', 'c'}, true
 	}
+	// DA1 variant used by a few shells/configs: CSI ? 1 ; 2 c.
+	if bytes.Equal(q, []byte{0x1b, '[', '?', '1', ';', '2', 'c'}) || bytes.Equal(q, []byte{0x1b, '[', '?', 'c'}) {
+		return []byte{0x1b, '[', '?', '6', '2', ';', '2', '2', ';', 'c'}, true
+	}
+	// DA2 (secondary device attributes): CSI > c. A bare xterm-ish answer is
+	// enough to satisfy probes that otherwise stall waiting for a reply.
+	if bytes.Equal(q, []byte{0x1b, '[', '>', 'c'}) {
+		return []byte{0x1b, '[', '>', '0', ';', '0', ';', '0', 'c'}, true
+	}
 	// XTGETTCAP by terminal name (CSI > 0 q): answer as an xterm-ish device
 	// with KITTY attribute so private-mode queries are honored.
 	if bytes.HasPrefix(q, []byte{0x1b, '[', '>', '0', 'q'}) {
 		return []byte{0x1b, '[', '>', '0', ';', '0', ';', '5', 'q'}, true
+	}
+	// DECRQM (CSI ? Ps $ p): report "not recognized / default" (Pa=0) so the
+	// caller proceeds; also covers the DECRQM *p variant from some tools.
+	if len(q) > 6 && q[0] == 0x1b && q[1] == '[' && q[2] == '?' && q[len(q)-2] == '$' && (q[len(q)-1] == 'p' || q[len(q)-1] == '*') {
+		digits := q[3 : len(q)-2]
+		return append(append([]byte{0x1b, '[', '?'}, digits...), []byte{';', '0', '$', 'y'}...), true
+	}
+	// DSR device-status reports: CSI 5 n / CSI 6 n (cursor position).
+	if bytes.Equal(q, []byte{0x1b, '[', '5', 'n'}) {
+		return []byte{0x1b, '[', '0', 'n'}, true
+	}
+	if bytes.Equal(q, []byte{0x1b, '[', '6', 'n'}) {
+		return []byte{0x1b, '[', '1', ';', '1', 'R'}, true
 	}
 	// OSC 11 background-colour query.
 	if bytes.HasPrefix(q, []byte{0x1b, ']', '1', '1', ';', '?'}) {

@@ -27,6 +27,133 @@
   let notesSaved = $state("");
   let notesPreview = $state(false);
 
+  // --- resizable spec/editor split --------------------------------------
+  const SPLIT_KEY = "ex.splitW";
+  const SPLIT_MIN = 260; // px the spec column is allowed to shrink to
+  let splitPX = $state<number | null>(null); // spec column width in px; null = default 40%
+  let dragging = $state(false);
+  let wide = $state(true);
+  let splitBox: HTMLDivElement;
+
+  function contentWidth(): number {
+    return splitBox?.getBoundingClientRect().width ?? 1200;
+  }
+
+  function clampSplit(v: number): number {
+    return Math.min(contentWidth() - 360, Math.max(SPLIT_MIN, v));
+  }
+
+  function splitStyle(): string {
+    if (!wide) return ""; // stacked below lg: full-width spec, workbench below
+    return `flex: 0 0 ${splitPX ?? Math.round(contentWidth() * 0.4)}px;`;
+  }
+
+  function defaultSplit(): number {
+    return Math.round(contentWidth() * 0.4);
+  }
+
+  function onSplitDown(e: PointerEvent) {
+    if (e.button !== 0) return;
+    const startX = e.clientX;
+    const start = splitPX ?? defaultSplit();
+    const move = (ev: PointerEvent) => {
+      splitPX = clampSplit(start + (ev.clientX - startX));
+    };
+    const up = () => {
+      dragging = false;
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      saveSplit();
+    };
+    dragging = true;
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    e.preventDefault();
+  }
+
+  function onSplitKey(e: KeyboardEvent) {
+    const dir = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!dir) return;
+    e.preventDefault();
+    const step = e.shiftKey ? 40 : 10;
+    splitPX = clampSplit((splitPX ?? defaultSplit()) + dir * step);
+    saveSplit();
+  }
+
+  function saveSplit() {
+    if (splitPX) {
+      void api.saveSettings({ [SPLIT_KEY]: String(Math.round(splitPX)) }).catch(() => {});
+    }
+  }
+
+  // --- resizable file list (workbench) -----------------------------------
+  const FILELIST_KEY = "ex.fileListW";
+  const FILELIST_MIN = 112;
+  const FILELIST_MAX = 320;
+  let fileListW = $state<number | null>(null); // px; null = default 176
+  let listDragging = $state(false);
+
+  function clampList(v: number): number {
+    return Math.min(FILELIST_MAX, Math.max(FILELIST_MIN, v));
+  }
+
+  function fileListStyle(): string {
+    return `flex: 0 0 ${fileListW ?? 176}px;`;
+  }
+
+  function onListDown(e: PointerEvent) {
+    if (e.button !== 0) return;
+    const startX = e.clientX;
+    const start = fileListW ?? 176;
+    const move = (ev: PointerEvent) => {
+      fileListW = clampList(start + (ev.clientX - startX));
+    };
+    const up = () => {
+      listDragging = false;
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      saveFileList();
+    };
+    listDragging = true;
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    e.preventDefault();
+  }
+
+  function onListKey(e: KeyboardEvent) {
+    const dir = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!dir) return;
+    e.preventDefault();
+    const step = e.shiftKey ? 32 : 8;
+    fileListW = clampList((fileListW ?? 176) + dir * step);
+    saveFileList();
+  }
+
+  function saveFileList() {
+    if (fileListW) {
+      void api.saveSettings({ [FILELIST_KEY]: String(Math.round(fileListW)) }).catch(() => {});
+    }
+  }
+
+  // Read both persisted split widths in one settings pass.
+  async function applyLayout() {
+    try {
+      const s = await api.settings();
+      const v = s?.[SPLIT_KEY];
+      if (v) {
+        const n = Number(v);
+        if (Number.isFinite(n)) splitPX = clampSplit(n);
+      }
+      const f = s?.[FILELIST_KEY];
+      if (f) {
+        const n = Number(f);
+        if (Number.isFinite(n)) fileListW = clampList(n);
+      }
+    } catch {
+      /* non-fatal */
+    }
+  }
+
   const rankExt = new Map([
     [".c", 0], [".h", 0],
     [".go", 1],
@@ -54,7 +181,15 @@
     return ranked[0].f.path;
   }
 
-  onMount(load);
+  onMount(() => {
+    void load();
+    void applyLayout();
+    const mq = window.matchMedia("(min-width: 1024px)");
+    wide = mq.matches;
+    const onMq = (e: MediaQueryListEvent) => (wide = e.matches);
+    mq.addEventListener("change", onMq);
+    return () => mq.removeEventListener("change", onMq);
+  });
 
   async function load() {
     try {
@@ -242,9 +377,15 @@
       </div>
     </div>
 
-    <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-5">
-      <!-- left: spec -->
-      <div class="lg:col-span-3 min-h-0 flex flex-col border-r border-base-300">
+    <div
+      class="flex-1 min-h-0 flex flex-col lg:flex-row {dragging ? 'cursor-col-resize select-none' : ''}"
+      bind:this={splitBox}
+    >
+      <!-- left: spec (resizable) -->
+      <div
+        class="min-h-0 flex flex-col border-b lg:border-b-0"
+        style={splitStyle()}
+      >
         <div class="tabs px-4 pt-3 gap-1">
           <button class="tab {tab === 'spec' ? 'tab-active' : ''}" onclick={() => (tab = "spec")}>Spec</button>
           <button class="tab {tab === 'readings' ? 'tab-active' : ''}" onclick={() => (tab = "readings")}>
@@ -441,8 +582,23 @@
         </div>
       </div>
 
+      <!-- divider -->
+      {#if wide}
+        <div
+          class="w-1.5 shrink-0 cursor-col-resize flex items-center justify-center select-none bg-base-200/60 hover:bg-primary/15 active:bg-primary/25 border-x border-base-300"
+          role="separator"
+          aria-orientation="vertical"
+          tabindex="0"
+          title="Drag to resize — Arrow keys fine-tune (Shift = larger steps)"
+          onpointerdown={onSplitDown}
+          onkeydown={onSplitKey}
+        >
+          <span class="w-0.5 h-10 rounded-full bg-base-300"></span>
+        </div>
+      {/if}
+
       <!-- right: workbench -->
-      <div class="lg:col-span-2 min-h-0 flex flex-col">
+      <div class="flex-1 min-h-0 flex flex-col">
         <div class="flex items-center gap-2 px-4 py-3 border-b border-base-300">
           <button class="btn btn-primary btn-sm" onclick={grade} disabled={grading}>
             {#if grading}
@@ -462,9 +618,12 @@
           {/if}
         </div>
 
-        <div class="flex-1 min-h-0 flex">
-          <!-- file list -->
-          <div class="w-44 shrink-0 border-r border-base-300 bg-base-200/40 overflow-y-auto py-2">
+        <div class="flex-1 min-h-0 flex {listDragging ? 'cursor-col-resize select-none' : ''}">
+          <!-- file list (resizable) -->
+          <div
+            class="shrink-0 bg-base-200/40 overflow-y-auto py-2"
+            style={fileListStyle()}
+          >
             <div class="px-3 pb-2 text-[10px] uppercase tracking-wider opacity-40 font-semibold">Files</div>
             {#each files.filter((f) => !f.dir) as f}
               <button
@@ -487,6 +646,17 @@
               </div>
             </div>
           </div>
+
+          <!-- file-list divider -->
+          <div
+            class="w-1 shrink-0 cursor-col-resize flex items-center justify-center select-none bg-base-200/60 hover:bg-primary/15 active:bg-primary/25 border-x border-base-300"
+            role="separator"
+            aria-orientation="vertical"
+            tabindex="0"
+            title="Drag to resize the file list — Arrow keys fine-tune (Shift = larger steps)"
+            onpointerdown={onListDown}
+            onkeydown={onListKey}
+          ></div>
 
           <!-- editor -->
           <div class="flex-1 min-w-0">

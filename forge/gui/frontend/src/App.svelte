@@ -17,6 +17,15 @@
   let modules = $state(0);
   let total = $state(0);
   let backendErr = $state("");
+  let sidebarOpen = $state(true);
+  const SIDEBAR_KEY = "ui.sidebar";
+
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+    void api
+      .saveSettings({ [SIDEBAR_KEY]: sidebarOpen ? "open" : "closed" })
+      .catch(() => {});
+  }
 
   const nav = [
     { name: "dashboard", label: "Dashboard", icon: "M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10" },
@@ -37,24 +46,75 @@
         backendErr = String(e);
       }
     });
+    // Restore the persisted sidebar preference and wire Ctrl/Cmd+B.
+    void api
+      .settings()
+      .then((s) => {
+        if (s?.[SIDEBAR_KEY] === "closed") sidebarOpen = false;
+      })
+      .catch(() => {});
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "b") return;
+      // Never steal Ctrl+B from editors/inputs/terminal (tmux prefix etc.).
+      const t = e.target as HTMLElement | null;
+      if (
+        t &&
+        (t.tagName === "TEXTAREA" ||
+          t.tagName === "INPUT" ||
+          t.tagName === "SELECT" ||
+          t.isContentEditable)
+      )
+        return;
+      e.preventDefault();
+      toggleSidebar();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   });
 
   const r = $derived($route as Route);
+
+  let mainEl: HTMLElement;
+
+  // Each top-level page scrolls inside <main>. When navigating between pages
+  // (or between exercises), the container keeps its previous scrollTop, which
+  // can strand the user mid-page on a shorter/self-scrolling view. Reset it
+  // on every route change.
+  $effect(() => {
+    void r.name;
+    void r.param; // exercise → exercise navigations carry a new param
+    if (mainEl) mainEl.scrollTop = 0;
+    window.scrollTo(0, 0);
+  });
 </script>
 
 <FocusOverlay open={appState.focusOpen} onClose={() => appState.setFocusOpen(false)} />
 
-<div class="flex h-full">
-  <!-- Sidebar -->
-  <aside class="w-16 lg:w-60 shrink-0 border-r border-base-300 bg-base-200 flex flex-col">
+<div class="flex h-full relative">
+  <!-- Sidebar (collapsible) -->
+  <aside
+    class="shrink-0 bg-base-200 flex flex-col overflow-hidden transition-[width] duration-200 ease-in-out
+           {sidebarOpen
+             ? 'w-16 lg:w-60 border-r border-base-300'
+             : 'w-0 lg:w-0 border-r-0'}"
+  >
     <div class="px-3 lg:px-5 py-4 flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-extrabold text-primary-content shadow-lg shadow-primary/30">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-extrabold text-primary-content shadow-lg shadow-primary/30 shrink-0">
         SF
       </div>
-      <div class="hidden lg:block leading-tight">
-        <div class="font-bold">systems-forge</div>
+      <div class="hidden lg:block leading-tight flex-1 min-w-0">
+        <div class="font-bold truncate">systems-forge</div>
         <div class="text-[11px] opacity-50">study app</div>
       </div>
+      <button
+        class="btn btn-square btn-ghost btn-xs opacity-60 hover:opacity-100"
+        onclick={toggleSidebar}
+        title="Hide sidebar (Ctrl+B)"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5 5-5m7 10l-5-5 5-5" />
+        </svg>
+      </button>
     </div>
 
     <nav class="flex-1 px-2 lg:px-3 space-y-1 mt-2">
@@ -82,7 +142,7 @@
   </aside>
 
   <!-- Content -->
-  <main class="flex-1 min-w-0 overflow-y-auto bg-base-100">
+  <main class="flex-1 min-w-0 overflow-y-auto bg-base-100" bind:this={mainEl}>
     {#if r.name === "dashboard"}
       <Dashboard />
     {:else if r.name === "path"}
@@ -103,4 +163,18 @@
       <Dashboard />
     {/if}
   </main>
+
+  {#if !sidebarOpen}
+    <button
+      class="absolute inset-y-0 left-0 w-5 z-40 flex items-center justify-center cursor-pointer
+             bg-gradient-to-r from-base-300/40 to-transparent opacity-50 hover:opacity-100
+             transition-opacity group"
+      onclick={toggleSidebar}
+      title="Show sidebar (Ctrl+B)"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 17l5-5-5-5M6 17l5-5-5-5" />
+      </svg>
+    </button>
+  {/if}
 </div>
