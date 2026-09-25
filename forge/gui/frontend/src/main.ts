@@ -2,6 +2,14 @@ import { mount } from "svelte";
 import "./app.css";
 import App from "./App.svelte";
 
+// In a plain browser tab (vite dev) there is no Wails webview, so install the
+// dev-only binding mock before the app mounts. The `import.meta.env.DEV` is
+// statically replaced at build time: production bundles drop this entirely.
+if (import.meta.env.DEV) {
+  const { installMockBackend } = await import("./lib/mock");
+  installMockBackend();
+}
+
 // Forward webview errors to the backend's stderr so runtime issues are
 // visible outside the window (debugging aid).
 window.addEventListener("error", (e) => {

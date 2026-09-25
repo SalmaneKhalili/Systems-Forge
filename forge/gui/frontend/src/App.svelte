@@ -88,7 +88,9 @@
     {:else if r.name === "path"}
       <Path />
     {:else if r.name === "exercise" && r.param}
-      <Exercise id={r.param} />
+      {#key r.param}
+        <Exercise id={r.param} />
+      {/key}
     {:else if r.name === "review"}
       <Review />
     {:else if r.name === "focus"}

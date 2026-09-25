@@ -30,3 +30,6 @@ __pycache__/
 # Fixture build outputs (private to each self-test case)
 tools/fixtures/**/hello
 tools/fixtures/**/*.o
+
+# dev-only browser mock fixture
+forge/gui/frontend/src/lib/mock-data.json

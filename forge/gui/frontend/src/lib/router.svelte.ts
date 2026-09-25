@@ -2,8 +2,8 @@
 // Routes:
 //   #/              dashboard
 //   #/path          curriculum path
-//   #/ex/<id>       exercise (spec + editor + grader)
-//   #/review        flashcards
+//   #/exercise/<id>   exercise (spec + editor + grader); #/ex/<id> also accepted
+//   #/review          flashcards
 //   #/focus         pomodoro / focus mode
 //   #/terminal      terminal (shell / nvim)
 //   #/profile       profile & skills
@@ -20,7 +20,7 @@ function parse(hash: string): Route {
   const h = hash.replace(/^#\/?/, "");
   const parts = h.split("/").filter(Boolean);
   if (parts.length === 0) return { name: "dashboard" };
-  if (parts[0] === "ex" && parts[1]) {
+  if ((parts[0] === "exercise" || parts[0] === "ex") && parts[1]) {
     return { name: "exercise", param: decodeParam(parts[1]) };
   }
   return { name: parts[0] };

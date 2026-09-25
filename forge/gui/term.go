@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"os"
@@ -61,6 +62,9 @@ func (a *App) TermStart(id, dir string, command []string) error {
 		fmt.Fprintf(os.Stderr, "[term] %s pty.Start(%q): %v\n", id, argv[0], err)
 		return err
 	}
+	// Give the fresh pty a sane size before the frontend's first resize call,
+	// so fullscreen-ish startup probes (fish, nvim) never see a 0x0 window.
+	_ = pty.Setsize(ptmx, &pty.Winsize{Cols: 80, Rows: 24})
 	termMu.Lock()
 	termSession[id] = &TermSession{cmd: cmd, ptmx: ptmx}
 	termMu.Unlock()
@@ -83,8 +87,12 @@ func (a *App) pump(id string, ptmx *os.File) {
 		}
 		runtime.EventsEmit(a.ctx, event, payload)
 	}
+	resp := &termResponder{}
 	readPty(ptmx, func(chunk []byte) {
 		emit("term:out:"+id, base64.StdEncoding.EncodeToString(chunk))
+		if reply := resp.feed(chunk); len(reply) > 0 {
+			_, _ = ptmx.Write(reply)
+		}
 	})
 	_ = ptmx.Close()
 
@@ -115,6 +123,108 @@ func readPty(ptmx *os.File, onChunk func([]byte)) {
 			return
 		}
 	}
+}
+
+// termResponder is a miniature terminal emulator side: interactive shells and
+// editors probe the terminal with capability queries (DECRQM, XTGETTCAP, OSC
+// color) and some, notably fish and bash, block waiting for a reply. The
+// frontend xterm.js answers several of these, but not all, so unanswered ones
+// stall the shell mid-input. The responder catches the query bytes flowing
+// out of the pty and writes the expected answer back, making the session
+// immune to whatever the frontend terminal covers. Known answers match the
+// queries fired by fish, bash and nvim with TERM=xterm-256color.
+type termResponder struct {
+	buf []byte // unparsed output window
+}
+
+const (
+	termMaxWindow = 8 * 1024 // drop a window that never terminates (queries are tiny)
+)
+
+// feed scans a chunk of pty output for query sequences and returns the canned
+// replies to write back into the pty. Non-query bytes are consumed silently;
+// incomplete sequences are kept for the next chunk.
+func (r *termResponder) feed(b []byte) []byte {
+	if len(r.buf) > termMaxWindow {
+		r.buf = r.buf[:0]
+	}
+	r.buf = append(r.buf, b...)
+	var replies [][]byte
+	for len(r.buf) > 0 {
+		if r.buf[0] != 0x1b {
+			r.buf = r.buf[1:]
+			continue
+		}
+		n := matchQuery(r.buf)
+		if n == 0 {
+			break // waiting for the sequence to complete
+		}
+		q := r.buf[:n]
+		r.buf = r.buf[n:]
+		if ans, ok := termAnswer(q); ok {
+			replies = append(replies, ans)
+		}
+	}
+	return bytes.Join(replies, nil)
+}
+
+// matchQuery reports the byte length of a complete query sequence at the start
+// of buf: OSC string (ESC ] … ST), DCS string (ESC P … ST), or CSI (ESC [ …
+// final byte). Returns 0 when more bytes are needed.
+func matchQuery(buf []byte) int {
+	switch {
+	case buf[0] == 0x1b && len(buf) > 1 && buf[1] == ']': // OSC … ST
+		for i := 2; i < len(buf); i++ {
+			if buf[i] == 0x07 {
+				return i + 1
+			}
+			if i+1 < len(buf) && buf[i] == 0x1b && buf[i+1] == '\\' {
+				return i + 2
+			}
+		}
+	case buf[0] == 0x1b && len(buf) > 1 && buf[1] == 'P': // DCS … ST
+		for i := 2; i < len(buf); i++ {
+			if i+1 < len(buf) && buf[i] == 0x1b && buf[i+1] == '\\' {
+				return i + 2
+			}
+		}
+	case buf[0] == 0x1b && len(buf) > 1 && buf[1] == '[': // CSI … final
+		for i := 2; i < len(buf); i++ {
+			if c := buf[i]; c >= 0x40 && c <= 0x7e {
+				return i + 1
+			}
+		}
+	}
+	return 0
+}
+
+// termAnswer maps a known query to its reply. Unrecognized queries return ok
+// == false and are passed on to the frontend unmodified.
+func termAnswer(q []byte) ([]byte, bool) {
+	// Keyboard-protocol query (fish, bash 5.2+): CSI ? u → basic kitty-style
+	// keyboard reporting so the shell proceeds past its probe.
+	if bytes.Equal(q, []byte{0x1b, '[', '?', 'u'}) {
+		return []byte{0x1b, '[', '?', '1', 'u'}, true
+	}
+	// DA (device attributes) queries come in several shapes.
+	if bytes.Equal(q, []byte{0x1b, '[', '0', 'c'}) || bytes.Equal(q, []byte{0x1b, '[', 'c'}) {
+		return []byte{0x1b, '[', '?', '6', '2', ';', '2', '2', ';', 'c'}, true
+	}
+	// XTGETTCAP by terminal name (CSI > 0 q): answer as an xterm-ish device
+	// with KITTY attribute so private-mode queries are honored.
+	if bytes.HasPrefix(q, []byte{0x1b, '[', '>', '0', 'q'}) {
+		return []byte{0x1b, '[', '>', '0', ';', '0', ';', '5', 'q'}, true
+	}
+	// OSC 11 background-colour query.
+	if bytes.HasPrefix(q, []byte{0x1b, ']', '1', '1', ';', '?'}) {
+		return []byte{0x1b, ']', '1', '1', ';', 'r', 'g', 'b', ':', '0', 'f', '/', '0', 'f', '/', '1', '5', 0x1b, '\\'}, true
+	}
+	// XTGETTCAP DCS (ESC P + q <name> ST): echo an empty but valid response.
+	if bytes.HasPrefix(q, []byte{0x1b, 'P', '+', 'q'}) {
+		name := bytes.TrimSuffix(q[3:], []byte{0x1b, '\\'})
+		return append(append([]byte{0x1b, 'P', '1', '+', 'r'}, name...), append([]byte{'='}, append(name, []byte{0x1b, '\\'}...)...)...), true
+	}
+	return nil, false
 }
 
 // TermInput writes frontend keystrokes into the pty.
