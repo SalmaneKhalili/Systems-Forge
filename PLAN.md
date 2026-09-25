@@ -5,8 +5,8 @@
 >
 > Canonical repo: `/home/salmane/GolandProjects/systems-forge`
 >
-> Last updated: 2026-09-03 (removed the `quiz` grading method — quizzing is Anki-only; TUI
-> redesign: home/activity/profile views; selftest 47/47, 0 mismatches)
+> Last updated: 2026-09-25 (shipped the desktop GUI — `forge-gui`, Wails v2 + Svelte 5;
+> additive to the CLI/TUI; see §14 and `docs/gui-spec.md`)
 
 ---
 
@@ -1031,6 +1031,36 @@ relative to CWD). `go build ./...` runs inside `forge/`. Root Makefile targets (
 ---
 
 ## 14. Log / Changelog
+
+- **2026-09-25** **Desktop GUI shipped — `forge-gui` (Wails v2 + Svelte 5 + CodeMirror).**
+  Additive layer over the same `check.Engine` / `cur.Load` / `store` the CLI/TUI already
+  use: one binary, one `progress.db`, no daemon. Scope & decision log in
+  [`docs/gui-spec.md`](docs/gui-spec.md). Highlights:
+  - Seven views: **dashboard** (progress ring, 90-day activity heatmap, weekly focus
+    minutes, per-module bars, continue-where-you-left-off), **path** (all 18 modules +
+    exercises with status dots and gate markers), **exercise** (rendered spec markdown,
+    readings, Q&A, run history + a built-in workbench: file tree, CodeMirror 6 editor
+    with C/C++/Go/Python/JS/shell highlighting, save, **Run grader** with the full
+    method/part breakdown), **review** (in-app SM-2 flashcards from every exercise's
+    `answers[]`, Again/Hard/Good/Easy, per-card ease/interval/reps/lapses persisted via a
+    new `review_state` table), **focus** (pomodoro + free-focus, tracked sessions +
+    per-exercise minutes via a new `sessions` table), fullscreen **deep focus** overlay,
+    and **profile** (skills/proficiency bars, run stats, focus totals, themes + settings
+    via a new `settings` table).
+  - `forge/gui` is a new Go package inside module `forge`; `wails.json` pins the
+    `webkit2_41` tag so `make gui` produces a real WebKitGTK 4.1 binary
+    (`bin/forge-gui`, ~13 MB, links webkit2gtk-4.1/soup-3.0). The frontend is Svelte 5
+    runes + Tailwind v4 + daisyUI (dark `business` default), built with yarn (no npm on
+    this box).
+  - **Bug class fixed during bring-up**: nil Go slices/maps serialize as JSON `null`,
+    which crashed the Svelte views (e.g. `recent.length`); all binding slices/maps are
+    now explicitly initialized to `[]`/`{}`.
+  - Duplicate exercise basenames (`ex05-gate` exists in 7 modules) → the GUI addresses
+    exercises by full `module/exID` keys everywhere (routes, spell-check bindings,
+    flashcard keys) with a `resolveExercise` helper that accepts either form.
+  - CLI/TUI untouched; GUI never reads `solutions/`. Verified: `make gui` builds;
+    binary launches on Wayland (native) under 8 s; dashboard + all views render with zero
+    frontend error lines; `go vet` green. Dev loop: `make gui-dev` (wails dev hot reload).
 
 - **2026-09-11** **Reading-Ladder overhaul complete — full backfill + gated lint.** Every
   exercise (`92/92`) now opens its `## Readings` with a cold-start entry and climbs

@@ -68,6 +68,38 @@ func (s *Store) migrate() error {
 		ran_at     TEXT    NOT NULL
 	);
 	CREATE INDEX IF NOT EXISTS idx_runs_exercise ON runs(exercise, id);
+
+	CREATE TABLE IF NOT EXISTS review_state (
+		key          TEXT PRIMARY KEY,
+		ease         REAL    NOT NULL DEFAULT 2.5,
+		interval_days REAL   NOT NULL DEFAULT 0,
+		due          TEXT    NOT NULL,
+		last_review  TEXT    NOT NULL,
+		reps         INTEGER NOT NULL DEFAULT 0,
+		lapses       INTEGER NOT NULL DEFAULT 0
+	);
+
+	CREATE TABLE IF NOT EXISTS sessions (
+		id         INTEGER PRIMARY KEY AUTOINCREMENT,
+		kind       TEXT    NOT NULL,
+		exercise   TEXT    NOT NULL DEFAULT '',
+		started_at TEXT    NOT NULL,
+		ended_at   TEXT    NOT NULL,
+		minutes    INTEGER NOT NULL DEFAULT 0
+	);
+	CREATE INDEX IF NOT EXISTS idx_sessions_started ON sessions(started_at);
+
+	CREATE TABLE IF NOT EXISTS settings (
+		key   TEXT PRIMARY KEY,
+		value TEXT NOT NULL
+	);
+
+	CREATE TABLE IF NOT EXISTS user_cards (
+		id           INTEGER PRIMARY KEY AUTOINCREMENT,
+		q            TEXT    NOT NULL,
+		a            TEXT    NOT NULL,
+		created_at   TEXT    NOT NULL
+	);
 	`
 	_, err := s.db.Exec(schema)
 	return err
@@ -180,6 +212,31 @@ func (s *Store) ActivityByDay(start, end time.Time) (map[string]int, error) {
 		out[dayKey(t)]++
 	}
 	return out, rows.Err()
+}
+
+// PassesOnDay counts grading runs recorded as "pass" within the UTC calendar
+// day containing day.
+func (s *Store) PassesOnDay(day time.Time) (int, error) {
+	start := day.UTC()
+	end := start.AddDate(0, 0, 1)
+	var n int
+	err := s.db.QueryRow(
+		`SELECT COUNT(*) FROM runs WHERE status = ? AND ran_at >= ? AND ran_at < ?`,
+		StatusPass, start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)).Scan(&n)
+	return n, err
+}
+
+// ReviewedOnDay counts review_state rows last reviewed within the UTC
+// calendar day containing day. Rows with a zero last_review (never reviewed)
+// fall outside any real day range and are naturally excluded.
+func (s *Store) ReviewedOnDay(day time.Time) (int, error) {
+	start := day.UTC()
+	end := start.AddDate(0, 0, 1)
+	var n int
+	err := s.db.QueryRow(
+		`SELECT COUNT(*) FROM review_state WHERE last_review >= ? AND last_review < ?`,
+		start.Format(time.RFC3339Nano), end.Format(time.RFC3339Nano)).Scan(&n)
+	return n, err
 }
 
 func scanRun(row interface{ Scan(...any) error }) (*Run, error) {

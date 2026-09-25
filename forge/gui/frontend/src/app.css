@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: business --default, dark, dracula, night, synthwave, winter, corporate, emerald;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Markdown content styling inside the app */
+.md-body {
+  line-height: 1.7;
+}
+.md-body h1,
+.md-body h2,
+.md-body h3,
+.md-body h4 {
+  margin: 1.25em 0 0.5em;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.md-body h1 {
+  font-size: 1.65rem;
+}
+.md-body h2 {
+  font-size: 1.35rem;
+}
+.md-body h3 {
+  font-size: 1.15rem;
+}
+.md-body h4 {
+  font-size: 1.05rem;
+}
+.md-body p {
+  margin: 0.7em 0;
+}
+.md-body ul,
+.md-body ol {
+  margin: 0.7em 0;
+  padding-left: 1.5em;
+}
+.md-body ul {
+  list-style: disc;
+}
+.md-body ol {
+  list-style: decimal;
+}
+.md-body li {
+  margin: 0.25em 0;
+}
+.md-body code {
+  font-family: ui-monospace, "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.88em;
+}
+.md-body :not(pre) > code {
+  background: oklch(var(--b3) / 0.6);
+  padding: 0.1em 0.35em;
+  border-radius: 0.35em;
+}
+.md-body pre {
+  background: oklch(0.21 0.02 260);
+  border: 1px solid oklch(0.35 0.03 260);
+  border-radius: 0.6rem;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  margin: 0.9em 0;
+}
+.md-body blockquote {
+  border-left: 3px solid oklch(var(--p));
+  padding-left: 1em;
+  margin: 0.9em 0;
+  color: oklch(var(--bc) / 0.75);
+}
+.md-body table {
+  border-collapse: collapse;
+  margin: 0.9em 0;
+  width: 100%;
+}
+.md-body th,
+.md-body td {
+  border: 1px solid oklch(var(--b3));
+  padding: 0.4em 0.75em;
+  text-align: left;
+}
+.md-body th {
+  background: oklch(var(--b3) / 0.5);
+}
+.md-body a {
+  color: oklch(var(--p));
+  text-decoration: underline;
+}

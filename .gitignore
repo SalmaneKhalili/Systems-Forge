@@ -13,6 +13,12 @@ bin/
 a.out
 core
 
+# Desktop GUI (Wails) build output + generated frontend artifacts
+forge/gui/build/
+forge/gui/frontend/node_modules/
+forge/gui/frontend/dist/
+forge/gui/frontend/wailsjs/
+
 # Tooling noise
 __pycache__/
 *.pyc

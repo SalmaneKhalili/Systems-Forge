@@ -1,0 +1,16 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "systems-forge",
+  "outputfilename": "forge-gui",
+  "frontend:install": "yarn install",
+  "frontend:build": "yarn build",
+  "frontend:dev": "yarn dev",
+  "frontend:dev:serverUrl": "auto",
+  "frontend:dev:watcher": "yarn dev",
+  "build:tags": "webkit2_41",
+  "wailsjsdir": "frontend/wailsjs",
+  "author": {
+    "name": "systems-forge",
+    "email": ""
+  }
+}

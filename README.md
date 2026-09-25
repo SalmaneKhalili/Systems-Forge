@@ -18,6 +18,29 @@ make setup        # build the forge binary (requires go 1.27+, gcc/clang, make, 
 `make` also works as shorthand: `make check M11-ex03`, `make show M0-ex01`, `make score`,
 `make selftest`.
 
+## Desktop app (optional GUI)
+
+There is also a native desktop app (`forge-gui`) built on **Wails v2 + Svelte 5 + CodeMirror**.
+It is a layer over the same engine/store as the CLI/TUI — one binary, one SQLite file, no
+daemon — so you can mix `./bin/forge check M11-ex03` with GUI work freely.
+
+```sh
+make gui          # build bin/forge-gui (requires the wails CLI + WebKitGTK 4.1)
+bin/forge-gui     # launch: dashboard, path, exercise editor + grader, flashcards,
+                  # pomodoro/focus, profile & skills
+make gui-dev      # hot-reload development (wails dev)
+```
+
+What it gives you over the TUI: inline CodeMirror editing with highlighting for the
+curriculum languages, the **solve loop baked in** (edit → save → Run grader → see method
+breakdown), spaced-repetition flashcards with SM-2 scheduling, a pomodoro/focus timer that
+logs time per exercise, an activity heatmap, and settings/themes. It never writes outside
+`answers/` and `progress.db`. The exercise specs, readings, and Q&A come straight from the
+canon in `subjects/`. See [`docs/gui-spec.md`](docs/gui-spec.md) for the full spec.
+
+> Note: `wails build` requires the `webkit2_41` build tag, which is already configured in
+> `forge/gui/wails.json` — plain `go build` inside the GUI module is not enough.
+
 ## Where things live
 
 ```

@@ -174,6 +174,40 @@ func (e *Engine) Check(ctx context.Context, ex *cur.Exercise) (*Report, error) {
 	return report, nil
 }
 
+// CheckMethod runs a single method (by index) and returns just its report
+// without recording a run — used by the GUI's "re-run failing method" aid
+// so debug iterations never pollute history/status.
+func (e *Engine) CheckMethod(ctx context.Context, ex *cur.Exercise, idx int) (*MethodReport, error) {
+	if idx < 0 || idx >= len(ex.Methods) {
+		return nil, fmt.Errorf("method index %d out of range (0..%d)", idx, len(ex.Methods)-1)
+	}
+	work, err := e.WorkDir(ex)
+	if err != nil {
+		return nil, err
+	}
+	m := ex.Methods[idx]
+	if m.Artifact != nil && m.Artifact.Wipe {
+		_ = os.Remove(filepath.Join(work, m.Artifact.Path))
+	}
+	c := &methods.Ctx{Ex: ex, Dir: work, Root: e.Root}
+	start := time.Now()
+	res, err := methods.Dispatch(ctx, c, m)
+	mr := &MethodReport{Type: m.Type, Label: m.DisplayName(), Pass: false, DurMs: time.Since(start).Milliseconds()}
+	if err != nil {
+		mr.Output = "checker error: " + err.Error()
+		return mr, nil
+	}
+	mr.Pass = res.Pass
+	for _, p := range res.Parts {
+		mr.Parts = append(mr.Parts, &PartReport{Name: p.Name, Pass: p.Pass, Detail: p.Detail})
+	}
+	mr.Output = strings.TrimSpace(res.Stderr)
+	if mr.Output == "" {
+		mr.Output = strings.TrimSpace(res.Stdout)
+	}
+	return mr, nil
+}
+
 func detailJSON(r *Report) string {
 	b, err := json.Marshal(r.Methods)
 	if err != nil {
