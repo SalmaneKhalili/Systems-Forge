@@ -3,7 +3,7 @@
   import { Terminal } from "@xterm/xterm";
   import { FitAddon } from "@xterm/addon-fit";
   import "@xterm/xterm/css/xterm.css";
-  import { api } from "../lib/api";
+  import { api, logError } from "../lib/api";
   import type { WorkDirInfo } from "../lib/types";
 
   let dirs = $state<WorkDirInfo[]>([]);
@@ -56,6 +56,7 @@
       dirs = await api.workDirs();
       if (dirs.length > 0) selectedKey = dirs[0].key;
     } catch (e) {
+      logError("WorkDirs", e);
       err = String(e);
     }
     term = new Terminal({
@@ -106,6 +107,7 @@
       pid = id;
       if (term) void api.termResize(pid, term.cols, term.rows).catch(() => {});
     } catch (e) {
+      logError("TermStart", e);
       unregisterSession(id);
       err = String(e);
     }

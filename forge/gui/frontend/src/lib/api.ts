@@ -29,16 +29,30 @@ export class BackendError extends Error {
 function call<R>(name: string, ...args: unknown[]): Promise<R> {
   const fn = (window as any).go?.main?.App?.[name];
   if (typeof fn !== "function") {
-    return Promise.reject(
-      new BackendError(
-        `Backend binding "${name}" is not available. ` +
-          `This window may have been opened outside the Wails runtime.`,
-      ),
+    const err = new BackendError(
+      `Backend binding "${name}" is not available. ` +
+        `This window may have been opened outside the Wails runtime.`,
     );
+    logError(name, err);
+    return Promise.reject(err);
   }
   return Promise.resolve(fn(...args)).catch((err: unknown) => {
-    throw new BackendError(err instanceof Error ? err.message : String(err));
+    const e = new BackendError(err instanceof Error ? err.message : String(err));
+    logError(name, e);
+    throw e;
   });
+}
+
+// logError forwards a frontend error to the backend stderr (via the Log
+// binding) so runtime issues show up in the app's output as "[frontend] …".
+export function logError(tag: string, e: unknown): void {
+  const msg = e instanceof Error ? e.message : String(e);
+  console.error(`[frontend] ${tag}: ${msg}`);
+  try {
+    (window as any)?.go?.main?.App?.Log?.(`${tag}: ${msg}`);
+  } catch {
+    /* the runtime may be torn down; ignore */
+  }
 }
 
 export const api = {

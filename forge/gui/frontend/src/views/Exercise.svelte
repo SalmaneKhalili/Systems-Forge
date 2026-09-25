@@ -27,14 +27,42 @@
   let notesSaved = $state("");
   let notesPreview = $state(false);
 
+  const rankExt = new Map([
+    [".c", 0], [".h", 0],
+    [".go", 1],
+    [".cc", 2], [".cpp", 2], [".hpp", 2],
+    [".py", 3],
+    [".sh", 4], [".bash", 4],
+  ]);
+
+  // Pick the most useful file to open first: real source files beat the
+  // Makefile, scaffolding and metadata; compiled binaries are never auto-opened.
+  function pickFile(list: FileInfo[]): string | null {
+    const nonDir = list.filter((f) => !f.dir);
+    if (nonDir.length === 0) return null;
+    const ranked = nonDir
+      .map((f) => {
+        const lower = f.path.toLowerCase();
+        let rank = 9;
+        for (const [ext, r] of rankExt) {
+          if (lower.endsWith(ext) && r < rank) rank = r;
+        }
+        if (lower === "makefile" || lower.endsWith(".mk")) rank = 5;
+        return { f, rank };
+      })
+      .sort((a, b) => a.rank - b.rank);
+    return ranked[0].f.path;
+  }
+
   onMount(load);
 
   async function load() {
     try {
       ex = await api.exercise(id);
       files = ex.files;
-      if (!currentFile && files.length > 0 && !files[0].dir) {
-        await openFile(files[0].path);
+      if (!currentFile) {
+        const pick = pickFile(files);
+        if (pick) await openFile(pick);
       }
     } catch (e) {
       lastErr = String(e);

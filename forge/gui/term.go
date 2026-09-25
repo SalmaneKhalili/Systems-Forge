@@ -31,6 +31,7 @@ var (
 // "term:out:<id>" event (base64 payload); the "term:exit:<id>" event fires
 // when the process finishes.
 func (a *App) TermStart(id, dir string, command []string) error {
+	fmt.Fprintf(os.Stderr, "[term] start id=%s dir=%q argv=%v\n", id, dir, command)
 	argv := command
 	if len(argv) == 0 {
 		sh := os.Getenv("SHELL")
@@ -57,6 +58,7 @@ func (a *App) TermStart(id, dir string, command []string) error {
 
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "[term] %s pty.Start(%q): %v\n", id, argv[0], err)
 		return err
 	}
 	termMu.Lock()
@@ -67,18 +69,23 @@ func (a *App) TermStart(id, dir string, command []string) error {
 	return nil
 }
 
-// pump forwards pty output to the frontend and cleans up on exit.
+// pump forwards pty output to the frontend and cleans up on exit. A panic
+// here must never kill the app, so it is recovered and logged.
 func (a *App) pump(id string, ptmx *os.File) {
-	buf := make([]byte, 32*1024)
-	for {
-		n, err := ptmx.Read(buf)
-		if n > 0 {
-			runtime.EventsEmit(a.ctx, "term:out:"+id, base64.StdEncoding.EncodeToString(buf[:n]))
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintf(os.Stderr, "[term] %s pump panic: %v\n", id, r)
 		}
-		if err != nil {
-			break
+	}()
+	emit := func(event string, payload any) {
+		if a.ctx == nil {
+			return
 		}
+		runtime.EventsEmit(a.ctx, event, payload)
 	}
+	readPty(ptmx, func(chunk []byte) {
+		emit("term:out:"+id, base64.StdEncoding.EncodeToString(chunk))
+	})
 	_ = ptmx.Close()
 
 	termMu.Lock()
@@ -92,7 +99,22 @@ func (a *App) pump(id string, ptmx *os.File) {
 		_ = ts.cmd.Wait() // reap after the process has exited
 		ts.mu.Unlock()
 	}
-	runtime.EventsEmit(a.ctx, "term:exit:"+id, true)
+	emit("term:exit:"+id, true)
+}
+
+// readPty forwards pty output to onChunk until EOF (the testable core of
+// pump). Each chunk is copied so callers may retain it safely.
+func readPty(ptmx *os.File, onChunk func([]byte)) {
+	buf := make([]byte, 32*1024)
+	for {
+		n, err := ptmx.Read(buf)
+		if n > 0 {
+			onChunk(append([]byte(nil), buf[:n]...))
+		}
+		if err != nil {
+			return
+		}
+	}
 }
 
 // TermInput writes frontend keystrokes into the pty.
@@ -129,6 +151,7 @@ func (a *App) TermStop(id string) {
 	if ts == nil {
 		return
 	}
+	fmt.Fprintf(os.Stderr, "[term] stop id=%s\n", id)
 	ts.mu.Lock()
 	if ts.cmd.Process != nil {
 		_ = ts.cmd.Process.Kill()
