@@ -42,3 +42,10 @@ n=5 quorum=3 has3=true
 The tell: `n=2 quorum=2`, `n=4 quorum=3` — an even cluster needs one past the
 half, so `has1=false` for n=2 and `has2=false` for n=4. A `floor(n/2)` quorum
 (2-node winning on 1, 4-node winning on 2) is the bug.
+
+## Readings
+
+- **Reading ladder** — election by majority is a quorum, and you already trained that in
+  M10-ex04; here it is lifted onto term-and-log.
+- Raft paper, §5.2 "Leader election" (quorum, vote granting): https://raft.github.io/raft.pdf
+- Reread M10-ex04 (majority quorum).

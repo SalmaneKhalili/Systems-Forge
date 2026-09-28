@@ -1,15 +1,15 @@
-# M4-ex05 · Gate: Bounded Queue
+# M4-ex05 gate · bounded queue
 
-The gate combines M4's lifecycle and locking rules in a bounded producer–consumer queue.
-A producer and consumer hammer the same capacity-16 queue from separate threads, so the
-implementation must preserve every value and FIFO order while blocking, not spinning, on
-full and empty states. Implement the provided contract in `queue.c`; the harness supplies
-`queue.h` and `main.c`.
+## Goal
 
-## Shape
+Implement `queue.c` backing the provided `queue.h`: a **thread-safe bounded FIFO** that two
+threads hammer simultaneously — a producer pushing 0…999 and a consumer popping them, both
+through a capacity-16 queue. It must deliver:
 
-The gate is a harness shape: the provided `main.c` (the harness) and `queue.h` are not
-editable. You implement `queue.c` with:
+- every value, exactly once, **in FIFO order**;
+- with **no data race** (ThreadSanitizer is watching);
+- without busy-spinning — when the queue is full, `queue_push` *waits*; when it is empty,
+  `queue_pop` *waits* — a condition variable does the waiting.
 
 ```c
 Queue *queue_new(size_t cap);   /* allocate+init; NULL on failure */
@@ -18,33 +18,40 @@ int    queue_push(Queue *q, int v);  /* 0, blocking while full */
 int    queue_pop(Queue *q, int *out); /* 0, blocking while empty */
 ```
 
-The producer pushes 0…999 and the consumer pops them through a capacity-16 queue. The
-queue must deliver every value exactly once and in FIFO order, with no data race under
-ThreadSanitizer. One `pthread_mutex_t` guards `count`/`head`/`tail`/buffer. Two
-`pthread_cond_t` track the two wait situations: `not_full` (producers wait here) and
-`not_empty` (consumers wait here).
+`forge` compiles `main.c` (provided harness) + `queue.c`, runs `./test`, diffs stdout.
 
-Use the block/wait pattern: `pthread_mutex_lock`, then
-`while (condition) pthread_cond_wait(&cv, &mutex);` — the `while` matters because a
-spurious wakeup must re-check the condition. When a producer adds a value it signals
-`not_empty`; when a consumer takes one it signals `not_full`. A forgotten signal leaves a
-thread waiting forever. The `Queue` struct is yours and lives in `queue.c` because the
-header hides it. `queue_cap` is 16 in the harness and `ITEMS` is 1000, so the queue is
-exercised full and empty many times over.
+## Constraints
 
-There are no `sleep`, busy-wait loops for the wait side, or atomics-only shortcuts. Add
-`-pthread` on the cc lines only, never redefining `CFLAGS`/`LDFLAGS`. `forge` compiles
-`main.c` (provided harness) + `queue.c`, runs `./test`, and diffs stdout.
+- One `pthread_mutex_t` guards `count`/`head`/`tail`/buffer. Two `pthread_cond_t` track
+  the two wait situations: `not_full` (producers wait here) and `not_empty` (consumers wait
+  here).
+- The block/wait pattern is the textbook one: `pthread_mutex_lock`, then
+  `while (condition) pthread_cond_wait(&cv, &mutex);` — the `while` matters, a spurious
+  wakeup must re-check. When a producer adds a value it must signal `not_empty`; when a
+  consumer takes one it must signal `not_full`. A forgotten signal = a thread that waits
+  forever.
+- The `Queue` struct is yours — it lives in `queue.c` (the header hides it).
+- `queue_cap` is 16 in the harness; `ITEMS` is 1000, so the queue is exercised full *and*
+  empty many times over.
+- No `sleep`, no busy-wait loops for the wait side, no atomics-only shortcut.
+- `-pthread` on the cc lines only (never redefine `CFLAGS`/`LDFLAGS`).
 
-## Acceptance
+## Acceptance criteria
 
-A clean run must have `queue_new(16)` succeed and start with an empty queue, then produce and
-consume 1000 values with exit 0 and empty stderr. `fifo ok` means value `i` comes out before
-value `i+1`; the values are batched into `checksum 499500`. ThreadSanitizer must be completely
-silent. The full and empty wait paths must actually block and wake, with no spin, so the run
-finishes quickly instead of deadlocking; complete `quiz.txt` (see below).
+- [ ] `queue_new(16)` succeeds; empty queue starts correct
+- [ ] 1000 values produced and 1000 consumed, exit 0, empty stderr
+- [ ] `fifo ok` — value `i` comes out before value `i+1`, batched into `checksum 499500`
+- [ ] ThreadSanitizer completely silent
+- [ ] the full/empty wait paths actually block and wake (no spin), so the run finishes
+      quickly, not in a deadlock you mistake for correctness
+- [ ] `quiz.txt` complete (see below)
 
-The `build` grade is a strict compile (`-std=gnu11 -Wall -Wextra -Werror -fsanitize=thread`) plus the `./test` stdout diff, exit 0, and empty stderr, under ThreadSanitizer. A queue with no mutex lets the producer and consumer race on `count`/buffer, so TSan aborts → FAIL. A stack posing as a queue makes the first pop 999 rather than 0, producing `fifo violated` → FAIL. A condvar that is never signalled leaves the consumer waiting forever, so the run times out (20s) → FAIL. The `quiz` grade checks that `quiz.txt` answers match.
+Then complete `quiz.txt`:
+
+```
+Which function waits on a condition variable while releasing its mutex?: <answer>
+Which function wakes one thread waiting on a condition variable?: <answer>
+```
 
 ## Readings
 
@@ -59,7 +66,11 @@ The `build` grade is a strict compile (`-std=gnu11 -Wall -Wextra -Werror -fsanit
   unlocked until another thread signals".
 - Producer-consumer with bounded buffer is TLPI §30.2.3's classic example figure 30-2.
 
-## Quiz
+## How you are graded
 
-1. Which function waits on a condition variable while releasing its mutex?
-2. Which function wakes one thread waiting on a condition variable?
+- `build`: strict compile (`-std=gnu11 -Wall -Wextra -Werror -fsanitize=thread`) + `./test`
+  stdout diff, exit 0, empty stderr, under ThreadSanitizer. A queue with no mutex: producer
+  and consumer race on `count`/buffer → TSan aborts → FAIL. A stack posing as a queue: the
+  first pop is 999, not 0 → `fifo violated` → FAIL. A condvar that is never signalled:
+  consumer waits forever → run times out (20s) → FAIL.
+- `quiz`: `quiz.txt` answers must match.

@@ -55,5 +55,7 @@ The root `request` (120) contains `db.query` (40, itself containing `db.scan` 25
 
 ## Readings
 
+- **Reading ladder** — OpenTelemetry tracing concepts:
+  https://opentelemetry.io/docs/concepts/signals/traces/
 - OpenTelemetry concepts: spans, trace context.
 - DDIA, Chapter 11 (Stream processing) for the disambiguation of distributed request trees.

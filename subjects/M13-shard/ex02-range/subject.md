@@ -1,14 +1,12 @@
 # M13-ex02 · Range
 
-Fixed slots give each key a stable owner, but range sharding turns placement into
-contiguous, scan-friendly partitions of the sorted key space. This exercise fixes
-the upper-boundary convention that the rebalance work and shard gateway will use.
-You deliver `range.go` and an inclusive lookup over already-sorted boundaries.
+## Goal
 
-## Shape
+Instead of hashing, key-range sharding splits the sorted key space into
+contiguous ranges. Each shard owns everything between two boundaries. A key is
+routed to the shard whose boundary is the greatest one `<=` the key.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`range.go`** using only the Go standard library and implement:
+Implement `range.go`:
 
 ```go
 // RangeShard returns the shard index owning key, where boundaries is a sorted
@@ -19,17 +17,25 @@ Harness-style: the provided `main.go` prints the transcript; you write
 func RangeShard(key string, boundaries []string) int
 ```
 
-`boundaries` is already sorted ascending. `RangeShard` returns the smallest `i`
-such that `key <= boundaries[i]`, or `len(boundaries)` if the key exceeds every
-boundary; rely on plain string ordering and never read the wall clock. The
-reference transcript is `expected.txt` with whitespace normalized.
+`boundaries` is sorted ascending; `RangeShard` returns the smallest `i` such
+that `key <= boundaries[i]`, or `len(boundaries)` if the key exceeds every
+boundary.
+
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `range.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- `boundaries` is already sorted ascending; rely on plain string ordering.
+- Never read the wall clock.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 bounds k p u
 apple  -> 0
 kiwi   -> 1
@@ -40,12 +46,12 @@ u      -> 2
 zebra  -> 3
 ```
 
-With boundaries `k p u`, `apple` is below `k` in shard 0; `kiwi` and `mango`
-sit between `k` and `p` in shard 1; `pear` sits between `p` and `u` in shard 2;
-and `zebra` is past `u` in trailing shard 3. The key `k` lands exactly on the
-first boundary and routes to shard 0, while `u` lands on the last boundary and
-routes to shard 2. A `<` instead of `<=` sends `k` to shard 1 and `u` past all
-three boundaries.
+With boundaries `k p u`: `apple` is below `k` (shard 0); `kiwi` and `mango` sit
+between `k` and `p` (shard 1); `pear` between `p` and `u` (shard 2); `zebra` is
+past `u` (shard 3, the trailing shard). The key `k` lands exactly ON the first
+boundary → shard 0 (inclusive), and `u` on the last boundary → shard 2 — a
+`<`-instead-of-`<=` comparator that excludes the boundary would route `k` to
+shard 1 and `u` past all three. That is the bug to catch.
 
 ## Readings
 

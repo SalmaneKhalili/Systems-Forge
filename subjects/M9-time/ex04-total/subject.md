@@ -1,14 +1,18 @@
 # M9-ex04 · Total order
 
-Causality from ex03 is a **partial** order: concurrent events remain
-incomparable. A log, ledger or replicated state machine needs one deterministic
-sequence that still respects that order, so this exercise extends every stamp
-with its sender's process id and breaks Lamport ties.
+## Goal
 
-## Shape
+Lamport's happens-before is a **partial** order: concurrent events are
+incomparable. A system that must process events in a single deterministic
+sequence — a log, a ledger, a replicated state machine — needs a **total**
+order that still respects causality.
 
-The exercise ships `main.go` with six events, including ties at Lamport 1 and
-2. You write **`total.go`** in the same package and implement:
+The classic construction extends each stamp with the sender's process id and
+orders by `(lamport, pid)` lexicographically: compare stamps first; when two
+events tie on the same Lamport value (they are concurrent), the smaller pid
+wins.
+
+Implement `total.go`:
 
 ```go
 type Event struct {
@@ -21,28 +25,29 @@ type Event struct {
 func TotalOrder(es []Event) []int
 ```
 
-Compare events lexicographically by `(lamport, pid)`: the Lamport stamp comes
-first, and when concurrent events tie on the same value, the smaller pid wins.
-`make all` must build `test`, and `./test` must print the reference transcript
-exactly.
+The provided `main.go` feeds six events (two ties at Lamport 1 and 2) and
+prints the ordered event ids. `make all` must build `test`; `./test` must
+print the reference transcript exactly.
 
-Use Go and the standard library only. The sort must be **stable and
-deterministic** and must never rely on input order for ties. The reference
-transcript is `expected.txt`, with whitespace normalized; never read the wall
-clock.
+## Constraints
+
+- Go, standard library only; file is `total.go`.
+- The sort must be **stable and deterministic** — never rely on the input
+  order for ties.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- Never read the wall clock.
 
 ## Acceptance
 
-The reference transcript is:
+Reference transcript:
 
-```text
+```
 e1 e4 e0 e3 e2 e5
 ```
 
-- `e1` and `e4` both carry Lamport 1, so pid 0 (`e1`) precedes pid 1 (`e4`).
-- `e0` and `e3` both carry Lamport 2, so `e0` precedes `e3`.
-- Ordering by pid before Lamport is the classic bug and produces a different
-  sequence.
+`e1` and `e4` both carry Lamport 1 → pid 0 (`e1`) before pid 1 (`e4`). `e0`
+and `e3` both carry Lamport 2 → `e0` before `e3`. Ordering by pid first
+instead of Lamport first is the classic bug and yields a different sequence.
 
 ## Readings
 

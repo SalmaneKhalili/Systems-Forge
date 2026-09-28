@@ -1,15 +1,12 @@
-# M3-ex05 · Gate: OOM-Safe Buffer
+# M3-ex05 gate · OOM-safe buffer
 
-The gate of M3 puts everything together: a **growable byte buffer with a hard
-capacity** — real servers die when memory is exhausted; production code
-survives because it *refuses*. The hard cap here is a machine-checkable
-stand-in for `malloc` failure: when the buffer cannot grow any further,
-`buf_put` returns `-1` cleanly, without touching the data already stored.
+## Goal
 
-## Shape
-
-The exercise provides `buffer.h` and a harness `main.c`; you write
-**`buffer.c`**:
+Implement `buffer.c` backing the provided `buffer.h`: a **growable byte buffer with a hard
+capacity**. Real servers die when memory is exhausted; production code survives because it
+*refuses*. This gate's hard cap is a machine-checkable stand-in for malloc failure: when the
+buffer cannot grow any further, `buf_put` returns `-1` — cleanly, without touching the data
+already stored.
 
 ```c
 typedef struct Buffer {
@@ -23,43 +20,40 @@ size_t        buf_len(const Buffer *b);
 const char   *buf_data(const Buffer *b);  /* the stored bytes, growing/copy-safe */
 ```
 
-`forge` compiles `main.c` (harness) + `buffer.c`, runs `./test`, and diffs
-stdout. The contract:
+`forge` compiles `main.c` (harness) + `buffer.c`, runs `./test`, diffs stdout.
 
-- The buffer's memory lives in `buffer.c` as a **static 1024-byte arena**
-  (`_Alignas(8)`), the only storage. `cap` starts at 64 and, on growth, doubles
-  up to `BUF_MAX` (1024).
-- Growth must **preserve all earlier bytes**: `buf_data` must always return the
-  exact sequence previously appended, in order. Copy when you grow — nothing is
-  handed to you for free.
-- `buf_put` must refuse without side effects: when a push would need more than
-  `BUF_MAX` bytes, return `-1` **leaving `len` and the stored bytes exactly as
-  they were**.
-- `buf_put(b, NULL, 0)` succeeds trivially (returns 0, unchanged); a non-NULL
-  `n == 0` too. A NULL source with `n > 0` is refused.
+## Constraints
+
+- The buffer's memory lives in `buffer.c` as a **static 1024-byte arena** (`_Alignas(8)`),
+  the only storage. `cap` starts at 64 and, on growth, doubles up to `BUF_MAX` (1024).
+- Growth must **preserve all earlier bytes**: `buf_data` must always return the exact
+  sequence previously appended, in order. Copy when you grow — nothing is handed to you for
+  free.
+- `buf_put` must refuse without side effects: when a push would need more than `BUF_MAX`
+  bytes, return `-1` **leaving `len` and the stored bytes exactly as they were**.
+- `buf_put(b, NULL, 0)` succeeds trivially (returns 0, unchanged); a non-NULL `n == 0` too.
+  A NULL source with `n > 0` is refused.
 - No `malloc`, no `mmap`. No `CFLAGS` redefines.
-- A full buffer stays valid: after refusal, `buf_put` of smaller data succeeds
-  again.
+- The queue after refusal must still work: `buf_put` smaller data succeeds again.
 
-## Acceptance
+## Acceptance criteria
 
-Graded `build`: strict compile + harness stdout diff, exit 0, empty stderr.
-The harness forces growth past every power of two and then *past the cap*,
-checking data integrity at each step and the no-side-effect refusal at the
-end:
+- [ ] starts at `len 0, cap 64`
+- [ ] five appends of 200 bytes raise `len` to 1000 across several growths, and every step
+      the stored bytes match the source exactly
+- [ ] after a final 24-byte append, `len == 1024` and `cap == 1024`
+- [ ] a 1025th byte is refused with `-1`; `len` stays 1024 and all 1024 bytes are intact
+- [ ] after `buf_init`, the buffer accepts appends again (a full buffer stays valid until
+      reset)
+- [ ] `buf_put(b, NULL, 0)` and `buf_put(b, NULL, 5)` leave it unchanged (0 / -1)
+- [ ] `quiz.txt` complete (see below)
 
-- Starts at `len 0, cap 64`.
-- Five appends of 200 bytes raise `len` to 1000 across several growths, and at
-  every step the stored bytes match the source exactly (a student that drops
-  bytes on growth fails these content checks).
-- After a final 24-byte append, `len == 1024` and `cap == 1024`.
-- A 1025th byte is refused with `-1`; `len` stays 1024 and all 1024 bytes are
-  intact (a student that ignores refusal overruns the arena and trips ASan's
-  redzone).
-- After `buf_init`, the buffer accepts appends again.
-- `buf_put(b, NULL, 0)` and `buf_put(b, NULL, 5)` leave it unchanged (0 / -1).
+Then complete `quiz.txt`:
 
-`quiz.txt` is complete (see Quiz).
+```
+How must a bounded allocator signal that memory is exhausted?: <answer>
+What is the buffer's hard capacity in bytes?: <answer>
+```
 
 ## Readings
 
@@ -73,7 +67,11 @@ end:
 - How production crawlers/servers structure bounded buffers (skim; the pattern is yours):
   https://github.com/valyala/bytebufferpool (Go) — "get habit" of the pattern, not the code.
 
-## Quiz
+## How you are graded
 
-1. How must a bounded allocator signal that memory is exhausted?
-2. What is the buffer's hard capacity in bytes?
+- `build`: strict compile + harness stdout diff, exit 0, empty stderr. The harness forces
+  growth past every power-of-two and then *past the cap*, checking data integrity at each
+  step and the no-side-effect refusal at the end. A student that ignores refusal overruns
+  the 1024-byte arena and trips ASan's redzone; a student that drops bytes on growth fails
+  the content checks.
+- `quiz`: `quiz.txt` answers must match.

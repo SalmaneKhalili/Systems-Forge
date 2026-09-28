@@ -1,15 +1,18 @@
 # M15-ex06 · durable txstore
 
-The module's Micro-App fuses M15 with M16: transactional staging and atomic
-commit meet a durable write-ahead log in one gateway. Every committed write is
-applied atomically and recorded in the WAL that crash replay would consume, while
-rollback leaves no durable trace. You deliver `durable.go`, a storage engine an
-application can use across client connections and restarts.
+## Goal
 
-## Shape
+The **Micro-App** that fuses M15 with M16. ex01–ex05 gave you a transactional
+store and, separately, a persistence engine. Here they meet in one artifact: a
+**durable transactional KV gateway**. Committed writes are atomically applied
+*and* recorded in a write-ahead log (WAL) — the very record a crash replay
+would restore. This is the storage engine you'd actually hand to an
+application.
 
-Whole-program. You write **`durable.go`** using only the Go standard library.
-The line protocol accepts one command per line:
+`make all` must produce `./durable`. `forge` starts it once and drives it with
+transactions and writes.
+
+## Commands (line protocol, one per line)
 
 | Command | Reply | Meaning |
 |---|---|---|
@@ -23,17 +26,11 @@ The line protocol accepts one command per line:
 | `rollback` | `ok` | discard staged writes; **no WAL side effect** |
 | `wal` | WAL, one op per line | the durable commit record, in order |
 
-The WAL records every committed `set` as one `set k=v` line in commit order.
-Rollback writes nothing to it, and all steps are client-driven with no wall
-clock. `make all` must produce `./durable`; `forge` starts it once and drives it
-with transactions and writes.
-
 ## Acceptance
 
-`make all` must produce `./durable`; `forge` starts it once and its first
-connection must produce exactly:
+Conn 1 (persisted across the session):
 
-```text
+```
 set a 1   ->  ok
 set b 2   ->  ok
 begin     ->  ok
@@ -47,10 +44,9 @@ wal       ->  set a=1
               set a=3
 ```
 
-A fresh second connection to the same server must observe the persisted state and
-produce exactly:
+Conn 2 (a fresh dial, same server — committed state must persist):
 
-```text
+```
 get a     ->  3
 begin     ->  ok
 set c 4   ->  ok
@@ -63,6 +59,13 @@ wal       ->  set a=1      (rollback left nothing behind)
 
 `wal` is the whole point: committed writes appear there **once, in commit
 order**, and rolled-back writes never touch it.
+
+## Constraints
+
+- Go, standard library only; file is `durable.go`.
+- The WAL must record every committed `set` as a line `set k=v` in commit order.
+- No wall clock — all steps are client-driven.
+- `make all` must build `./durable`.
 
 ## Readings
 

@@ -1,27 +1,22 @@
 # M13 · Sharding
 
-This module builds the placement mechanics that let a cluster spread keys across
-shards and keep that distribution balanced as the cluster grows and shrinks.
-The thread runs from fixed slots to key ranges and consistent hashing, then into
-rebalancing and the TCP gateway that applies those ownership rules.
+A cluster can't store everything on one machine forever. **Sharding** spreads
+keys across shards and keeps the data balanced as the cluster grows and
+shrinks. This module builds the placement mechanics: fixed slot assignment,
+key-range sharding, consistent hashing, and rebalancing.
 
-## The build
+Milestones:
 
-- **ex01 · Slot** — assign every key to a fixed slot with an exact FNV-1a hash;
-  the stable primitive the later placement strategies build on.
-- **ex02 · Range** — partition the sorted key space into contiguous ranges with
-  inclusive upper boundaries.
-- **ex03 · Ring** — place keys and nodes on a consistent-hash ring, choosing the
-  first node clockwise and wrapping at the end.
-- **ex04 · Rebalance** — compare ownership before and after membership changes
-  and count only the keys that move.
-- **ex05 · The shard gateway** — **Gate**: serve concurrent TCP clients, route
-  each key to its range owner, and preserve shared shard state across connections.
+- ex01 · Slot — assigning each key to a fixed slot by hash.
+- ex02 · Range — partitioning keys by contiguous ranges.
+- ex03 · Ring — consistent hashing places keys on a ring with minimal moves on resize.
+- ex04 · Rebalance — moving keys between shards to restore balance.
+- ex05 · The shard gateway — a TCP gateway that routes keys to the right shard.
 
-## Rules
+Rule: nothing printed or compared may depend on wall-clock time. All
+exercises are transcript-driven and byte-deterministic.
 
-Nothing printed or compared may depend on wall-clock time. All exercises are
-transcript-driven and byte-deterministic.
+---
 
 ## Prerequisites
 
@@ -45,6 +40,8 @@ Before starting M13, you should be comfortable with everything from M0–M12, pl
 
 You do NOT need to know: rebalancing algorithms, virtual nodes, or distributed hash tables
 (Kademlia). Those are covered conceptually here but not implemented.
+
+---
 
 ## So what? (interview / portfolio)
 

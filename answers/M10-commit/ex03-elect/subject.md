@@ -48,3 +48,10 @@ e3: leader 2
 older stamp — the *newer* stamp wins (so the leader is 3, not 5; the higher
 id would win only on a tie). `e2` ties two candidates on the same stamp and
 the higher id wins.
+
+## Readings
+
+- **Reading ladder** — the bully algorithm is the classical reference; DDIA frames leader
+  election against the split-brain hazard.
+- Wikipedia, "Bully algorithm": https://en.wikipedia.org/wiki/Bully_algorithm
+- *Designing Data-Intensive Applications*, Chapter 9 — "Leader election and the split brain".

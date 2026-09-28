@@ -1,9 +1,10 @@
-# M8-ex04 · The switch: fault injection
+# M8-ex04 — the switch: fault injection
 
-ex03 gave you a transparent relay; this exercise adds the **fault plane** that
-makes it a test instrument. A small text file leaves the switch transparent by
-default, but lets it damage the client→backend stream in three precise,
-per-connection ways:
+## Goal
+
+Add a **fault plane** to the switch. A small text file leaves the switch
+transparent by default, but lets it damage the client→backend stream in three
+precise, per-connection ways:
 
 - `dup:N` — the N-th client frame is forwarded to the backend **twice**.
 - `drop:N` — the N-th client frame is **not forwarded at all**; every other
@@ -22,8 +23,8 @@ missing file means "no faults". `TARGETFAULTS`, when set, overrides the path
 Whole-program, evolving from M8-ex03. The scaffold is the previous switch:
 `backend/main.go` (provided, unmodified), `go.mod`, `Makefile`, and a relay
 `switch.go` you extend. Fault directives must be parsed **before** the accept
-loop, and applied per connection (a fresh connection restarts the numbering
-and re-applies every directive).
+loop, and applied per connection (a fresh connection restarts the numbering and
+re-applies every directive).
 
 Why the backend's numbered replies prove faults: the backend still answers
 `R<k> <content>` per received frame. A dropped frame is visible because the
@@ -31,12 +32,12 @@ next relayed frame answers with the *earlier* number. A duplicated frame is
 visible because one send gets two replies. A held frame is visible because the
 reply ordering swaps (`R4 M4` before `R5 M3`, never the other way).
 
-Releases must be deterministic: the held frame goes out **after** the
-following forwarded frame, in that exact order.
+Releases must be deterministic: the held frame goes out **after** the following
+forwarded frame, in that exact order.
 
 Nothing may be printed to stdout; diagnostics may go to stderr.
 
-## Acceptance
+## Acceptance criteria (all graded)
 
 `make all`, then the grader runs `./switch` with the shipped `faults.txt`
 (`dup:1`, `drop:2`, `hold:3`) and plays, over two connections:
@@ -48,13 +49,11 @@ Nothing may be printed to stdout; diagnostics may go to stderr.
 - connection 2 (fresh, same faults): `a` → `R1 a`, `R2 a`; then `b`, `c` →
   `R3 c`.
 
-Graded `net`.
-
 ## Readings
 
-- The concept of a **fault injection switch** — the M8 module notes and the
-  later capstones: every later grader drives its chaos through a switch like
-  this one; the `TARGETFAULTS` env is the channel it uses.
+- The concept of a **fault injection switch** — M8 module notes and later
+  capstones: every later grader drives its chaos through a switch like this
+  one; the `TARGETFAULTS` env is the channel it uses.
 - Go `os/exec`, `strconv`, `strings` — spawning, parsing.
 
 ## Quiz

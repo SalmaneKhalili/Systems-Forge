@@ -1,43 +1,39 @@
 # M6 · Networking
 
 Sockets are file descriptors with a destination. The whole dance is five calls
-— `socket`, `bind`, `listen`, `accept`, and `read`/`write` on what `accept`
-hands you — and the moment you see it, servers stop being magic: a server is a
-program that waits for a connection, then talks over an fd it never had to
-`open`. This module walks that thread from a bare echo server up to a stateful
-gate that greets, acknowledges, and re-answers across several connections —
-the skeleton of the fault-injection switch (M8) that the rest of the
-curriculum grades through.
+(`socket`, `bind`, `listen`, `accept`, and `read`/`write` on what `accept` hands you), and
+the moment you see it, servers stop being magic: a server is a program that waits for a
+connection, then talks over an fd it never had to `open`.
 
-## The build
+The thread through this module: a bare **echo** server, a **line-chat** server with
+per-connection state, an **HTTP-ish** server that parses request lines, a server that
+**times out** half-open clients instead of hanging forever — and a stateful **gate** server
+that greets, acknowledges, and re-answers across several connections, the skeleton of the
+switch (module M8) the rest of the curriculum grades through.
 
-- **ex01 · Echo server** — a single-connection echo server: `socket`→`bind`→
-  `listen`→`accept`, then an identical-bytes copy loop.
-- **ex02 · Line chat** — the same accept loop with per-connection state: lines
-  are numbered within their connection, and a fresh connection restarts the
-  counter.
-- **ex03 · HTTP-ish server** — parse a request until the `"\r\n\r\n"` blank
-  line and answer `200`/`404` in exact raw HTTP bytes.
-- **ex04 · Read timeout** — `SO_RCVTIMEO` so a half-open client cannot wedge
-  the server: no data for 400 ms means `TIMEOUT\n` and re-accept.
-- **ex05 · Gate: stateful server** — a greeting counter that survives
-  connections, PING/ECHO/BAD handling, and clean teardown: the skeleton of the
-  M8 switch.
+| exercise | kind   | what you build                                              |
+|----------|--------|-------------------------------------------------------------|
+| ex01     | echo   | single-connection echo server                                |
+| ex02     | linechat | multi-connection line server with per-connection counters  |
+| ex03     | http   | HTTP/1.1-ish request/response (200 and 404)                 |
+| ex04     | timeout| `SO_RCVTIMEO`, a server that never lets a half-client wedge it |
+| ex05     | **gate** | stateful protocol server with greeting + commands         |
 
-## Rules
+Every exercise ships a `main.c` server you write and a `Makefile`. Grading is
+`build` + `net` + `quiz`: your binary is compiled, **spawned**, and driven by a scripted
+client — the grader does a fresh TCP connection, plays the exact dialogue in
+`exercise.json`, and compares what it gets, byte for byte. No sleeps, no "wait for it to
+finish": the network run has a built-in connect retry, so timing cannot make a correct
+server flaky.
 
-- Every exercise: you write `main.c` (a full server) plus a `Makefile`. Grading
-  is `build` + `net` + `quiz`: the binary is compiled, **spawned**, and driven
-  by a scripted client — the grader makes a fresh TCP connection, plays the
-  exact dialogue, and compares byte for byte. The `net` run has a built-in
-  connect retry, so timing cannot make a correct server flaky.
-- Your server binds **`127.0.0.1` on the port in the `TARGETPORT` environment
-  variable** (the grader injects it — how real tooling hands servers their
-  ports). A missing or invalid `TARGETPORT` is a failure path (exit 1).
-- Nothing your server prints to stdout or stderr is graded (the grader closes
-  those), so spend your effort on exact **socket** semantics.
-- Compile flags: `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan; never
-  redefine `CFLAGS`/`LDFLAGS`.
+Two rules make this deterministic, and they are worth internalizing now:
+
+- Your server binds **`127.0.0.1` on the port in the `TARGETPORT` environment variable**
+  (the grader injects it — how real tooling hands servers their ports).
+- Nothing your server prints to stdout or stderr is graded (the grader closes those), so
+  the CPU you spend on "correct" output is better spent on exact **socket** semantics.
+
+---
 
 ## Prerequisites
 
@@ -62,6 +58,8 @@ Before starting M6, you should be comfortable with everything from M0–M5, plus
 
 You do NOT need to know: non-blocking I/O, `select`/`poll`, UDP, or DNS resolution.
 You will learn those concepts later.
+
+---
 
 ## So what? (interview / portfolio)
 

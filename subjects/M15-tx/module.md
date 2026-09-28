@@ -1,31 +1,29 @@
 # M15 · Transactions & Chaos
 
 Replicated logs (M11) and Raft (M12) give you **durability of a single write**.
-This module builds the harder guarantee: make a set of writes behave as one
-atomic unit and keep that promise correct while nodes fail. The thread runs from
-staging and deterministic replay through conflict detection and a chaos drill,
-then fuses the pieces into transactional TCP stores.
+This module is about the harder promise: **making a set of writes behave as one
+atomic unit**, and keeping that guarantee honest even when nodes are failing
+around you. Transactions stage writes, commit atomically, and roll back cleanly;
+a write-ahead log makes crash recovery deterministic; conflict detection stops
+silent lost updates; and a chaos drill proves a cluster stays correct as nodes
+drop.
 
-## The build
+Milestones:
 
-- **ex01 · Transaction** — stage writes, expose only the transaction's own view,
-  then commit atomically or roll back without residue.
-- **ex02 · Replay** — append intended changes to a write-ahead log and recover
-  state deterministically with last-writer-wins replay.
-- **ex03 · Conflict** — detect overlapping write sets and resolve them without
-  silently losing an update.
-- **ex04 · Drill** — drive node churn through a logical tick and make every
-  operation succeed only while its target is up.
-- **ex05 · txstore gateway** — expose the transactional store over a TCP line
-  protocol with connection-local staging and shared committed state.
-- **ex06 · durable txstore** — **Gate**: fuse atomic transactions with M16
-  **WAL durability** in the Micro-App, making each committed write observable in
-  the durable record.
+- ex01 · Transaction — writes inside a txn are **staged** and atomic-commit.
+- ex02 · Replay — a write-ahead log recovers state deterministically,
+  last-writer-wins.
+- ex03 · Conflict — detect overlapping writes; never silently lose an update.
+- ex04 · Drill — a chaos drill: ops only succeed while their node is up.
+- ex05 · txstore gateway — the transactional store (ex01–ex04) over a TCP
+  line protocol.
+- ex06 · durable txstore — the Micro-App: transactions fused with M16 **WAL
+  durability** into one artifact.
 
-## Rules
+Rule: nothing printed or compared may depend on wall-clock time. All
+exercises are transcript-driven and byte-deterministic.
 
-Nothing printed or compared may depend on wall-clock time. All exercises are
-transcript-driven and byte-deterministic.
+---
 
 ## Prerequisites
 
@@ -50,6 +48,8 @@ Before starting M15, you should be comfortable with everything from M0–M14, pl
 
 You do NOT need to know: MVCC, 2PL (two-phase locking), or ARIES recovery. Those are
 database internals topics outside this module.
+
+---
 
 ## So what? (interview / portfolio)
 

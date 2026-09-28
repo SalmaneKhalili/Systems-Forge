@@ -1,42 +1,29 @@
-# M5-ex05 · Gate: Log Parser
+# M5-ex05 gate · log parser
 
-The gate applies the descriptor model to structured input. ex05 reads a `name=value` file
-through a descriptor, assembles lines across arbitrary `read()` boundaries, and returns only
-names in order; the harness checks the parser without giving up ownership of the fd. You
-deliver `log.c` against the provided `fix.h` and `main.c`.
+## Goal
 
-## Shape
-
-Implement `log.c` behind the provided `fix.h` + `main.c`: a tiny **key=value log parser**
-that reads from a file descriptor. `forge` compiles `main.c` (harness) + `log.c`, runs
-`./test config.txt` and `./test apps.txt` (fixtures provided), and diffs stdout.
+Implement `log.c` backing the provided `fix.h` + `main.c`: a tiny **key=value log
+parser** that reads from a file descriptor. `forge` compiles `main.c` (harness) + `log.c`,
+runs `./test config.txt` and `./test apps.txt` (fixtures provided), diffs stdout.
 
 ```c
 int parse_log(int fd, Tokens *t);  /* 0 ok, -1 on malformed or overflow */
 ```
 
-The file is a list of `name=value` lines. Record only the **name**, up to the `=`. Skip
-blank lines (just `\n`). A non-blank line with no `=`, an empty name, or a name that does
-not fit `TOKEN_LEN` returns **-1**. The whole file is read through the given `fd` with
-`read()` — nothing else. The `Tokens` struct is zero-sized until you fill it:
+- The file is a list of `name=value` lines. Record only the **name** (up to the `=`).
+- Blank lines (just `\n`) are skipped.
+- A non-blank line with no `=`, an empty name, or a name that doesn't fit `TOKEN_LEN`
+  returns **-1**.
+- The whole file is read through the given `fd` with `read()` — nothing else. The
+  `Tokens` struct is zero-sized until you fill it:
 
 ```c
 typedef struct { char keys[TOKENS_MAX][TOKEN_LEN]; size_t n; } Tokens;
 ```
 
-`read()` may return the file in small pieces, so assemble lines across reads (buffering) and
-handle a final line with or without a trailing newline. A name is complete only at `\0`, with
-no stray newline or value bytes in `keys`. The `fd` is opened and closed by `main`; your
-function must not close it.
+Expected for `config.txt`:
 
-Compile with `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan, without redefining
-`CFLAGS`/`LDFLAGS`.
-
-## Acceptance
-
-`make all`, then `./test config.txt` and `./test apps.txt` must each exit 0 and print exactly:
-
-```text
+```
 host
 port
 verbose
@@ -44,7 +31,9 @@ tokens 3
 ALL PASS
 ```
 
-```text
+Expected for `apps.txt`:
+
+```
 web
 cache
 queue
@@ -52,16 +41,31 @@ tokens 3
 ALL PASS
 ```
 
-- The `config.txt` transcript is `host`, `port`, `verbose`, `tokens 3`; the `apps.txt` transcript is `web`, `cache`, `queue`, `tokens 3`, with names, order, and count exact.
-- Both fixture runs exit 0 with empty stderr; malformed input is refused with `-1`, never tolerated.
-- The final unterminated line is handled, the fd is left to `main`, and `quiz.txt` is complete (see below).
+Everything the harness prints comes from your `keys` — so the token names, their order,
+and `tokens <n>` must all be exactly right.
 
-The `build` grade is a strict compile plus both fixture runs, each stdout diffed, with exit 0
-and empty stderr. Splitting on the wrong delimiter (`:`) makes every line malformed →
-`parse failed` → FAIL. Storing the whole `name=value` instead of the name makes `keys` hold
-the full line → diff FAIL. Never finishing the final unterminated line leaves output one
-token short, or leaves the names with their newline → FAIL. The `quiz` grade checks that
-`quiz.txt` answers match.
+## Constraints
+
+- `read()` may return the file in small pieces — your parser must assemble lines across
+  reads (buffering!), and handle a final line with or without a trailing newline.
+- A name is complete only at `\0` — no stray newline or value bytes in `keys`.
+- The `fd` is opened and closed by `main`; your function must not close it.
+- `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan. Never redefine `CFLAGS`/`LDFLAGS`.
+
+## Acceptance criteria
+
+- [ ] `config.txt` → `host`, `port`, `verbose`, `tokens 3`
+- [ ] `apps.txt` → `web`, `cache`, `queue`, `tokens 3`
+- [ ] both runs exit 0, empty stderr
+- [ ] malformed input is refused (`-1`), never tolerated
+- [ ] `quiz.txt` complete (see below)
+
+Then complete `quiz.txt`:
+
+```
+What character separates a name from a value in a key=value line?: <answer>
+What should a parsing function return for a malformed line?: <answer>
+```
 
 ## Readings
 
@@ -72,7 +76,11 @@ token short, or leaves the names with their newline → FAIL. The `quiz` grade c
 - A real `strtok`-style parser is the wrong tool here: you need off-by-one-exact
   delimiters, and `TOKEN_LEN` overflow handling.
 
-## Quiz
+## How you are graded
 
-1. What character separates a name from a value in a key=value line?
-2. What should a parsing function return for a malformed line?
+- `build`: strict compile + both fixture runs, each stdout diffed, exit 0, empty stderr.
+  Split on the wrong delimiter (`:`): every line is malformed → `parse failed` → FAIL.
+  Store the whole `name=value` instead of the name: `keys` hold the full line → diff FAIL.
+  Never finish the final unterminated line: output ends up one token short (or the names
+  keep their newline) → FAIL.
+- `quiz`: `quiz.txt` answers must match.

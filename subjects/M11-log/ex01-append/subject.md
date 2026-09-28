@@ -1,16 +1,13 @@
 # M11-ex01 · Append
 
-M11 starts with the storage contract every replicated state machine depends
-on: commands enter an append-only log and receive stable indexes. You implement
-that first operation now, leaving overwrite and compaction to the later
-snapshot exercise.
+## Goal
 
-## Shape
+A replicated log is a **append-only** sequence of commands, indexed from 0.
+The two operations a replica offers are `append` (put a new command at the
+end) and `read` (return the current log). Nothing is ever overwritten or
+removed here — snapshotting is a later exercise.
 
-A replicated log is a **append-only** sequence of commands indexed from 0. Its
-operations are `append`, which puts a new command at the end, and `read`, which
-returns the current log. Nothing is overwritten or removed here. You write
-**`log.go`** and implement:
+Implement `log.go`:
 
 ```go
 type Log struct {
@@ -27,17 +24,21 @@ func (l *Log) Len() int
 func (l *Log) All() []string
 ```
 
-The exercise ships `main.go`, which prints the transcript. `make all` must
-build `test`, and `./test` must print the reference transcript exactly. Use Go
-and the standard library only. The reference transcript is `expected.txt`, with
-whitespace normalized. `All` must return a copy, so editing the returned slice
-cannot mutate the log. Never read the wall clock.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `log.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- `All` must not let the caller mutate the log by editing the returned slice.
+- Never read the wall clock.
 
 ## Acceptance
 
-The reference transcript is:
+Reference transcript:
 
-```text
+```
 len=0 all=
 append set -> 0
 append add -> 1
@@ -46,8 +47,7 @@ len=3 all=set|add|del
 at 1 = add
 ```
 
-Indexes are assigned strictly at the end: `set` is 0, `add` is 1 and `del` is
-2. Any gap or reuse fails the transcript.
+Indexes are assigned strictly at the end: `set` is 0, `add` is 1, `del` is 2.
 
 ## Readings
 

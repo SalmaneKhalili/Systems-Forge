@@ -44,6 +44,8 @@ Which flag makes a forked child's writes visible to the parent?: <answer>
 
 ## Readings
 
+- **Reading ladder** — start with `man 2 mmap` (MAP_PRIVATE / MAP_SHARED /
+  MAP_ANONYMOUS), then TLPI §49.1–49.3 below.
 - The Linux Programming Interface, §49.1–49.3 "Memory Mappings" — the private/shared
   contrast and Figure 49-1 (shared vs private file mapping). Also §24.2 "Sharing of file
   offsets" sidebar about what fork does to memory.

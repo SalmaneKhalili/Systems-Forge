@@ -48,10 +48,13 @@ Which macro tests whether a child exited normally?: <answer>
 
 ## Readings
 
+- **Reading ladder** — fork is one call, three outcomes; learn its return-value contract first,
+  then the waiting discipline, then where book detail lives.
+- `man 2 fork`, `man 2 waitpid`, `man 2 _exit` (why a child returns via `_exit` while the
+  parent keeps running).
 - The Linux Programming Interface, Chapter 24 "Process Creation" (§24.2 "Creating a New
-  Process: fork()"), §26.1 "Waiting on a Child Process", §26.2 "Orphans and Zombies"
-  (wait/waitpid, status macros).
-- `man 2 fork`, `man 2 waitpid`, `man 2 _exit` (why `return` in a child vs `_exit`).
+  Process: fork()"), §24.4 "Shared File Descriptors after fork()", §26.1 "Waiting on a Child
+  Process", §26.2 "Orphans and Zombies" (wait/waitpid, status macros).
 
 ## How you are graded
 

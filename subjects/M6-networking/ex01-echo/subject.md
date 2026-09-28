@@ -1,49 +1,47 @@
-# M6-ex01 · Echo Server
+# M6-ex01 · echo server
 
-Sockets are file descriptors with a destination, and this exercise builds the
-whole dance end to end. Your TCP echo server binds `127.0.0.1` on the
-injected `TARGETPORT` and sends back whatever bytes a client sends — the same
-copy loop that sits at the heart of almost every networked program. Every
-later exercise in this module reuses this skeleton.
+## Goal
 
-## Shape
+Write `main.c` so `make all` produces `./test` — a **TCP echo server** on `127.0.0.1`:
+whatever bytes a client sends, the server sends back. Two scripted visits are graded:
 
-Write `main.c` so `make all` produces `./test`. The five-call sequence, in
-order:
+- client sends `hello\n` → server must send back exactly `hello\n`
+- client sends `ping\n` → server must send back exactly `ping\n`
 
 ```
 socket(SOCK_STREAM) → setsockopt(SO_REUSEADDR) → bind → listen → accept → read → write
 ```
 
-- `socket(AF_INET, SOCK_STREAM, 0)`, then `bind`, then `listen(fd, 4)`, then
-  `accept` in a loop. `SO_REUSEADDR` before bind (so restarting is painless).
-- The port comes from `getenv("TARGETPORT")`; reject a missing or invalid
-  value with exit 1.
-- Loop forever: `read` whatever arrives, `write` the same bytes back, until
-  the client closes; then accept the next connection and repeat.
-- `read` may return fewer bytes than the client "sent" — echo exactly the
-  bytes you got (`write` must write `n`, not an assumed buffer size).
-- A client that disconnects must not kill the server: `read` returns 0 (EOF) →
-  close and accept again.
-- `signal(SIGPIPE, SIG_IGN)` so a write to a peer that just went away fails
-  gracefully instead of killing the process.
+Your server binds **`127.0.0.1`, port from the `TARGETPORT` env var** (the grader injects
+it). It then loops: `read` whatever arrives, `write` the same bytes back, until the client
+closes; then accept the next connection and repeat — forever.
 
-Compile flags: `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan; never redefine
-`CFLAGS`/`LDFLAGS`.
+## Constraints
 
-## Acceptance
+- The five-call sequence, in order: `socket(AF_INET, SOCK_STREAM, 0)`, `bind`,
+  `listen(fd, 4)`, then `accept` in a loop. `SO_REUSEADDR` before bind (so restarting is
+  painless). Port from `getenv("TARGETPORT")`; reject a missing/invalid value with exit 1.
+- `read` may return fewer bytes than the client "sent" — echo exactly the bytes you got
+  (`write` must write `n`, not an assumed buffer size).
+- A client that disconnects must not kill the server: `read` returns 0 (EOF) → close and
+  accept again.
+- `signal(SIGPIPE, SIG_IGN)` so a write to a peer that just went away fails gracefully
+  instead of killing the process.
+- `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan. Never redefine `CFLAGS`/`LDFLAGS`.
 
-Graded `build` + `net` + `quiz`. `make all` produces `./test`, and the `net`
-runner dials your server and plays two scripted sessions, comparing replies
-byte-for-byte with a bounded deadline:
+## Acceptance criteria
 
-- client sends `hello\n` → server sends back exactly `hello\n`
-- client sends `ping\n` → server sends back exactly `ping\n`
-- the accept loop runs forever, re-serving after EOF
-- binds loopback only, on the injected port
+- [ ] `make all` produces `./test`, then `accept` loop runs forever, re-serving after EOF
+- [ ] graded dialogue `hello\n`↔`hello\n` and `ping\n`↔`ping\n` passes byte-exact
+- [ ] binds loopback only, on the injected port
+- [ ] `quiz.txt` complete (see below)
 
-A server that replies from memory (e.g. always `PONG\n`), echoes the wrong
-slice, or never listens → FAIL. `quiz.txt` is complete (see Quiz).
+Then complete `quiz.txt`:
+
+```
+Which call puts a listening socket's address family, port and address on it?: <answer>
+Which call accepts a pending connection and returns a new socket for it?: <answer>
+```
 
 ## Readings
 
@@ -53,7 +51,9 @@ slice, or never listens → FAIL. `quiz.txt` is complete (see Quiz).
 - The echo server is the Unix miniature of every networked program: a listener plus a
   per-connection copy loop.
 
-## Quiz
+## How you are graded
 
-1. Which call puts a listening socket's address family, port and address on it?
-2. Which call accepts a pending connection and returns a new socket for it?
+- `build` compiles strict; two `net` scripted sessions then dial your server, scan for the
+  expected reply with a bounded deadline, and compare byte-for-byte. A server that replies
+  from memory (e.g. always `PONG\n`), echoes the wrong slice, or never listens → FAIL.
+- `quiz`: `quiz.txt` answers must match.

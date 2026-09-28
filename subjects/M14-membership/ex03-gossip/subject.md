@@ -1,14 +1,13 @@
 # M14-ex03 · Gossip
 
-Heartbeats and the suspect lifecycle define one node's view, but membership must
-spread through the cluster. Gossip exchanges versioned views pairwise so fresher
-facts replace stale ones until every view converges. You deliver `gossip.go` with
-a commutative, deterministic merge that gives each member one final entry.
+## Goal
 
-## Shape
+No single node knows the whole cluster at first. **Gossip** spreads membership
+facts node-to-node: each node carries a view, and when two nodes exchange they
+**merge** their views. Every member keeps the entry with the higher version, so
+fresher facts win and all views converge to the same set.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`gossip.go`** using only the Go standard library and implement:
+Implement `gossip.go`:
 
 ```go
 type Member struct {
@@ -22,27 +21,32 @@ type Member struct {
 func Merge(a, b []Member) []Member
 ```
 
-`Merge` must be commutative: its result cannot depend on argument order. Keep the
-higher version for every member, return one entry per node sorted by node name,
-and never read the wall clock. The reference transcript is `expected.txt` with
-whitespace normalized.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `gossip.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- `Merge` must be commutative (result independent of argument order) and
+  deterministic; result sorted by node name.
+- Never read the wall clock.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 a: x1 y1
 b: x2 y1 z1
 merge(a,b): x2 y1 z1
 merge(b,a): x2 y1 z1
 ```
 
-Node `x` is at version 1 in `a` and version 2 in `b`; merging in either order
-keeps the fresher version 2, and both views converge on `x2 y1 z1`. Keeping two
-entries for one member, or letting a stale version overwrite a fresher one,
-fails the merge.
+Node `x` is at version 1 in `a` and version 2 in `b`; merging — in either
+order — keeps the fresher version 2. Both nodes converge on `x2 y1 z1`. Keeping
+two entries for one member, or letting a stale version overwrite a fresher one
+(non-commutative merge), is the bug.
 
 ## Readings
 

@@ -53,3 +53,9 @@ store.get b -> 6
 
 `m.Snapshot` is used by the grader runner only; a transaction that loses its
 staged writes on `Commit`, or that applies rollback's writes anyway, is the bug.
+
+## Readings
+
+- **Reading ladder** — stage, commit, or roll back; DDIA Chapter 7 is the definitive *why*.
+- *Designing Data-Intensive Applications*, Chapter 7 "Transactions" — atomicity and commit.
+- Wikipedia, "ACID": https://en.wikipedia.org/wiki/ACID

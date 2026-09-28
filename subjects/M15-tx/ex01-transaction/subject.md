@@ -1,15 +1,13 @@
 # M15-ex01 · Transaction
 
-The module begins by turning several key-value writes into one atomic unit. A
-transaction stages its changes, reads its own pending values, and publishes them
-to the shared store only on commit, so rollback leaves nothing dangling. You
-deliver `store.go` with the in-memory store and transaction state needed by
-replay, conflict handling, and the later gateway.
+## Goal
 
-## Shape
+A **transaction** groups several writes so they either all take effect
+(commit) or none do (rollback). This exercise models a tiny in-memory key-value
+store where writes inside a transaction are **staged** and only become visible
+to other readers on commit. `"6"` writes nothing dangling.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`store.go`** using only the Go standard library and implement:
+Implement `store.go`:
 
 ```go
 type Store struct{ data map[string]string }
@@ -27,17 +25,22 @@ func (t *Tx) Commit()                     // apply all staged writes atomically
 func (t *Tx) Rollback()                   // discard all staged writes
 ```
 
-Staged writes must not be visible to `Store.Get` until `Commit`, while `Tx.Get`
-must prefer its own staged value. `Rollback` discards staged writes without
-touching the store. Never read the wall clock; the harness drives a pure data
-model. The reference transcript is `expected.txt` with whitespace normalized.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `store.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- Staged writes must NOT be visible to `Store.Get` until `Commit`.
+- `Rollback` must discard staged writes without touching the store.
+- No wall clock; a transaction is a pure data model driven by the harness.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 store.get a -> 1
 tx.get a -> 2
 store.get a -> 1
@@ -48,9 +51,8 @@ store.get a -> 5
 store.get b -> 6
 ```
 
-`m.Snapshot` is used by the grader runner only. A transaction that loses staged
-writes on `Commit` or applies rollback's writes anyway fails the atomicity
-contract and leaves state dangling.
+`m.Snapshot` is used by the grader runner only; a transaction that loses its
+staged writes on `Commit`, or that applies rollback's writes anyway, is the bug.
 
 ## Readings
 

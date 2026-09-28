@@ -46,3 +46,9 @@ ok b
 
 With `b` down at the current tick, `Op(b)` is `fail` while `a`/`c` are `ok`; a
 recovered `b` returns `ok` again. An op on a down node returning `ok` is the bug.
+
+## Readings
+
+- **Reading ladder** — a chaos drill makes node-churn *exercised* rather than theoretical.
+- Principles of Chaos Engineering: https://principlesofchaos.org/
+- *Designing Data-Intensive Applications*, Chapter 8 "The Trouble with Distributed Systems".

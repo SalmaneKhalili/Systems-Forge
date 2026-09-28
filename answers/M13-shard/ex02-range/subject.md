@@ -52,3 +52,11 @@ past `u` (shard 3, the trailing shard). The key `k` lands exactly ON the first
 boundary → shard 0 (inclusive), and `u` on the last boundary → shard 2 — a
 `<`-instead-of-`<=` comparator that excludes the boundary would route `k` to
 shard 1 and `u` past all three. That is the bug to catch.
+
+## Readings
+
+- **Reading ladder** — contiguous key ranges make scan-friendly shards; the chapter frames the
+  trade-off against hotspots.
+- *Designing Data-Intensive Applications*, Chapter 6 — "Partitioning by key range".
+- Wikipedia, "Shard (database architecture)":
+  https://en.wikipedia.org/wiki/Shard_(database_architecture)

@@ -1,28 +1,26 @@
 # M16 · Storage Engines
 
-The module replaces the in-memory map with the write and recovery path used by
-real databases and key-value engines such as RocksDB and Bigtable: a
-Log-Structured Merge-tree. The thread runs from a sorted memtable to immutable
-SSTables, a crash-safe WAL, and newest-run compaction, then joins those pieces in
-a persistent TCP key-value store.
+Everything you've persisted so far used a trivial in-memory map. Real storage
+servers — databases, key-value engines like RocksDB, Bigtable — are built on a
+**Log-Structured Merge-tree (LSM)**: buffer writes in a sorted in-memory
+**memtable**, flush them to immutable sorted **SSTables** on disk, log every
+mutation to a crash-safe **write-ahead log**, and periodically **compact**
+overlapping runs so reads stay fast and stale data is reclaimed.
 
-## The build
+Milestones:
 
-- **ex01 · Memtable** — keep buffered writes in lexicographic order with update,
-  lookup, and copied iteration contracts; the ordered handoff for a disk flush.
-- **ex02 · SSTable** — serialize sorted entries into an immutable file, then use
-  its sparse index and binary search for boundary-safe lookups.
-- **ex03 · WAL** — append each mutation before the volatile memtable and replay
-  the log in write order after a crash.
-- **ex04 · Compaction** — merge sorted runs, collapse duplicates with the newest
-  run winning, and remove tombstoned keys.
-- **ex05 · Persistent KV gateway** — **Gate**: combine the storage path in a
-  Mini-Capstone TCP store whose `store.log` restores state across restarts.
+- ex01 · Memtable — the sorted in-memory write buffer that keeps keys ordered.
+- ex02 · SSTable — flush to an immutable on-disk file; look up via sparse index
+  + binary search.
+- ex03 · WAL — append every mutation durably, then replay it after a crash.
+- ex04 · Compaction — merge sorted runs; the newest run wins, tombstones delete.
+- ex05 · Persistent KV gateway — the Mini-Capstone: an LSM key-value store with
+  a TCP line protocol, durable across restarts.
 
-## Rules
+Rule: nothing printed or compared may depend on wall-clock time. All
+exercises are transcript-driven and byte-deterministic.
 
-Nothing printed or compared may depend on wall-clock time. All exercises are
-transcript-driven and byte-deterministic.
+---
 
 ## Prerequisites
 
@@ -49,6 +47,8 @@ Before starting M16, you should be comfortable with everything from M0–M15, pl
 
 You do NOT need to know: Bloom filters, level-based compaction, tiered compaction, or
 RocksDB internals. Those are advanced storage engine topics outside this module.
+
+---
 
 ## So what? (interview / portfolio)
 

@@ -44,11 +44,10 @@ plays this script over the network:
 The backend numbers per connection: if connection 2 got `R3`, the relay reused
 a stale backend connection (wrong).
 
-Readings: `net`/`bufio` docs; Tanenbaum *Computer Networks* — the proxy/relay
-chapter.
+## Readings
 
-## Quiz
-
-1. Which program does the switch itself start so the relay has something to reach?
-2. Which octet terminates a frame in this module's wire format?
-3. When a client disconnects, what must the switch do with the relay's backend side?
+- **Reading ladder** — the failure half of networking: a transparent relay and
+  where the teardown rules live.
+- Go `net` docs — TCP listener and accept loop: https://pkg.go.dev/net
+- Go `bufio` docs — line framing: https://pkg.go.dev/bufio
+- Tanenbaum & Wetherall, *Computer Networks* — the proxy / relay chapter.

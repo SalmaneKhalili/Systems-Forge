@@ -1,40 +1,41 @@
 # M13-ex05 · The shard gateway
 
-The fixed slots, inclusive ranges, ring ownership, and movement checks now meet at
-the module's TCP gate. The gateway must route every key to one of three range
-owners, isolate each shard's key-value data, and retain that state across
-concurrent client connections. You deliver `gate.go`, the process-wide entry
-point clients use without knowing which shard owns a key.
+## Goal
 
-## Shape
+The capstone of the module: a **shard gateway** over TCP that routes each key
+to the shard that owns it and keeps each shard's data isolated. Routing is by
+key range with two sorted boundaries — `m` and `t` — giving three shards:
+`0`=`(-∞, m]`, `1`=`(m, t]`, `2`=`(t, +∞)`.
 
-Whole-program. You write **`gate.go`**, a TCP server on `TARGETPORT` that keeps
-**one shared set of shards for the process lifetime**. Routing is by key range
-with two sorted boundaries, `m` and `t`:
+The gateway answers two line commands:
 
-- `0` owns `(-∞, m]`;
-- `1` owns `(m, t]`;
-- `2` owns `(t, +∞)`.
-
-Each shard is an independent key→value store, so a key always reaches the same
-shard and a value set on one connection is visible from another. The gateway
-answers two line commands:
-
-```text
+```
 set <key> <val>   -> route to the owning shard, store it; reply "set <n>"
 get <key>         -> route to the owning shard, reply "<n>:<val>" (or "<n>:?" if absent)
 ```
 
-Use only the Go standard library. `make all` must build `gate`; the grader
-starts `./gate`. Serve multiple concurrent connections, and never read the wall
-clock or add sleeps or timestamps to replies.
+Each shard is an independent key→value store; a key is always routed to the
+same shard, so a value set on one connection is visible from another.
+
+Write `gate.go`: a TCP server on `TARGETPORT` that keeps **one shared set of
+shards for the process lifetime**. `make all` must build `gate`; the grader
+starts `./gate`.
+
+## Constraints
+
+- Go, standard library only; file is `gate.go`.
+- `make all` must build `gate` (the grader starts `./gate`).
+- Multiple concurrent connections must be served; shard state persists across them.
+- Routing is by key range: shard 0 if `key <= "m"`, shard 1 if `key <= "t"`,
+  else shard 2.
+- Never read the wall clock; no sleeps, no timestamps in replies.
+- Port number comes from `TARGETPORT`.
 
 ## Acceptance
 
-`make all` must build `gate`; the grader starts `./gate`, drives one connection,
-then uses a second connection to prove the shards are shared:
+The grader drives one connection, then a second shares the same shards:
 
-```text
+```
 conn1: set apple red     -> set 0        (apple <= m)
 conn1: get apple         -> 0:red
 conn1: set mango yellow  -> set 1        (m < mango <= t)
@@ -45,9 +46,9 @@ conn2: get zebra         -> 2:striped
 conn2: get melon         -> 1:?          (melon routes to shard 1; absent)
 ```
 
-`melon` routes to shard 1 because `m < melon < t`, but it was never set, so it
-reads `1:?`. A gateway that routes a key to the wrong shard or returns another
-shard's value fails the transcript.
+`melon` routes to shard 1 (m < melon < t) but was never set, so it reads
+`1:?`. A gateway that routes a key to the wrong shard, or that returns another
+shard's value, is the bug.
 
 ## Readings
 

@@ -1,16 +1,14 @@
 # M10-ex01 · The coordinator
 
-M10 begins with the process that turns independent participant votes into one
-atomic decision. You build the deterministic 2PC state machine that asks every
-participant to prepare, chooses commit or abort once, and makes every
-participant follow that same final outcome.
+## Goal
 
-## Shape
+Two-phase commit (2PC) is how a **coordinator** makes a set of participants
+agree on one transaction: either it **commits** everywhere or it **aborts**
+everywhere. Phase one is *prepare*: the coordinator asks every participant
+to vote. Phase two is *commit/abort*: the coordinator tells every participant
+the final decision.
 
-Two-phase commit (2PC) begins with **prepare**: the coordinator asks every
-participant to vote. The coordinator then broadcasts the final commit/abort
-decision in phase two. You write **`coordinator.go`** as a small deterministic
-state machine:
+Implement `coordinator.go` as a small deterministic state machine:
 
 ```go
 type Voter func(id int) bool // returns the participant's vote (true = commit)
@@ -22,21 +20,24 @@ type Coordinator struct{ n int }
 func (c *Coordinator) Run(vote Voter) string
 ```
 
-The exercise ships `main.go`, which runs the coordinator over a fixed
-participant set and prints the transcript. Round one asks each participant
-(`prepare id → vote`); round two emits the decision.
+The provided `main.go` runs the coordinator over a fixed participant set and
+prints the transcript: round one asks each participant (`prepare id → vote`),
+then round two emits the decision.
 
-Use Go and the standard library only. `make all` must build `test`, and
-`./test` must print the reference transcript exactly; `expected.txt` is
-authoritative and whitespace is normalized. Never read the wall clock or sleep.
-A participant that votes no makes the whole outcome `abort`, even if every other
-participant voted yes.
+## Constraints
+
+- Go, standard library only; file is `coordinator.go`.
+- `make all` must build `test`; `./test` must print the reference transcript
+  exactly (`expected.txt`, whitespace normalized).
+- Never read the wall clock. No sleeps.
+- A participant that votes no makes the whole outcome `abort` — even if
+  others voted yes.
 
 ## Acceptance
 
-The reference transcript is:
+Reference transcript:
 
-```text
+```
 prepare 0 -> yes
 prepare 1 -> yes
 prepare 2 -> no
@@ -46,10 +47,10 @@ abort 1
 abort 2
 ```
 
-The coordinator always emits a decision line, then one per-participant action:
-`commit` for every participant after a commit, or `abort` for every participant
-after an abort. Here participants 0 and 1 voted yes, but participant 2 voted
-no, so **everyone** is aborted. Partial commit is not allowed.
+The coordinator always emits a decision line, then one per-participant action
+(`commit` for every participant on a commit; `abort` for every participant on
+an abort). The tell: even though participants 0 and 1 said yes, participant 2
+said no, so **everyone** is aborted — partial commit is not allowed.
 
 ## Readings
 

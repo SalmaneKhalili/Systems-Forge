@@ -58,3 +58,10 @@ The tell: a candidate with a younger last-term loses even if it has more
 entries (case d with swapped terms), and a candidate trailing in index at the
 same term loses (case b). Granting on length alone, or granting twice, is the
 bug.
+
+## Readings
+
+- **Reading ladder** — the vote rule is the election restriction that protects a fresh log;
+  the guide shows it, the paper states it.
+- Raft paper, §5.2 "Leader election" (the up-to-date-log check): https://raft.github.io/raft.pdf
+- Raft visual guide: https://raft.github.io/

@@ -50,3 +50,13 @@ outscores others on its own component while trailing elsewhere — the only
 correct reads for `e2` are `||`.
 
 A scalar counter cannot express any of this: it has no "both directions".
+
+## Readings
+
+- **Reading ladder** — causality is a *relation between events*, read out of the stamps; the
+  notes define the three outcomes precisely.
+- Martin Kleppmann, *Distributed Systems* notes — comparing vector stamps (happened-before /
+  concurrent):
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf
+- Lamport's original ordering definitions, §1–§2:
+  https://lamport.azurewebsites.net/pubs/time-clocks.pdf

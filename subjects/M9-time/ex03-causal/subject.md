@@ -1,14 +1,15 @@
 # M9-ex03 · Causality
 
-The two-process vectors from ex02 become a relation in this exercise. You
-compare complete stamps to classify each pair as happened-before,
-happened-after or concurrent, exposing the partial order that ex04 extends
-without breaking causality.
+## Goal
 
-## Shape
+Vector stamps let a process decide, for any two events, which of the three
+causal relations holds:
 
-The exercise ships `main.go` with four events from a fixed script. You write
-**`causal.go`** in the same package and implement:
+- **happened before** — `vc(a) <= vc(b)` componentwise and not equal;
+- **happened after** — the mirror image;
+- **concurrent** — neither direction holds (the stamps are incomparable).
+
+Implement `causal.go`:
 
 ```go
 // CausallyBefore reports that a happened before b (strict componentwise <=).
@@ -18,22 +19,21 @@ func CausallyBefore(a, b [3]int) bool
 func Concurrent(a, b [3]int) bool
 ```
 
-A pair is:
+The provided `main.go` holds four events from a fixed script and prints one
+boolean per relation. `make all` must build `test`; `./test` must print the
+reference transcript exactly.
 
-- **happened before** when `vc(a) <= vc(b)` componentwise and the stamps are not equal;
-- **happened after** in the mirror-image case;
-- **concurrent** when neither direction holds and the stamps are incomparable.
+## Constraints
 
-`make all` must build `test`, and `./test` must print one boolean per relation
-in the reference transcript exactly. Use Go and the standard library only. The
-reference transcript is `expected.txt`, with whitespace normalized; never read
-the wall clock.
+- Go, standard library only; file is `causal.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- Never read the wall clock.
 
 ## Acceptance
 
-The reference transcript is:
+Reference transcript:
 
-```text
+```
 e0 -> e1: true
 e0 -> e2: false
 e1 -> e2: false
@@ -45,12 +45,11 @@ e1 || e2: true
 e0 || e3: true
 ```
 
-- `e3` copies `e0`'s stamp, so equality is **not** happened-before.
-- `e2` leads on its own component while trailing elsewhere, so its only correct
-  relations to the shown events are `||`.
+`e3` is a copy of `e0`'s stamp: equality is **not** happened-before. And `e2`
+outscores others on its own component while trailing elsewhere — the only
+correct reads for `e2` are `||`.
 
-A scalar counter cannot express these outcomes because it has no "both
-directions".
+A scalar counter cannot express any of this: it has no "both directions".
 
 ## Readings
 

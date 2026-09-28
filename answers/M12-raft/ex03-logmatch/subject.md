@@ -50,3 +50,9 @@ mismatch prev(0,2) -> REJECT
 The tell: when the follower's entry at the previous index does not carry the
 leader's `prevTerm`, nothing is appended (the log is left untouched and
 "REJECT" is returned) — the leader must back up. Appending anyway is the bug.
+
+## Readings
+
+- **Reading ladder** — the Log Matching Property is the single rule that keeps replicas'
+  logs in lockstep.
+- Raft paper, §5.3 "Log replication" (Log Matching Property): https://raft.github.io/raft.pdf

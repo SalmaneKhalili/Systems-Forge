@@ -40,3 +40,11 @@ t3: abort
 The point of the exercise is the **finality** of a commit vote: the transcript
 lists only votes here, but the quiz captures why an `abort` after a `commit`
 vote is forbidden.
+
+## Readings
+
+- **Reading ladder** — a vote is a *promise*; read why the coordinator must treat it as
+  binding, in both the commit and abort directions.
+- *Designing Data-Intensive Applications*, Chapter 9 — the participant promise inside 2PC.
+- Kleppmann notes, the 2PC participant protocol:
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf

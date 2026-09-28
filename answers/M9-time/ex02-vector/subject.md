@@ -52,3 +52,12 @@ e2 (4,3)
 Watch `p1 recv m0`: after merging (2,0), p1's own component advances — the
 receive is an event of p1 — so it reads (2,1), not (2,0). A clock that forgets
 to merge (or advances the wrong component) prints a different vector.
+
+## Readings
+
+- **Reading ladder** — you built the scalar clock; a vector clock is the same idea with one
+  counter per process. The notes compare both and give the merge rule.
+- Martin Kleppmann, *Distributed Systems* notes — vector clocks:
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf
+- Wikipedia, "Vector clock": https://en.wikipedia.org/wiki/Vector_clock
+- Tanenbaum & Van Steen, *Distributed Systems* — vector (Ward) clocks chapter.

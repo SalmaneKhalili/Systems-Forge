@@ -1,14 +1,10 @@
 # M16-ex01 · Memtable
 
-The LSM write path starts with a sorted buffer that can later flush entries in
-order to an SSTable. This exercise makes every mutation visible through an ordered
-in-memory view with overwrite and absence semantics. You deliver `memtable.go`,
-the component ex02 serializes and the WAL later rebuilds.
+## Goal
 
-## Shape
+The **memtable** is the write buffer in an LSM-tree (Log-Structured Merge-tree) storage engine. All incoming writes (`Put`) are buffered in memory before being flushed to disk. Crucially, the memtable must keep its keys **sorted** to allow efficient range queries and sequential disk writes during flush.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`memtable.go`** using only the Go standard library and implement:
+Implement `memtable.go`:
 
 ```go
 type KV struct {
@@ -34,18 +30,21 @@ func (m *MemTable) Get(key string) (string, bool)
 func (m *MemTable) All() []KV
 ```
 
-`Put` overwrites an existing key and preserves lexicographic order. `Get`
-returns `("", false)` when absent, while `All` returns a copy rather than the
-memtable's backing storage. Never read the wall clock; use synchronization
-primitives if memory safety and concurrency require them. The reference
-transcript is `expected.txt` with whitespace normalized.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `memtable.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- No wall clock.
+- Memory safety and concurrency: use synchronization primitives if required.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 keys in order:
 apple=1
 banana=4
@@ -54,9 +53,7 @@ get banana: 4 (ok=true)
 get dragon: (ok=false)
 ```
 
-The ordered output proves that every key remains lexicographically sorted, and
-the lookup lines prove the value/presence contract. A memtable that loses that
-order or fails to overwrite an existing key fails the transcript.
+A memtable that fails to keep keys sorted, or that does not overwrite an existing key, is the bug.
 
 ## Readings
 

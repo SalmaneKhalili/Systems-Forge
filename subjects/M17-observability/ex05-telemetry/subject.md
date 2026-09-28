@@ -1,37 +1,35 @@
 # M17-ex05 · Telemetry Gateway (Mini-Capstone)
 
-The concurrency-safe registry now needs an external surface for live updates and
-snapshots. This Mini-Capstone lets operators mutate and read named counters over
-TCP while the service itself accounts for every accepted connection. You deliver
-`server.go`, the shared-state telemetry endpoint the module culminates in.
+## Goal
 
-## Shape
+Expose the metrics registry (ex01) to the outside world as a **telemetry gateway**: a TCP service that lets operators query and update live metrics, and the module's Mini-Capstone. The server increments a `conn_total` counter every time it accepts a new connection.
 
-Whole-program. You write **`server.go`** using only the Go standard library:
-
-```go
-func main() // reads TARGETPORT, serves TCP on 127.0.0.1:port, driving a Metrics
-```
-
-The server listens on `127.0.0.1` at the port in the `TARGETPORT` environment
-variable and speaks this line protocol:
+The server listens on `127.0.0.1` at the port in `TARGETPORT` (set by the grader) and speaks a line protocol:
 
 - `INC <name> <n>` → `ok` (increments a named counter by `n`)
 - `GET <name>` → the current value as an integer, or `0` if absent
 - `SNAP` → one `name=value` line per metric, sorted by name
 
-Every accepted connection increments `conn_total`, so a second connection sees
-the first connection in that count. Read `TARGETPORT` with `os.Getenv`, never a
-fixed port, and guard the shared registry with a mutex. A second connection must
-see counters written by the first. `make all` must build `test`; the grader
-starts `./test`, runs commands over two connections, and checks the replies.
+Every accepted connection increments `conn_total` (so a second connection sees the count from the first). Implement `server.go`:
+
+```go
+func main() // reads TARGETPORT, serves TCP on 127.0.0.1:port, driving a Metrics
+```
+
+`make all` must build `test`. The grader starts `./test`, runs commands across two connections, and checks replies.
+
+## Constraints
+
+- Go, standard library only; file is `server.go`.
+- Shared state is required: a second connection must see counters written by the first.
+- Read `TARGETPORT` from `os.Getenv`; never use a fixed port. Use a mutex around the registry.
+- `SNAP` must list metrics in sorted name order.
 
 ## Acceptance
 
-`make all` must build `test`; the grader starts `./test` and requires these two
-connections to produce exactly:
+The grader runs these two connections and expects:
 
-```text
+```
 conn 1:
   INC http_ok 3      -> ok
   INC http_total 10  -> ok
@@ -47,10 +45,7 @@ conn 2:
   SNAP               -> conn_total=2\nhttp_ok=7\nhttp_total=11\n
 ```
 
-The second connection's inherited values prove shared state, and the two
-`conn_total` snapshots prove accept-time accounting. A fresh registry per
-connection, a miscounted connection, an unsorted snapshot, or a wrong value
-fails the transcript.
+A server that serves each connection from a fresh registry, miscounts connections, or returns the wrong value is the bug.
 
 ## Readings
 

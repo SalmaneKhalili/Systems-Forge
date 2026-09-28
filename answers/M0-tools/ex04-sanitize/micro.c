@@ -3,10 +3,10 @@
 
 int main(void)
 {
-	int *p = malloc(sizeof *p);
-	*p = 1;
-	*p = 2; /* use-after-free */
-	printf("micro ok\n");
-	free(p);
-	return 0;
+    int* p = malloc(sizeof *p);
+    *p = 1;
+    *p = 2; /* use-after-free */
+    free(p);
+    printf("micro ok\n");
+    return 0;
 }

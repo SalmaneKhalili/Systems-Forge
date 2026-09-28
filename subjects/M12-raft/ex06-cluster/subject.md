@@ -1,19 +1,24 @@
 # M12-ex06 · Raft cluster
 
-M12 ends with the pure logic from ex01–ex05 running as a real **3-node raft
-cluster**. A single binary boots three distinct nodes with separate TCP
-endpoints; they exchange RequestVote and AppendEntries over real sockets until
-the leader's log is replicated across the cluster.
+## Goal
 
-## Shape
+Put it all together: a **real 3-node raft cluster**. Ex01–ex05 taught the
+mechanics as pure logic (term, vote rule, log-match, quorum). Here a single
+binary boots **three distinct nodes (a, b, c)**, each with its own TCP
+endpoint, and they replicate a log the real distributed way — nodes exchange
+RequestVote and AppendEntries **over real sockets**, the leader commits on a
+majority, and every node ends with the same log.
 
-The binary contains **three distinct nodes (a, b, c)**, each with its own TCP
-endpoint. `make all` must produce `./cluster`. `forge` starts the binary and
-drives it with explicit commands; there is no wall clock, and the transcript
-is byte-deterministic.
+`make all` must produce `./cluster`. `forge` starts it and drives the cluster
+with explicit commands (no wall clock — the transcript is byte-deterministic).
 
-The client talks to the whole cluster on `TARGETPORT`. The three nodes listen
-on `TARGETPORT+1`, `+2` and `+3`, and message one another over those sockets:
+## Cluster layout
+
+- The client talks to the whole cluster on `TARGETPORT`.
+- The three nodes listen on `TARGETPORT+1`, `+2`, `+3` and message each other
+  over those sockets.
+
+## Commands (to the client socket)
 
 | Command | Reply | Meaning |
 |---|---|---|
@@ -23,18 +28,20 @@ on `TARGETPORT+1`, `+2` and `+3`, and message one another over those sockets:
 | `log <node>` | `<node>`'s full log | **the replication proof** — every node's log must match |
 | `term <node>` | `term <t>` | `<node>`'s current election term |
 
-Use Go and the standard library only in `cluster.go`. There must be exactly 3
-peers, and `make all` must build `./cluster`. An election needs a strict
-majority: 2 of 3 votes, from the candidate and one peer. Every message between
-nodes must cross a real TCP connection. Every step is driven by the grading
-client, never a wall clock. A node that observes a higher term steps down to
-follower immediately.
+## Constraints
+
+- Go, standard library only; file is `cluster.go`.
+- Exactly 3 peers; `make all` must build `./cluster`.
+- Election needs a strict majority: 2 of 3 votes (self + one peer).
+- All message passing between nodes must go over a real TCP connection.
+- No wall clock: every step is driven by the grading client.
+- A node that observes a higher term steps down to follower immediately.
 
 ## Acceptance
 
-This transcript must hold on conn 1 and then a fresh conn 2:
+This transcript must hold (conn 1 then a fresh conn 2):
 
-```text
+```
 read        ->  (empty: no leader yet)
 elect a     ->  ELECTED a term 1
 propose x   ->  ok 0
@@ -49,9 +56,8 @@ term a      ->  term 1
 log c       ->  x|y
 ```
 
-`log b` and `log c` must match the leader's `read`. That equality is the
-replication proof: entries proposed to the leader really reached the followers
-over TCP.
+`log b` and `log c` matching the leader's `read` is the whole point: entries
+proposed to the leader are actually replicated to the followers over TCP.
 
 ## Readings
 

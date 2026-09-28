@@ -50,9 +50,11 @@ When parent and child share a pipe, what must the parent close to see EOF on rea
 
 ## Readings
 
+- **Reading ladder** — the EOF-on-read rule is the whole exercise; get the syscall contract
+  first, then the pipe-plus-fork walkthrough in the book.
+- `man 2 pipe`, `man 2 fork`, `man 2 read`, `man 2 write`, `man 2 waitpid`.
 - The Linux Programming Interface, §44.1–44.4 "Pipes and FIFOs" — read the pipe-plus-fork
   walkthrough carefully (Figure 44-2).
-- `man 2 pipe`, `man 2 read`, `man 2 write`.
 - The EOF rule is in the "Count the write ends" paragraph of TLPI §44.2 — finding it is part
   of the exercise.
 

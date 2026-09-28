@@ -44,3 +44,10 @@ elder @4 -> 3
 
 The tell: `banana` and `cherry` collide on slot 0, `apple` and `elder` on slot
 3 — two keys hashing to the same slot always land on the same shard.
+
+## Readings
+
+- **Reading ladder** — hashing is the simplest *stable* key-to-slot map; DDIA frames
+  partitioning generally.
+- *Designing Data-Intensive Applications*, Chapter 6 "Partitioning" — hash partitioning.
+- Wikipedia, "Hash function": https://en.wikipedia.org/wiki/Hash_function

@@ -62,3 +62,12 @@ With a timeout of 3, each `Tick` counts the peer down; a `Beat` resets to 3.
 After three consecutive unbeat ticks the peer fails, and a late `beat` revives
 it. A peer that fails one tick early (off-by-one on the countdown), or that
 fails and never revives on a beat, is the bug.
+
+## Readings
+
+- **Reading ladder** — SWIM is the canonical membership protocol behind heartbeats; Cassandra's
+  failure detector shows the practical thresholding.
+- "SWIM: Scalable Weakly-consistent Infection-style process group membership" (Das, Gupta,
+  Motivala): https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf
+- Datastax, "Failure Detector":
+  https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/operations/opsFailureDetector.html

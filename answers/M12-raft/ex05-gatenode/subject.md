@@ -50,3 +50,10 @@ conn2: read     -> a|b|c
 
 A node whose term drops (or that lets a stale `see` regress it), or that
 answers a `read` with anything but the committed prefix, is the bug.
+
+## Readings
+
+- **Reading ladder** — the gate ties term, vote, log-match and commit into one node;
+  §5.1–§5.4 in a single read.
+- Raft paper, §5.1–§5.4: https://raft.github.io/raft.pdf
+- Go `net` / `bufio` docs: https://pkg.go.dev/net

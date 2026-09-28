@@ -49,3 +49,10 @@ conn2: get melon         -> 1:?          (melon routes to shard 1; absent)
 `melon` routes to shard 1 (m < melon < t) but was never set, so it reads
 `1:?`. A gateway that routes a key to the wrong shard, or that returns another
 shard's value, is the bug.
+
+## Readings
+
+- **Reading ladder** — routing by range over TCP; the data structures are ex01–ex04, the wire
+  is M8.
+- *Designing Data-Intensive Applications*, Chapter 6 — partition routing.
+- Go `net` / `bufio` docs: https://pkg.go.dev/net

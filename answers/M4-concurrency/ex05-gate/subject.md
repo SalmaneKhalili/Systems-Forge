@@ -55,6 +55,9 @@ Which function wakes one thread waiting on a condition variable?: <answer>
 
 ## Readings
 
+- **Reading ladder** — start with `man pthread_cond_wait` and
+  `man pthread_cond_signal`, then TLPI §30.2 for the wait loop and
+  spurious wakeups.
 - The Linux Programming Interface, §30.2 "Signaling Changes of State: Condition Variables"
   (esp. §30.2.2 "Signaling and Waiting on Condition Variables") — the
   lock→wait→resignal loop in figure 30-2, the `while` loop contract, and the

@@ -24,12 +24,12 @@ safe: they can detect truncation by comparing the return value against `size`. `
 
 ## Acceptance criteria
 
-- [x] `"hello"` into size 10 copies `hello\0`, returns 5
-- [x] `"hello"` into size 3 copies `he\0`, returns 5, and nothing past index 2 is touched
-- [x] `"hello world"` (11) into size 6 copies `hello\0`, still returns **11**
-- [x] `"hello"` into size 0 writes nothing at all, returns 5
-- [x] size 1 yields an empty string (`dst[0] == '\0'`)
-- [x] `quiz.txt` complete (see below)
+- [ ] `"hello"` into size 10 copies `hello\0`, returns 5
+- [ ] `"hello"` into size 3 copies `he\0`, returns 5, and nothing past index 2 is touched
+- [ ] `"hello world"` (11) into size 6 copies `hello\0`, still returns **11**
+- [ ] `"hello"` into size 0 writes nothing at all, returns 5
+- [ ] size 1 yields an empty string (`dst[0] == '\0'`)
+- [ ] `quiz.txt` complete (see below)
 
 Then complete `quiz.txt`:
 

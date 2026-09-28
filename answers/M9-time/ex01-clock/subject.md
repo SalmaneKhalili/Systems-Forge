@@ -54,3 +54,13 @@ e3 t7
 
 `e2 t3` is the tell: p0's local events proceed independently of p1, and when
 p0 finally receives m1 (stamp 5) it must jump to 6, never stay at 3.
+
+## Readings
+
+- **Reading ladder** — the paper is short and original; read the idea first, then
+  Kleppmann's modern treatment, then the Go you already know.
+- Lamport, "Time, Clocks, and the Ordering of Events in a Distributed System" (1978):
+  https://lamport.azurewebsites.net/pubs/time-clocks.pdf
+- Martin Kleppmann, *Distributed Systems* lecture notes — logical clocks:
+  https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf
+- Go `sync` (mutex around the counter) and `time` — only as needed to parallel the trace.

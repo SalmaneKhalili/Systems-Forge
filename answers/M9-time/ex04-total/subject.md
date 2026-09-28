@@ -48,3 +48,11 @@ e1 e4 e0 e3 e2 e5
 `e1` and `e4` both carry Lamport 1 → pid 0 (`e1`) before pid 1 (`e4`). `e0`
 and `e3` both carry Lamport 2 → `e0` before `e3`. Ordering by pid first
 instead of Lamport first is the classic bug and yields a different sequence.
+
+## Readings
+
+- **Reading ladder** — a partial order becomes a total order the moment you break ties; the
+  paper's construction is the canonical one.
+- Lamport, "Time, Clocks, and the Ordering of Events…", §2.3 "Total Ordering of Events":
+  https://lamport.azurewebsites.net/pubs/time-clocks.pdf
+- Wikipedia, "Total order": https://en.wikipedia.org/wiki/Total_order

@@ -1,13 +1,10 @@
-# M6-ex04 · Read Timeout
+# M6-ex04 · read timeout
 
-The last three servers trusted the client to be well-behaved. This exercise
-covers the operational half: a **line-echo server with a read timeout** —
-every connection that has no data for **400 ms** is terminated with
-`TIMEOUT\n`. A stuck or half-open client can never wedge your server.
+## Goal
 
-## Shape
-
-Write `main.c` so `make all` produces `./test`. The loop:
+Write `main.c` so `make all` produces `./test` — a **line-echo server with a read
+timeout**: every connection that has no data for **400 ms** is terminated with
+`TIMEOUT\n`.
 
 ```
 socket → bind → listen → loop:
@@ -21,22 +18,7 @@ socket → bind → listen → loop:
   close
 ```
 
-- **`SO_RCVTIMEO`** (or `poll`/`select` with a timeout — both acceptable) on
-  the read side. The exact mechanism is yours; the point is that a stuck
-  client cannot wedge the server.
-- Timeout = **400 ms**. Your server must fail before the grader's 1200 ms
-  delay ends.
-- A complete line echoed with the correct newline; a timed-out connection must
-  produce exactly `TIMEOUT\n`.
-- After the timeout event: close the client; the accept loop continues, so a
-  *new* connection can proceed normally.
-
-Compile flags: `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan; never redefine
-`CFLAGS`/`LDFLAGS`.
-
-## Acceptance
-
-Graded `build` + `net` + `quiz`. Single run, one connection:
+Graded dialogue (single run, one connection):
 
 ```
 send "ready\n"
@@ -46,15 +28,30 @@ send "half"
   → expect "TIMEOUT\n"
 ```
 
-- `ready\n` echoed correctly; `half` (no newline) triggers `TIMEOUT\n` within
-  1200 ms.
-- The server re-accepts after a timeout — a subsequent connection must still
-  work.
-- No timeout mechanism: the server hangs forever on the second `read` → the
-  `net` deadline fires, FAIL. Timeout too long: the `net` deadline fires
-  before `TIMEOUT\n` → FAIL.
+## Constraints
 
-`quiz.txt` is complete (see Quiz).
+- **`SO_RCVTIMEO`** (or `poll`/`select` with timeout — both are acceptable) on the read
+  side. The exact mechanism is yours; the point is that a stuck client cannot wedge the
+  server.
+- Timeout = **400 ms**. Your server must fail before the grader's 1200 ms delay ends.
+- A complete line echoed with correct newline; a timed-out connection must produce exactly
+  `TIMEOUT\n`.
+- After the timeout event: close the client; the accept loop continues, so a *new*
+  connection can proceed normally.
+- `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan.
+
+## Acceptance criteria
+
+- [ ] `ready\n` echoed correctly; `half` (no newline) triggers `TIMEOUT\n` within 1200 ms
+- [ ] server re-accepts after a timeout — subsequent connection must still work
+- [ ] `quiz.txt` complete
+
+Then complete `quiz.txt`:
+
+```
+Which socket option makes a blocking read give up after a delay?: <answer>
+What errno does a timed-out recv return?: <answer>
+```
 
 ## Readings
 
@@ -64,7 +61,10 @@ send "half"
 - A `poll` loop with a deadline achieves the same effect and is a common alternative
   (TLPI §63.2). Both are acceptable for this exercise.
 
-## Quiz
+## How you are graded
 
-1. Which socket option makes a blocking read give up after a delay?
-2. What errno does a timed-out recv return?
+- `build` strict; `net` sends the exact script, sleeps between the two sends, and expects
+  the server to have timed out before its own deadline. No timeout mechanism: server hangs
+  forever on the second `read` → `net` deadline fires, FAIL. Timeout too long: `net`
+  deadline fires before `TIMEOUT\n` → FAIL.
+- `quiz`: `quiz.txt` answers must match.

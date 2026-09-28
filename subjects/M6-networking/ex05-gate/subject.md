@@ -1,37 +1,23 @@
-# M6-ex05 · Gate: Stateful Server
+# M6-ex05 · Gate: stateful server
 
-The gate of M6 is the skeleton of the infrastructure the rest of the
-curriculum grades *through*: a **stateful protocol server** whose connection
-counter survives across connections, and that greets, acknowledges, and
-re-answers. You write it now so you can point to it in M8, where the switch
-takes the same shape and adds faults.
+## Goal
 
-## Shape
+Write `main.c` so `make all` produces `./test` — a **stateful protocol server** with a
+connection counter that survives across connections. This is the skeleton of the grading
+**gate** server that switches later modules' exercises (see PLAN.md) — the server that
+greets, acknowledges, and cross-connects state.
 
-Write `main.c` so `make all` produces `./test`. The protocol, on each
-connection:
+Protocol, on each connection:
 
-1. On accept, send the greeting `HELLO <n>\n`, where `<n>` counts connections
-   made to this server process (1 for the first, 2 for the second, … never
-   reset).
+1. On accept, send the greeting `HELLO <n>\n`, where `<n>` counts connections made to
+   this server process (1 for the first, 2 for the second, … never reset).
 2. Then loop over complete lines:
    - `PING\n` → reply `PONG\n`
    - `ECHO <text>\n` → reply `ECHO <text>\n` (only the text, no extra spaces)
    - anything else → reply `BAD\n`
 3. On EOF (client closed), close the connection and `accept` the next one.
 
-- The greeting **must be sent immediately on accept**, not on demand; state is
-  shared across connections (the counter lives in `main`, or in a static).
-- Line framing, echo reply, `BAD` fallback, counter — all exact.
-- On a disconnect mid-line: discard the partial line, close, accept again.
-
-Compile flags: `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan; never redefine
-`CFLAGS`/`LDFLAGS`.
-
-## Acceptance
-
-Graded `build` + `net` + `quiz`. Two `net` runs — the second proves state
-survives the new connection:
+Graded dialogue — two `net` runs (the second proves state survives the new connection):
 
 ```
 run 1:  (send "")   → expect "HELLO 1\n"
@@ -41,15 +27,30 @@ run 2:  (send "")   → expect "HELLO 2\n"
         send "PING\n"        → expect "PONG\n"
 ```
 
-The `""` send means *just connect*: your server must send the greeting on its
-own when a connection is accepted, without waiting for a request line.
+The `""` send means *just connect*: your server must send the greeting on its own when a
+connection is accepted, without waiting for a request line.
 
-- Greeting on demand, never on accept → the `""` step times out, FAIL.
-- No stateful counter → the second run sees `HELLO 1`, FAIL.
-- Wrong PING/ECHO reply → byte mismatch, FAIL.
-- The server survives both disconnects (never exits on EOF).
+## Constraints
 
-`quiz.txt` is complete (see Quiz).
+- Greeting **must be sent immediately on accept**, state shared across connections
+  (the counter lives in `main`, or in a static).
+- Line framing, echo reply, `BAD` fallback, counter — all must be exact.
+- On a disconnect mid-line: discard the partial line, close, accept again.
+- `-std=gnu11 -Wall -Wextra -Werror`, ASan/UBSan.
+
+## Acceptance criteria
+
+- [ ] `HELLO 1\n` and `HELLO 2\n` in two runs — greeting cross-connection counter
+- [ ] `PONG\n` and `ECHO awesome\n` exact
+- [ ] server survives both disconnects (never exits on EOF)
+- [ ] `quiz.txt` complete
+
+Then complete `quiz.txt`:
+
+```
+Which environment variable carries the port the grader injects?: <answer>
+Which socket option lets a server rebind an address still in TIME_WAIT?: <answer>
+```
 
 ## Readings
 
@@ -58,7 +59,9 @@ own when a connection is accepted, without waiting for a request line.
   protocol server (SMTP banner, FTP 220, SSH banner…).
 - This is the server the rest of the curriculum grades *through* — make it robust.
 
-## Quiz
+## How you are graded
 
-1. Which environment variable carries the port the grader injects?
-2. Which socket option lets a server rebind an address still in TIME_WAIT?
+- `build` strict; two `net` sessions. Greeting on demand, never on accept → `""` step
+  times out, FAIL. No stateful counter → second run sees `HELLO 1`, FAIL. Wrong PING/ECHO
+  reply → byte mismatch, FAIL.
+- `quiz`: `quiz.txt` answers must match.

@@ -1,16 +1,10 @@
 # M17-ex01 · Metrics
 
-Observability starts with numeric state that can be updated while a service runs
-and read consistently by dashboards. This exercise builds the concurrency-safe
-registry behind that view, with deterministic snapshots for later tracing and
-telemetry work. You deliver `metrics.go` and the read-write locking discipline
-that keeps concurrent updates lossless.
+## Goal
 
-## Shape
+Observability starts with **metrics**: small numeric measurements collected from a running service. A metrics registry tracks named counters and gauges that other components increment and read; a snapshot feeds dashboards and alerting.
 
-Harness-style: the provided `main.go` increments counters from several
-goroutines, snapshots them, and prints the result; you write **`metrics.go`**
-using only the Go standard library and implement:
+Implement `metrics.go`:
 
 ```go
 // Metrics is a concurrency-safe registry of named counters.
@@ -32,19 +26,24 @@ func (m *Metrics) Get(name string) (int64, bool)
 func (m *Metrics) Snapshot() []KV
 ```
 
-Use a **read-write lock** (`sync.RWMutex`): reads take `RLock`, while writes
-take `Lock`. This is the M4-ex04 rwlock pattern in Go, where snapshots read far
-more often than counters change, so readers need not serialize with one
-another. Reads (`SnapGet`/`Snapshot`) and writes (`Inc`/`Add`) must be safe from
-multiple goroutines. Define `KV` as a `Key, Val` pair where `Val` is a `string`
-in this package.
+Use a **read-write lock** (`sync.RWMutex`) so concurrent goroutines can update safely and
+readers don't serialize with each other. This is your M4-ex04 rwlock revenge in Go: a
+metrics registry is read far more than written (snapshots feed dashboards constantly while
+counters are bumped only occasionally), so **reads take `RLock`, writes take `Lock`** — the
+exact asymmetry you built in C. The provided `main.go` increments counters from a couple of
+goroutines, snapshots them, and prints the result. `make all` must build `test`; `./test`
+must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `metrics.go`. Define `KV` (a `Key, Val` pair, where `Val` is a `string`) in this package.
+- Reads (SnapGet/Snapshot) and writes (Inc/Add) must be safe to call from multiple goroutines.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 snapshot (sorted):
 conn_ok=5
 conn_total=8
@@ -54,10 +53,9 @@ total=19
 total a+b=11
 ```
 
-Three goroutines bump `req_total`, `req_ok`, and `conn_total`; five bump
-`conn_total` and `conn_ok`; `total` starts at 19. The final values prove no
-concurrent increment is lost, and the sorted snapshot proves stable output. A
-non-mutex-safe registry or a nondeterministic snapshot fails the transcript.
+In the sample, three goroutines bump `req_total`/`req_ok`/`conn_total`, five bump `conn_total`/`conn_ok`, and `total` is seeded to 19.
+
+A registry that loses increments from concurrent goroutines (not mutex-safe), or that fails to snapshot deterministically sorted, is the bug.
 
 ## Readings
 

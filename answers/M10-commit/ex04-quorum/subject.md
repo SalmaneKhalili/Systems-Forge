@@ -44,3 +44,10 @@ The tell: a 2-node group needs **both** nodes (quorum 2) — a bare tie of 1-1
 is not a quorum; and a 4-node group needs 3, not 2 (2-2 is a tie, not a
 majority). Getting quorum as `floor(n/2)` (or `n/2`) is the classic bug that
 lets a tie be mistaken for a decision.
+
+## Readings
+
+- **Reading ladder** — a quorum is a fact about *counts*; majority arithmetic does the work.
+- *Designing Data-Intensive Applications*, Chapter 9 — quorums and majority reads/writes.
+- Wikipedia, "Quorum (distributed computing)":
+  https://en.wikipedia.org/wiki/Quorum_(distributed_computing)

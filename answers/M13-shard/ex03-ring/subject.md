@@ -44,3 +44,11 @@ key 600  -> node 0
 The tell: `key 50` and `key 600` both wrap to node 0; `key 100` and `key 300`
 land exactly on their node (inclusive hit). A lookup that uses `>` instead of
 `>=`, or that fails to wrap, is the bug.
+
+## Readings
+
+- **Reading ladder** — consistent hashing was invented to make resizes cheap; the original
+  paper is short, Wikipedia gives the mechanics.
+- Karger et al., "Consistent Hashing and Random Trees" (1997):
+  https://www.cs.princeton.edu/courses/archive/fall09/cos518/papers/chash.pdf
+- Wikipedia, "Consistent hashing": https://en.wikipedia.org/wiki/Consistent_hashing

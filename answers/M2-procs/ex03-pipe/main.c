@@ -22,7 +22,6 @@ int main()
        printf("pipe failed\n");
         return 1;
     }
-
     switch (pid = fork())
     {
     case -1:
@@ -48,6 +47,7 @@ int main()
         close(arr[0]);
         buff[total] = '\0';
         waitpid(pid, NULL, 0);
+
         if (total == 19 && memcmp(buff, "hello over the pipe", 19) == 0)
             flag = 1;
         if (flag) {

@@ -1,15 +1,12 @@
 # M13-ex04 · Rebalance
 
-The ring's value appears when membership changes: only keys whose owning node
-changes need to move. This exercise turns that claim into a deterministic
-comparison of ownership before and after additions and removals, the move count
-the shard gateway's final placement story depends on. You deliver
-`rebalance.go` with owner lookup and movement counting.
+## Goal
 
-## Shape
+The value of consistent hashing shows up on resize: when a node joins or
+leaves, only the keys whose owning node changes actually move. Counting those
+moves is the clean way to verify a sharder stays balanced with minimal churn.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`rebalance.go`** using only the Go standard library and implement:
+Implement `rebalance.go`:
 
 ```go
 // OwnerHash returns the hash position of the node owning key on a ring built
@@ -22,25 +19,31 @@ func OwnerHash(key int, nodes []int) int
 func Moved(oldNodes, newNodes []int, keys []int) int
 ```
 
-`oldNodes` and `newNodes` are each sorted ascending. Never read the wall clock.
-The reference transcript is `expected.txt` with whitespace normalized.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `rebalance.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- `oldNodes`/`newNodes` are each sorted ascending.
+- Never read the wall clock.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 owners [100 300 500]: 50:100 150:300 250:300 350:500 450:500 550:100
 add 200 -> 1 moved
 add 700 -> 1 moved
 remove 300 -> 2 moved
 ```
 
-Adding a node at 200, between 100 and 300, takes over only key `150`. Adding
-700, past 500, claims only `550` from the wrap-around owner. Removing 300
+Adding a node at 200 (between 100 and 300) takes over only key `150`; adding
+700 (past 500) claims only `550` from the wrap-around owner; removing 300
 redistributes `150` and `250` to 500. Shuffling every key, or counting by
-position instead of by node hash, fails the move counts.
+position instead of by node hash, is the bug.
 
 ## Readings
 

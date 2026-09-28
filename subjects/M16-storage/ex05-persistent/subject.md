@@ -1,41 +1,37 @@
 # M16-ex05 · Persistent KV Gateway (Mini-Capstone)
 
-The module's storage path now reaches a network boundary: ordered memtable
-entries, immutable SSTables, and pre-apply WAL records must behave as one
-persistent key-value service. This Mini-Capstone serves TCP clients, logs each
-mutation before applying it, and rebuilds memory from `store.log` on startup.
-You deliver `server.go`, the runnable LSM gateway.
+## Goal
 
-## Shape
+Bring the LSM-tree pieces together into a **persistent key-value store** with a TCP gateway (this module's Mini-Capstone). All mutations are appended to a write-ahead log (ex03) so the store survives a restart; the in-memory map is rebuilt by replaying the log on startup (ex01/ex03), and keys stay sorted (ex01).
 
-Whole-program. You write **`server.go`** using only the Go standard library:
-
-```go
-func main() // reads TARGETPORT, loads store.log, serves TCP on 127.0.0.1:port
-```
-
-The server listens on `127.0.0.1` at the port supplied in the `TARGETPORT`
-environment variable. Its line protocol is:
+The server listens on `127.0.0.1` at the port given in the environment variable `TARGETPORT` (set by the grader) and speaks a simple line protocol:
 
 - `PUT <key> <value>` → `ok`
 - `GET <key>` → the value, or `nil` if absent
 - `DEL <key>` → `ok` (removes the key)
 
-Append every PUT/DEL to `store.log` **in the working directory** before applying
-it to memory, then rebuild the in-memory map by replaying that log on startup;
-keys remain sorted. Read `TARGETPORT` with `os.Getenv`, never a fixed port, and
-protect the store with a mutex while serving concurrent connections.
-Persistence is required: a second connection still sees the first connection's
-data, and a real restart restores it through log replay. `make all` must build
-`test`; the grader starts `./test` and checks replies over two consecutive TCP
-connections.
+Every PUT/DEL is appended to a log file named `store.log` **in the working directory** before being applied to memory, so a later restart (including one within the same grader run) replays it.
+
+Implement `server.go`:
+
+```go
+func main() // reads TARGETPORT, loads store.log, serves TCP on 127.0.0.1:port
+```
+
+`make all` must build `test`. The grader starts `./test`, sends commands over two consecutive TCP connections, and checks the replies.
+
+## Constraints
+
+- Go, standard library only; file is `server.go`.
+- Persistence is required: a second connection must still see data written by the first (both are served by the same process; on a real restart the log replay restores it).
+- Read `TARGETPORT` from `os.Getenv`; never use a fixed port.
+- Handle concurrent connections with a mutex around the store.
 
 ## Acceptance
 
-`make all` must build `test`; the grader starts `./test` and requires these two
-connections to produce exactly:
+The grader runs these two connections and expects:
 
-```text
+```
 conn 1:
   PUT alpha 1        -> ok
   GET alpha          -> 1
@@ -59,9 +55,7 @@ server installs a SIGTERM handler, stops accepting new connections, flushes
 and closes `store.log`, and exits 0.
 ```
 
-A fresh non-persistent map per connection, a stale value, or the wrong reply
-fails the transcript. A server that dies on `SIGTERM` with a non-zero exit also
-fails the graceful-shutdown step.
+A server that serves each connection from a fresh (non-persistent) map, returns stale values, or answers the wrong value, is the bug. A server that dies on SIGTERM (non-zero exit) fails the graceful-shutdown step.
 
 ## Readings
 

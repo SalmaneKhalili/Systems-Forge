@@ -1,4 +1,4 @@
-# M2-ex05 · Gate: pipeline
+**# M2-ex05 · Gate: pipeline
 
 The gate of M2. Everything so far was one process handshaking with another. Now compose:
 two children, one pipe, two `exec`s, and a parent who waits for all of it — the exact
@@ -68,14 +68,17 @@ A pipe delivers written bytes in what order?: <answer>
 
 ## Readings
 
-- The Linux Programming Interface, §44.4 "Using Pipes to Connect Filters" — study the
-  figure of two children joined by a pipe (TLPI Figure 44-6).
+- **Reading ladder** — the gate composes the three verbs you already trained (fork, exec,
+  pipes); refresh the syscalls first, then the composed figure, then the dup2 detail.
+- `man 2 pipe`, `man 2 fork`, `man 2 dup2`, `man 3 execlp`, `man 2 waitpid`.
+- The Linux Programming Interface, §44.4 "Using Pipes to Connect Filters" — study the figure
+  of two children joined by a pipe (TLPI Figure 44-6).
 - §5.5 "Duplicating File Descriptors" (dup/dup2) if you haven't read it.
-- `man 2 dup2`, `man 2 pipe`, `man 3 execlp`, `man 2 waitpid` again.
+- Reread your M2-ex02 (spawn idiom) and M2-ex03 (EOF on read) — the gate is their composition.
 
 ## How you are graded
 
 - `build` with two runs against two expected files (the two words). The success of both runs
   plus exit 0 plus empty stderr is the whole gate: any leak, hang, or wrong redirect shows up
   as a diff, a timeout, or a sanitizer report.
-- `quiz`: `quiz.txt` answers must match.
+- `quiz`: `quiz.txt` answers must match.**

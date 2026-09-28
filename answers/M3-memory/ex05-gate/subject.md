@@ -57,6 +57,8 @@ What is the buffer's hard capacity in bytes?: <answer>
 
 ## Readings
 
+- **Reading ladder** — start with `man 3 realloc`'s contract, then TLPI §7.1
+  below for why allocators fail.
 - The Linux Programming Interface, §7.1 "Allocating Memory on the Heap" — why every real
   allocator can fail, and what robust code must do. An allocation failure is a `NULL`; this
   exercise makes that failure deterministic.

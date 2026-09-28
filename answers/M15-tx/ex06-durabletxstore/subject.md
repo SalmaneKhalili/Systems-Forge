@@ -69,6 +69,8 @@ order**, and rolled-back writes never touch it.
 
 ## Readings
 
+- **Reading ladder** — start from the WAL durability core (M16-ex03, ex02
+  replay), then the revisit list below.
 - M15-ex01 (staged writes / atomic commit), M15-ex02 (WAL replay).
 - M16-ex03 (persistence): a WAL is the durability guarantee; replay restores
   state. Here you can observe the WAL directly via the `wal` command.

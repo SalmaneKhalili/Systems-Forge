@@ -58,3 +58,10 @@ t0 term=6 vote=self
 Once the node is at term 6, a stale `see 3` is ignored (still term 6, vote
 kept). A node that resets its term downward, or that resets its vote on a
 lower/equal term, is the bug.
+
+## Readings
+
+- **Reading ladder** — the visual guide gives the intuition, then the paper's §5.1 pins the
+  term rules.
+- Raft visual guide (interactive): https://raft.github.io/
+- Raft paper, §5.1 "Raft basics" — terms: https://raft.github.io/raft.pdf

@@ -27,7 +27,7 @@ The grader runs `sh mini_forge.sh` and requires exit 0.
 
 ## Acceptance criteria
 
-- [x] untouched `./sample/hello` builds and its output matches `sample/expected.txt`
+- [ ] untouched `./sample/hello` builds and its output matches `sample/expected.txt`
 - [ ] `sh mini_forge.sh` prints `PASS` and exits 0
 - [ ] sabotage the sample (break `main.c`, rebuild) and confirm your script exits nonzero
 - [ ] `quiz.txt` complete

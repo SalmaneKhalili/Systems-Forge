@@ -1,15 +1,13 @@
 # M12-ex02 · Vote
 
-The monotonic term from ex01 orders ballots, but freshness decides which
-candidate may receive one. This exercise makes a follower grant a vote only to
-a candidate whose last log entry is at least as up-to-date as its own.
+## Goal
 
-## Shape
+A follower grants a vote only to a candidate whose log is **at least as
+up-to-date** as its own — the rule that keeps a stale node from overtaking a
+fresh one. A log is compared by its last term, falling back to its last index
+when terms tie. A node that already voted this term refuses everyone.
 
-A stale node must not overtake a fresh one. Compare logs by the candidate's
-last term, falling back to the last index when the terms tie. A node that has
-already voted in the term refuses every later candidate. You write
-**`vote.go`** and implement:
+Implement `vote.go`:
 
 ```go
 type LogInfo struct {
@@ -33,18 +31,22 @@ func NewVoter() *Voter
 func (v *Voter) RequestVote(candTerm int, cand LogInfo, mine LogInfo) bool
 ```
 
-The exercise ships `main.go`, which prints the transcript. `make all` must
-build `test`, and `./test` must print the reference transcript exactly. Use Go
-and the standard library only. The reference transcript is `expected.txt`, with
-whitespace normalized. For the up-to-date comparison, a candidate last-term
-above the node's is fresher; when terms are equal, the candidate's last index
-must be greater than or equal to the node's. Never read the wall clock.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `vote.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- Up-to-date comparison: candidate's last-term > ours → fresher; equal term →
+  candidate's last-index >= ours → at least as up-to-date.
+- Never read the wall clock.
 
 ## Acceptance
 
-The reference transcript is:
+Reference transcript:
 
-```text
+```
 case a: term1 idx1 vs term1 idx0  -> true
 case b: term1 idx0 vs term1 idx1  -> false
 case c: term2 idx0 vs term1 idx9  -> true   (higher term wins regardless of index)
@@ -52,10 +54,10 @@ case d: term1 idx5 vs term0 idx8  -> true   (equal? no: ours term0, cand term1 -
 case e: already voted             -> false
 ```
 
-- A candidate with a younger last-term loses even if it has more entries, as
-  case d shows with the terms swapped.
-- A candidate trailing in index at the same term loses, as case b shows.
-- Granting on length alone, or granting twice, fails the election restriction.
+The tell: a candidate with a younger last-term loses even if it has more
+entries (case d with swapped terms), and a candidate trailing in index at the
+same term loses (case b). Granting on length alone, or granting twice, is the
+bug.
 
 ## Readings
 

@@ -1,54 +1,46 @@
-# M3-ex02 · Copy-on-Write
+# M3-ex02 · copy-on-write
 
-ex01 built an allocator; this exercise answers one question with an experiment:
-*do `fork` and memory sharing actually do what the manual pages claim?* You
-write a whole program that `mmap`s two anonymous pages — one `MAP_PRIVATE`,
-one `MAP_SHARED` — and proves that a child's writes behave differently on
-each. The private/shared contrast you demonstrate is the same mechanism behind
-M2's `fork`, made visible.
+## Goal
 
-## Shape
+Write `main.c` so `make all` produces `./test`, a program that answers one question with an
+experiment: *do `fork` and memory sharing actually do what the manual pages claim?*
 
-Write `main.c` so `make all` produces `./test`. The program:
-
-1. `mmap`s two anonymous pages of `PROT_READ|PROT_WRITE`: one `MAP_PRIVATE`,
-   one `MAP_SHARED`.
-2. Fills both with the byte `'A'`.
-3. `fork`s; the child sets the first byte of **both** pages to `'B'`, then
-   `_exit(0)` (no `printf`, no `return` from `main`).
-4. The parent `waitpid`s the child, then reads the first byte of each page
-   and prints:
+1. `mmap` two anonymous pages of `PROT_READ|PROT_WRITE`: one `MAP_PRIVATE`, one `MAP_SHARED`.
+2. Fill both with the byte `'A'`.
+3. `fork`; the child sets the first byte of **both** pages to `'B'`, then `_exit(0)` (no
+   `printf`, no `return` from `main`).
+4. The parent `waitpid`s the child, then reads the first byte of each page:
 
 ```
 private page kept A after child write (copy-on-write)
 shared page shows B (MAP_SHARED)
 ```
 
-Print those two lines exactly when the checks pass; on a mismatch print
-`FAIL: …` and exit 1. Rules:
+Print the lines exactly when the checks pass; on a mismatch print `FAIL: …` and exit 1.
 
-- Both mappings are created **before** `fork` — that is the point; mappings
-  are inherited.
-- `mmap`/`fork` return values are all checked; `MAP_FAILED` and `pid < 0` are
-  failure paths.
-- The child does only `write`-class work plus `_exit`. No `printf` in the
-  child, no `sleep` anywhere, no `usleep`.
-- `munmap` both pages at the end (leak-free discipline even though exit would
-  reclaim them).
+## Constraints
+
+- Both mappings are created **before** `fork` (that is the point — mappings are inherited).
+- `mmap`/`fork` return values all checked; `MAP_FAILED` and `pid < 0` are failure paths.
+- The child is allowed only `write`-class work and `_exit`. No `printf` in the child, no
+  `sleep` anywhere, no `usleep`.
+- `munmap` both pages at the end (leak-free discipline even though exit would reclaim them).
 - No `CFLAGS` redefines. Empty stderr, deterministic output.
 
-## Acceptance
+## Acceptance criteria
 
-Graded `build`: strict compile + `./test` stdout diff, exit 0, empty stderr.
-The two checks are independent — flipping a flag in `mmap` flips one line:
+- [ ] the private page still reads `A` after the child wrote `B` (copy-on-write)
+- [ ] the shared page reads `B` after the child wrote `B` (shared mapping semantics)
+- [ ] the child was reaped with exit status 0
+- [ ] both pages `munmap`'d; no leak report from ASan/LeakSanitizer
+- [ ] `quiz.txt` complete (see below)
 
-- The private page still reads `A` after the child wrote `B` (copy-on-write).
-- The shared page reads `B` after the child wrote `B` (shared mapping
-  semantics).
-- The child was reaped with exit status 0.
-- Both pages are `munmap`'d; no leak report from ASan/LeakSanitizer.
+Then complete `quiz.txt`:
 
-`quiz.txt` is complete (see Quiz).
+```
+Anonymous private mappings use copy-on-write across fork by default — true or false?: <answer>
+Which flag makes a forked child's writes visible to the parent?: <answer>
+```
 
 ## Readings
 
@@ -60,7 +52,8 @@ The two checks are independent — flipping a flag in `mmap` flips one line:
 - `man 2 mmap` — read the `MAP_PRIVATE` and `MAP_SHARED` paragraphs, and `MAP_ANONYMOUS`.
 - The "copy-on-write" paragraph in TLPI §24.2, "Semantics of fork()".
 
-## Quiz
+## How you are graded
 
-1. Anonymous private mappings use copy-on-write across fork by default — true or false?
-2. Which flag makes a forked child's writes visible to the parent?
+- `build`: strict compile + `./test` stdout diff, exit 0, empty stderr. The two checks are
+  independent — flipping a flag in `mmap` flips one line; both verified.
+- `quiz`: `quiz.txt` answers must match.

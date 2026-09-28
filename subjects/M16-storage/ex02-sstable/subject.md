@@ -1,16 +1,10 @@
 # M16-ex02 · SSTable
 
-Once the memtable is full, its sorted entries can be flushed without another
-in-place update path. This exercise serializes them into an immutable SSTable and
-builds a sparse block index for boundary-safe lookup, the on-disk unit ex04 later
-compacts. You deliver `sstable.go` with the file format, writer, opener, and
-indexed `Get`.
+## Goal
 
-## Shape
+When a memtable fills up (ex01), an LSM-tree **flushes** its sorted entries to an immutable on-disk file called an **SSTable** (Sorted String Table). Because SSTables are immutable and sorted, we never rewrite them in place — we compact them (ex04). Lookup uses a sparse index plus binary search rather than scanning the whole file.
 
-Harness-style: the provided `main.go` writes a temporary SSTable, reopens it,
-and queries keys; you write **`sstable.go`** using only the Go standard library
-and implement:
+Implement `sstable.go`:
 
 ```go
 // WriteSSTable serializes a sorted slice of KV pairs to a file at path.
@@ -28,17 +22,20 @@ func OpenSSTable(path string) (*SSTable, error)
 func (s *SSTable) Get(key string) (string, bool)
 ```
 
-`KV` is reused from `memtable.go` in the same package. Imports from
-`encoding/binary` and `sort` are permitted. Lookups must also work near block
-boundaries, and never read the wall clock. The reference transcript is
-`expected.txt` with whitespace normalized.
+The provided `main.go` writes a temp SSTable, reopens it, and queries keys. `make all` must build `test`; `./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `sstable.go`. `KV` is reused from `memtable.go` (same package).
+- Imports (`encoding/binary`, `sort`) are permitted.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- No wall clock. Looks up must also work near the block boundaries.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 sstable write ok
 get zed -> (v0)
 get kappa -> (v1)
@@ -48,10 +45,7 @@ get missing -> ok=false
 blocks: 3
 ```
 
-The successful writes and reads prove serialization, reopening, and indexed
-lookup; the three-block count proves the sparse index's block cadence.
-Mishandling the last entry in a block or returning the wrong value across a
-boundary breaks the file contract.
+A lookup that mishandles the last entry in a block, or returns the wrong value across a block boundary, is the bug.
 
 ## Readings
 

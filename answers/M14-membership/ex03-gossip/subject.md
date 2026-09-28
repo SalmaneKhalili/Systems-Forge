@@ -47,3 +47,10 @@ Node `x` is at version 1 in `a` and version 2 in `b`; merging — in either
 order — keeps the fresher version 2. Both nodes converge on `x2 y1 z1`. Keeping
 two entries for one member, or letting a stale version overwrite a fresher one
 (non-commutative merge), is the bug.
+
+## Readings
+
+- **Reading ladder** — gossip is pairwise membership exchange converging to cluster-wide
+  agreement; "infection-style" is SWIM's word for it.
+- SWIM paper, infection-style exchange: https://www.cs.cornell.edu/~asdas/research/dsn02-swim.pdf
+- Wikipedia, "Gossip protocol": https://en.wikipedia.org/wiki/Gossip_protocol

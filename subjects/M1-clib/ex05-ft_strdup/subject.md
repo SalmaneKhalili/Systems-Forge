@@ -1,11 +1,9 @@
 # M1-ex05 · Gate: ft_strdup
 
-The earlier functions cover loops, bounded writes, fills, and comparisons. The gate adds
-ownership: a heap copy must be correctly sized, independent from its source, and clean
-under the sanitizers. You deliver `ft_strdup.c` and the `Makefile` that make that
-allocation contract real.
+The gate of M1. You have written loops, bounded copies, fills, and comparisons. Now you must
+own memory: produce a heap copy of a string, with every allocated byte accounted for.
 
-## Shape
+## Goal
 
 Implement `ft_strdup` in `ft_strdup.c`:
 
@@ -13,38 +11,41 @@ Implement `ft_strdup` in `ft_strdup.c`:
 char *ft_strdup(const char *s);
 ```
 
-Return a fresh heap allocation containing an exact copy of `s`, including its terminating
-NUL, or `NULL` if allocation fails. You may reuse your own `ft_strlen` / `ft_memcpy`-style
-loops by copying them into this directory, or write everything inline. Either way it
-must be **your** code.
+Returns a fresh allocation on the heap containing an exact copy of `s` (including its
+terminating NUL), or `NULL` if allocation fails. You may reuse your own `ft_strlen` /
+`ft_memcpy`-style loops by copying them into this directory — or write it all inline. Either
+way it must be **your** code.
 
-`forge` compiles with `-fsanitize=address,undefined`: a leak, an off-by-one heap overflow,
-or any UB fails you with a sanitizer report. `ft_strdup.c` and `Makefile` are yours to
-write; do not touch `main.c` or `ft_strdup.h`. You may not call `strdup`, `strcpy`,
-`strlen`, `memcpy`, `strcat`, or similar functions. `malloc` (and only `malloc`) is
-allowed.
+`forge` compiles with `-fsanitize=address,undefined`: a leak, an off-by-one heap overflow, or
+any UB fails you with a sanitizer report.
 
-`malloc(len)` with a `strlen`-derived `len` is wrong: make room for the NUL. If `malloc`
-returns `NULL`, return `NULL` and touch nothing. The copy must be independent, so
-mutating it must not change the source. Every `ft_strdup` allocation the harness makes
-is freed by the harness; anything that leaks leaked inside *your* function. No `CFLAGS`
-redefines.
+## Constraints
 
-## Acceptance
+- Yours to write: `ft_strdup.c` and `Makefile`. Do not touch `main.c` / `ft_strdup.h`.
+- You may **not** call `strdup`, `strcpy`, `strlen`, `memcpy`, `strcat`, etc. `malloc` (and
+  only `malloc`) is allowed.
+- `malloc(len)` with `strlen`-derived `len` is wrong — you must make room for the NUL.
+  The harness's ASan build will find you.
+- On `NULL` from `malloc`, return `NULL` and touch nothing.
+- The copy must be independent: mutating it must not change the source.
+- Every `ft_strdup` allocation the harness makes is freed by the harness — if anything leaks,
+  it leaked inside *your* function. No `CFLAGS` redefines.
 
-The strict build and harness stdout diff must pass, with ASan/UBSan providing the
-allocation check. The run must exit 0 with no leak, overflow, or UB report.
+## Acceptance criteria
 
-- `ft_strdup("")` yields an empty, NUL-terminated heap string.
-- `"hello"` and a 33-character string come back byte-identical.
-- The returned pointer has a different address from the source.
-- Mutating the copy does not touch the source.
-- The harness frees each allocation, and no sanitizer finding reaches stderr.
-- `quiz.txt` is complete.
+- [ ] `ft_strdup("")` yields an empty, NUL-terminated heap string
+- [ ] `"hello"` and a 33-char string come back byte-identical
+- [ ] the returned pointer is a different address than the source
+- [ ] mutating the copy does not touch the source
+- [ ] no leak, no overflow, no UB under ASan/UBSan (the run must exit 0)
+- [ ] `quiz.txt` complete (see below)
 
-Graded `build` + `quiz`: `build` is a strict compile and harness stdout diff with implicit
-ASan/UBSan enforcement; any sanitizer finding makes the process exit nonzero with a report
-on stderr and fails the run. `quiz.txt` answers must match.
+Then complete `quiz.txt`:
+
+```
+What does ft_strdup return if malloc fails?: <answer>
+Which sanitizer reports a leak on exit?: <answer>
+```
 
 ## Readings
 
@@ -55,7 +56,9 @@ on stderr and fails the run. `quiz.txt` answers must match.
   https://clang.llvm.org/docs/AddressSanitizer.html
 - K&R §5.5 + §5.6 (pointers, arrays, and pointer arithmetic — your copy loop lives here).
 
-## Quiz
+## How you are graded
 
-1. What does ft_strdup return if malloc fails?
-2. Which sanitizer reports a leak on exit?
+- `build`: strict compile + harness stdout diff, plus implicit ASan/UBSan enforcement:
+  any sanitizer finding makes the process exit nonzero with a report on stderr, which fails
+  your run.
+- `quiz`: `quiz.txt` answers must match.

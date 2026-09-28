@@ -48,7 +48,9 @@ Stderr must stay empty. A clean exit (0) is part of the grade.
 
 ## Readings
 
-- Go `io` package docs → `io.Reader`, `io.ReadFull`, `io.EOF`.
+- Go `io` docs: https://pkg.go.dev/io#Reader, https://pkg.go.dev/io#ReadFull,
+  https://pkg.go.dev/io#EOF
+- Go `encoding/binary` docs → `BigEndian`.
 - Go `encoding/binary` docs → `BigEndian`.
 - A. Tanenbaum, *Computer Networks* — framing/byte stuffing chapter.
 

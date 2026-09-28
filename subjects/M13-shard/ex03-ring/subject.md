@@ -1,15 +1,13 @@
 # M13-ex03 · Ring
 
-Range ownership partitions keys into fixed stretches; the ring generalizes that
-lookup to a changing node set. A key is owned by the first node at or after its
-hash position, wrapping to node 0 when it passes the last node, so most keys stay
-in place across membership changes. You deliver `ring.go` with that clockwise
-ownership rule.
+## Goal
 
-## Shape
+Consistent hashing places both keys and nodes on a ring of hash positions. A
+key is owned by the **next node clockwise** from the key's position — the
+first node at or after the key, wrapping around to the first node. This keeps
+most keys in place when the node set changes.
 
-Harness-style: the provided `main.go` prints the transcript; you write
-**`ring.go`** using only the Go standard library and implement:
+Implement `ring.go`:
 
 ```go
 // NodeFor returns the index into nodes (0-based) of the node that owns
@@ -18,16 +16,22 @@ Harness-style: the provided `main.go` prints the transcript; you write
 func NodeFor(keyHash int, nodes []int) int
 ```
 
-Exact hits are inclusive: a key at the same position as a node belongs to it.
-Keys past the last node wrap around to node 0. Never read the wall clock. The
-reference transcript is `expected.txt` with whitespace normalized.
+The provided `main.go` prints the transcript. `make all` must build `test`;
+`./test` must print the reference transcript exactly.
+
+## Constraints
+
+- Go, standard library only; file is `ring.go`.
+- Reference transcript is `expected.txt` (whitespace normalized).
+- Exact hits are inclusive: a key at the same position as a node belongs to it.
+- Keys past the last node wrap around to node 0.
+- Never read the wall clock.
 
 ## Acceptance
 
-`make all` must build `test`; `./test` must print the reference transcript
-exactly:
+Reference transcript:
 
-```text
+```
 nodes 100 300 500
 key 50   -> node 0
 key 100  -> node 0
@@ -37,9 +41,9 @@ key 350  -> node 2
 key 600  -> node 0
 ```
 
-`key 50` and `key 600` wrap to node 0. `key 100` and `key 300` land exactly on
-their nodes and prove the inclusive boundary; a lookup that uses `>` instead of
-`>=`, or that fails to wrap, fails this transcript.
+The tell: `key 50` and `key 600` both wrap to node 0; `key 100` and `key 300`
+land exactly on their node (inclusive hit). A lookup that uses `>` instead of
+`>=`, or that fails to wrap, is the bug.
 
 ## Readings
 

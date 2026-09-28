@@ -1,29 +1,23 @@
 # M14 · Membership
 
-This module builds the failure-detection layer that decides who belongs to a
-cluster and which peers are still alive. The thread runs from heartbeat-driven
-liveness through suspicion, gossip convergence, and eviction, then combines those
-states in a TCP membership gateway.
+A cluster must agree on WHO is in it. **Membership** is how a node learns of
+its peers, tracks whether they are alive, and eventually drops a peer that has
+gone silent. This module builds the failure-detection mechanics: heartbeats,
+the suspect/failed lifecycle, gossip propagation, and eviction.
 
-## The build
+Milestones:
 
-- **ex01 · Heartbeat** — keep a peer alive while heartbeats arrive and fail it
-  after a deterministic countdown.
-- **ex02 · Suspect** — put a two-threshold `alive → suspect → failed`
-  lifecycle between silence and removal.
-- **ex03 · Gossip** — merge versioned membership views until every node keeps
-  the same freshest facts.
-- **ex04 · Evict** — remove members whose logical heartbeat sequence exceeds the
-  inclusive staleness bound.
-- **ex05 · The membership gateway** — **Gate**: serve concurrent TCP clients that
-  inspect and mutate one process-wide live set, including clean `SIGTERM`
-  shutdown.
+- ex01 · Heartbeat — a node is considered alive while heartbeats arrive.
+- ex02 · Suspect — silence moves a node from alive to suspect before failure.
+- ex03 · Gossip — membership facts spread node-to-node and converge.
+- ex04 · Evict — a failed node is removed from the live set.
+- ex05 · The membership gateway — a TCP gateway that reports and updates the live set.
 
-## Rules
+Rule: nothing printed or compared may depend on wall-clock time. Where a
+timeout is needed, it is delivered as an event/step — never read the wall
+clock. All exercises are transcript-driven and byte-deterministic.
 
-Nothing printed or compared may depend on wall-clock time. Where a timeout is
-needed, it is delivered as an event/step — never read the wall clock. All
-exercises are transcript-driven and byte-deterministic.
+---
 
 ## Prerequisites
 
@@ -48,6 +42,8 @@ Before starting M14, you should be comfortable with everything from M0–M13, pl
 
 You do NOT need to know: SWIM protocol details, phi-accrual failure detectors, or
 gossip convergence proofs. Those are advanced topics outside this module.
+
+---
 
 ## So what? (interview / portfolio)
 
